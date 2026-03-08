@@ -77,7 +77,7 @@ const avatarColors = [
 ]
 
 function getAvatarColor(index: number): string {
-  return avatarColors[index % avatarColors.length]
+  return avatarColors[index % avatarColors.length] ?? ''
 }
 
 // Log milestone modal
@@ -103,12 +103,13 @@ function saveMilestone() {
   const index = milestonesData.value.findIndex(
     (m) => m.id === loggingMilestoneId.value,
   )
-  if (index !== -1) {
+  const existing = index !== -1 ? milestonesData.value[index] : undefined
+  if (existing) {
     milestonesData.value[index] = {
-      ...milestonesData.value[index],
+      ...existing,
       achieved: true,
       achievedDate: logDate.value,
-      notes: logNotes.value || milestonesData.value[index].notes,
+      notes: logNotes.value || existing.notes,
       loggedBy: 'stf-001',
     }
   }
@@ -182,7 +183,7 @@ function saveMilestone() {
             :class="[
               'flex h-14 w-14 items-center justify-center rounded-full text-lg font-bold text-white',
               getAvatarColor(
-                classStudents.findIndex((s) => s.id === selectedStudent.id),
+                classStudents.findIndex((s) => s.id === selectedStudent?.id),
               ),
             ]"
           >

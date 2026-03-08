@@ -151,7 +151,10 @@ const groupedMessages = computed(() => {
       currentDate = msgDate
       groups.push({ date: msg.timestamp, messages: [msg] })
     } else {
-      groups[groups.length - 1].messages.push(msg)
+      const lastGroup = groups[groups.length - 1]
+      if (lastGroup) {
+        lastGroup.messages.push(msg)
+      }
     }
   }
 

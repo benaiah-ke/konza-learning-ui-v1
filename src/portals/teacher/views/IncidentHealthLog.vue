@@ -22,19 +22,8 @@ const classStudents = computed(() =>
   ),
 )
 
-const classStudentIds = computed(() =>
-  new Set(classStudents.value.map((s) => s.id)),
-)
-
 // Reactive incidents list for demo
 const incidentsData = ref<Incident[]>([...allIncidents])
-
-// All incidents (not just filtered to Butterfly - show all for a richer view)
-const allClassIncidents = computed(() =>
-  incidentsData.value.filter(
-    (inc) => classStudentIds.value.has(inc.studentId),
-  ),
-)
 
 // Show all incidents for demo richness (including non-Butterfly students)
 const displayIncidents = computed(() => incidentsData.value)
@@ -132,7 +121,7 @@ function submitIncident() {
     description: newIncident.value.description,
     actionTaken: newIncident.value.actionTaken,
     reportedBy: 'stf-001',
-    date: new Date().toISOString().split('T')[0],
+    date: new Date().toISOString().split('T')[0] ?? '',
     parentNotified: newIncident.value.parentNotified,
   }
 

@@ -65,7 +65,7 @@ const bucketAmounts = computed(() => {
     '90plus': 0,
   }
   for (const record of financeStore.arrearsRecords) {
-    amounts[record.agingBucket] += record.totalOwed
+    amounts[record.agingBucket] = (amounts[record.agingBucket] ?? 0) + record.totalOwed
   }
   return amounts
 })
@@ -178,7 +178,7 @@ const queueData = computed(() =>
       parentPhone: parent?.phone ?? '-',
       amountOwed: record.totalOwed,
       agingBucket: record.agingBucket,
-      agingBucketLabel: bucketLabelMap[record.agingBucket],
+      agingBucketLabel: bucketLabelMap[record.agingBucket] ?? '',
       agingBucketStatus: bucketStatusMap[record.agingBucket] ?? 'info',
       status: record.status,
       statusLabel: recordStatusLabel[record.status] ?? record.status,

@@ -163,7 +163,7 @@ const avatarColors = [
 ]
 
 function getAvatarColor(index: number): string {
-  return avatarColors[index % avatarColors.length]
+  return avatarColors[index % avatarColors.length] ?? ''
 }
 
 // Mobile: show chat panel
@@ -284,19 +284,19 @@ function selectParent(parentId: string) {
                 'flex h-9 w-9 items-center justify-center rounded-full text-xs font-semibold text-white',
                 getAvatarColor(
                   parentContacts.findIndex(
-                    (c) => c.parentId === selectedContact.parentId,
+                    (c) => c.parentId === selectedContact?.parentId,
                   ),
                 ),
               ]"
             >
-              {{ selectedContact.studentInitials }}
+              {{ selectedContact?.studentInitials }}
             </div>
             <div>
               <p class="text-sm font-semibold tracking-tight text-foreground">
-                {{ selectedContact.parentName }}
+                {{ selectedContact?.parentName }}
               </p>
               <p class="text-sm text-muted-foreground">
-                Parent of {{ selectedContact.studentName }}
+                Parent of {{ selectedContact?.studentName }}
               </p>
             </div>
           </template>

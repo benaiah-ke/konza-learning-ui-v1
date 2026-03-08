@@ -18,13 +18,11 @@ import type { ApexOptions } from 'apexcharts'
 import StatCard from '@/components/shared/StatCard.vue'
 import ChartCard from '@/components/shared/ChartCard.vue'
 import { useFinanceStore } from '@/stores/finance'
-import { useStudentsStore } from '@/stores/students'
 import { useCurrency } from '@/composables/useCurrency'
 import { useChartTheme } from '@/composables/useChartTheme'
 import { campuses } from '@/data/campuses'
 
 const finance = useFinanceStore()
-const students = useStudentsStore()
 const { formatCompact, format } = useCurrency()
 const { baseOptions } = useChartTheme()
 
@@ -162,14 +160,14 @@ const enrollmentOptions = computed<ApexOptions>(() => ({
 const arrearsBuckets = computed(() => finance.arrearsByBucket)
 
 const arrearsSeries = computed(() => [
-  arrearsBuckets.value.current,
-  arrearsBuckets.value['30days'],
-  arrearsBuckets.value['60days'],
-  arrearsBuckets.value['90plus'],
+  arrearsBuckets.value.current ?? 0,
+  arrearsBuckets.value['30days'] ?? 0,
+  arrearsBuckets.value['60days'] ?? 0,
+  arrearsBuckets.value['90plus'] ?? 0,
 ])
 
 const arrearsTotal = computed(() =>
-  arrearsSeries.value.reduce((a, b) => a + b, 0),
+  arrearsSeries.value.reduce((a, b) => (a ?? 0) + (b ?? 0), 0),
 )
 
 const arrearsOptions = computed<ApexOptions>(() => ({

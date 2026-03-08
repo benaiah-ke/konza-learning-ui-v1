@@ -41,7 +41,7 @@ export const useFinanceStore = defineStore('finance', () => {
       '90plus': 0,
     }
     for (const record of arrearsRecords.value) {
-      buckets[record.agingBucket]++
+      buckets[record.agingBucket] = (buckets[record.agingBucket] ?? 0) + 1
     }
     return buckets
   })

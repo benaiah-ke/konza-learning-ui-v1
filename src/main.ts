@@ -11,7 +11,7 @@ const app = createApp(App)
 // Without this, an unhandled error in onMounted corrupts Vue's internal
 // component tree and prevents RouterView from swapping children on
 // subsequent navigations.
-app.config.errorHandler = (err, instance, info) => {
+app.config.errorHandler = (err, _instance, info) => {
   console.warn(`[Vue error handler] ${info}:`, err)
 }
 

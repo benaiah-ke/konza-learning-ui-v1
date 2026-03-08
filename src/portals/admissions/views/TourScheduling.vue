@@ -106,7 +106,7 @@ const upcomingTours = computed<TourItem[]>(() => {
     return {
       id: lead.id,
       date: lead.date,
-      time: times[idx % times.length],
+      time: times[idx % times.length] ?? '',
       parentName: lead.parentName,
       childName: lead.childName,
       childAge: lead.childAge,

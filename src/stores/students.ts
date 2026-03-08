@@ -33,10 +33,8 @@ export const useStudentsStore = defineStore('students', () => {
   const studentsByClassName = computed(() => {
     const grouped: Record<string, Student[]> = {}
     for (const student of students.value.filter((s) => s.status === 'active')) {
-      if (!grouped[student.className]) {
-        grouped[student.className] = []
-      }
-      grouped[student.className].push(student)
+      const arr = (grouped[student.className] ??= [])
+      arr.push(student)
     }
     return grouped
   })

@@ -18,13 +18,11 @@ import StatusBadge from '@/components/shared/StatusBadge.vue'
 import SearchInput from '@/components/shared/SearchInput.vue'
 import PageHeader from '@/components/shared/PageHeader.vue'
 import { useFinanceStore } from '@/stores/finance'
-import { useStudentsStore } from '@/stores/students'
 import { useCurrency } from '@/composables/useCurrency'
 import { students } from '@/data/students'
 import { parents } from '@/data/parents'
 
 const financeStore = useFinanceStore()
-const studentsStore = useStudentsStore()
 const { format: formatCurrency } = useCurrency()
 
 // ── State ───────────────────────────────────────────────────

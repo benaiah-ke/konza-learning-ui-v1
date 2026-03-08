@@ -82,7 +82,7 @@ const avatarColors = [
 ]
 
 function getAvatarColor(index: number): string {
-  return avatarColors[index % avatarColors.length]
+  return avatarColors[index % avatarColors.length] ?? ''
 }
 
 // Today's schedule

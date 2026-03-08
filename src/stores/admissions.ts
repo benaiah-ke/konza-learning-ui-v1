@@ -11,10 +11,8 @@ export const useAdmissionsStore = defineStore('admissions', () => {
   const leadsByStage = computed(() => {
     const grouped: Record<string, AdmissionLead[]> = {}
     for (const lead of admissionLeads.value) {
-      if (!grouped[lead.stage]) {
-        grouped[lead.stage] = []
-      }
-      grouped[lead.stage].push(lead)
+      const arr = (grouped[lead.stage] ??= [])
+      arr.push(lead)
     }
     return grouped
   })

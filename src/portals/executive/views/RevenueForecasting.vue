@@ -81,7 +81,7 @@ const areaChartOptions = computed(() => ({
   yaxis: {
     ...baseOptions.yaxis,
     labels: {
-      ...baseOptions.yaxis?.labels,
+      ...(baseOptions.yaxis && !Array.isArray(baseOptions.yaxis) ? baseOptions.yaxis.labels : {}),
       formatter: (val: number) => formatCompact(val),
     },
   },

@@ -59,7 +59,7 @@ const bucketAmounts = computed(() => {
     '90plus': 0,
   }
   for (const record of financeStore.arrearsRecords) {
-    amounts[record.agingBucket] += record.totalOwed
+    amounts[record.agingBucket] = (amounts[record.agingBucket] ?? 0) + record.totalOwed
   }
   return amounts
 })
@@ -88,7 +88,7 @@ const barChartOptions = computed(() => ({
   yaxis: {
     ...baseOptions.yaxis,
     labels: {
-      ...baseOptions.yaxis?.labels,
+      ...(baseOptions.yaxis && !Array.isArray(baseOptions.yaxis) ? baseOptions.yaxis.labels : {}),
       formatter: (val: number) => formatCompact(val),
     },
   },

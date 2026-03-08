@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import SafeChart from '@/components/shared/SafeChart.vue'
-import { Building2, Users, GraduationCap, BarChart3 } from 'lucide-vue-next'
-import StatCard from '@/components/shared/StatCard.vue'
+import { Building2 } from 'lucide-vue-next'
 import ChartCard from '@/components/shared/ChartCard.vue'
 import DataTable from '@/components/shared/DataTable.vue'
 import PageHeader from '@/components/shared/PageHeader.vue'
@@ -15,7 +14,7 @@ import { campuses } from '@/data/campuses'
 
 const studentsStore = useStudentsStore()
 const financeStore = useFinanceStore()
-const { format, formatCompact } = useCurrency()
+const { formatCompact } = useCurrency()
 const { baseOptions } = useChartTheme()
 
 type CampusFilter = 'all' | 'campus-karen' | 'campus-westlands'
@@ -82,7 +81,7 @@ const comparisonChartOptions = computed(() => ({
   yaxis: {
     ...baseOptions.yaxis,
     labels: {
-      ...baseOptions.yaxis?.labels,
+      ...(baseOptions.yaxis && !Array.isArray(baseOptions.yaxis) ? baseOptions.yaxis.labels : {}),
       formatter: (val: number) => val.toFixed(0),
     },
   },
