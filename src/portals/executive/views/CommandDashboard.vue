@@ -12,7 +12,7 @@ import {
   CalendarClock,
   AlertCircle,
 } from 'lucide-vue-next'
-import VueApexCharts from 'vue3-apexcharts'
+import SafeChart from '@/components/shared/SafeChart.vue'
 import type { ApexOptions } from 'apexcharts'
 
 import StatCard from '@/components/shared/StatCard.vue'
@@ -368,7 +368,7 @@ const alertIconBg: Record<string, string> = {
           </div>
         </template>
         <template #chart>
-          <VueApexCharts
+          <SafeChart
             type="area"
             :height="300"
             :options="revenueOptions"
@@ -391,7 +391,7 @@ const alertIconBg: Record<string, string> = {
           </div>
         </template>
         <template #chart>
-          <VueApexCharts
+          <SafeChart
             type="bar"
             :height="300"
             :options="enrollmentOptions"
@@ -417,7 +417,7 @@ const alertIconBg: Record<string, string> = {
           </div>
         </template>
         <template #chart>
-          <VueApexCharts
+          <SafeChart
             type="donut"
             :height="300"
             :options="arrearsOptions"

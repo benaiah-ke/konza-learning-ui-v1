@@ -11,7 +11,7 @@ import {
   ChevronDown,
   ChevronUp,
 } from 'lucide-vue-next'
-import VueApexCharts from 'vue3-apexcharts'
+import SafeChart from '@/components/shared/SafeChart.vue'
 import type { ApexOptions } from 'apexcharts'
 import { format } from 'date-fns'
 
@@ -246,7 +246,7 @@ function handleRecordCall(id: string) {
         subtitle="Distribution by aging bucket (KES)"
       >
         <template #chart>
-          <VueApexCharts
+          <SafeChart
             type="donut"
             :height="280"
             :options="donutOptions"

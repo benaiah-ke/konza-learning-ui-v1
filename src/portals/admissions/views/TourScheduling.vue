@@ -8,7 +8,7 @@ import {
   Phone,
   MapPin,
 } from 'lucide-vue-next'
-import VueApexCharts from 'vue3-apexcharts'
+import SafeChart from '@/components/shared/SafeChart.vue'
 import type { ApexOptions } from 'apexcharts'
 
 import StatCard from '@/components/shared/StatCard.vue'
@@ -308,7 +308,7 @@ function formatDate(dateStr: string): string {
         subtitle="Where inquiries come from"
       >
         <template #chart>
-          <VueApexCharts
+          <SafeChart
             type="donut"
             :height="280"
             :options="sourceChartOptions"

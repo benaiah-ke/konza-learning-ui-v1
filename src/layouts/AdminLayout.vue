@@ -25,6 +25,11 @@ const navItems = [
   { label: 'Staff Roster', to: '/admin/staff', icon: Users },
   { label: 'Leave Management', to: '/admin/leave', icon: CalendarOff },
 ]
+
+function isActive(to: string): boolean {
+  if (to === '/admin') return route.path === '/admin'
+  return route.path.startsWith(to)
+}
 </script>
 
 <template>
@@ -61,8 +66,12 @@ const navItems = [
           v-for="item in navItems"
           :key="item.to"
           :to="item.to"
-          class="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-white/60 transition-all duration-200 hover:bg-white/[0.08] hover:text-white"
-          active-class="!bg-white/[0.15] !text-white shadow-sm shadow-black/10"
+          :class="[
+            'group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200',
+            isActive(item.to)
+              ? 'bg-white/[0.15] text-white shadow-sm shadow-black/10'
+              : 'text-white/60 hover:bg-white/[0.08] hover:text-white',
+          ]"
           @click="sidebarOpen = false"
         >
           <component :is="item.icon" class="h-5 w-5 shrink-0" />
@@ -112,7 +121,9 @@ const navItems = [
 
       <!-- Content -->
       <main class="flex-1 overflow-y-auto bg-background p-6 lg:p-8">
-        <RouterView />
+        <RouterView v-slot="{ Component, route: matchedRoute }">
+          <component :is="Component" :key="matchedRoute.fullPath" />
+        </RouterView>
       </main>
     </div>
   </div>

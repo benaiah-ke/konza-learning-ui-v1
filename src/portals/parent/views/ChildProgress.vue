@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import VueApexCharts from 'vue3-apexcharts'
+import SafeChart from '@/components/shared/SafeChart.vue'
 import {
   ChevronDown,
   ChevronUp,
@@ -211,7 +211,7 @@ function formatDate(dateStr: string): string {
       <h3 class="text-sm font-semibold tracking-tight text-foreground">Development Overview</h3>
       <p class="text-sm text-muted-foreground">Progress across 5 key domains</p>
       <div class="mt-2">
-        <VueApexCharts
+        <SafeChart
           type="radar"
           :height="280"
           :options="radarOptions"

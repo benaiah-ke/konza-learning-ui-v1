@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import VueApexCharts from 'vue3-apexcharts'
+import SafeChart from '@/components/shared/SafeChart.vue'
 import { Building2, Users, GraduationCap, BarChart3 } from 'lucide-vue-next'
 import StatCard from '@/components/shared/StatCard.vue'
 import ChartCard from '@/components/shared/ChartCard.vue'
@@ -261,7 +261,7 @@ const classTableData = computed(() => {
       subtitle="Karen vs Westlands across key metrics"
     >
       <template #chart>
-        <VueApexCharts
+        <SafeChart
           type="bar"
           height="320"
           :options="comparisonChartOptions"

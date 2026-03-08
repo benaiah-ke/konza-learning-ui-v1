@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import VueApexCharts from 'vue3-apexcharts'
+import SafeChart from '@/components/shared/SafeChart.vue'
 import { AlertTriangle, Users, Clock, CircleDollarSign } from 'lucide-vue-next'
 import StatCard from '@/components/shared/StatCard.vue'
 import ChartCard from '@/components/shared/ChartCard.vue'
@@ -217,7 +217,7 @@ const detailData = computed(() =>
       subtitle="Breakdown of outstanding amounts by aging period"
     >
       <template #chart>
-        <VueApexCharts
+        <SafeChart
           type="bar"
           height="300"
           :options="barChartOptions"

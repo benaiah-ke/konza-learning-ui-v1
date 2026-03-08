@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import VueApexCharts from 'vue3-apexcharts'
+import SafeChart from '@/components/shared/SafeChart.vue'
 import { DollarSign, TrendingUp, TrendingDown, Calculator } from 'lucide-vue-next'
 import StatCard from '@/components/shared/StatCard.vue'
 import ChartCard from '@/components/shared/ChartCard.vue'
@@ -213,7 +213,7 @@ const overallCollectionPct = computed(() =>
       subtitle="Historical expected vs collected with 3-month projection"
     >
       <template #chart>
-        <VueApexCharts
+        <SafeChart
           type="area"
           height="360"
           :options="areaChartOptions"
