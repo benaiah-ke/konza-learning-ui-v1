@@ -23,15 +23,15 @@ function alignClass(align?: 'left' | 'right' | 'center'): string {
 </script>
 
 <template>
-  <div class="overflow-hidden rounded-2xl border border-border/60 bg-white shadow-sm">
-    <table class="w-full table-fixed">
+  <div class="card overflow-x-auto">
+    <table class="w-full">
       <thead>
-        <tr class="bg-slate-50/80">
+        <tr class="bg-muted">
           <th
             v-for="column in columns"
             :key="column.key"
             :class="[
-              'px-5 py-3.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground',
+              'px-6 py-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground whitespace-nowrap',
               alignClass(column.align),
             ]"
           >
@@ -43,12 +43,12 @@ function alignClass(align?: 'left' | 'right' | 'center'): string {
         <tr
           v-for="(row, index) in data"
           :key="index"
-          class="border-b border-border/40 transition-colors duration-150 last:border-b-0 hover:bg-slate-50/50"
+          class="border-b border-border transition-colors duration-150 last:border-b-0 hover:bg-muted/50"
         >
           <td
             v-for="column in columns"
             :key="column.key"
-            :class="['px-5 py-4 text-sm text-foreground', alignClass(column.align)]"
+            :class="['px-6 py-4 text-sm text-foreground', alignClass(column.align)]"
           >
             <slot
               :name="`cell-${column.key}`"

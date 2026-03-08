@@ -1,25 +1,40 @@
+import { computed } from 'vue'
 import type { ApexOptions } from 'apexcharts'
 
+function getCSSVar(name: string): string {
+  return getComputedStyle(document.documentElement)
+    .getPropertyValue(name)
+    .trim()
+}
+
 export function useChartTheme() {
-  const baseOptions: ApexOptions = {
+  const colors = computed(() => [
+    getCSSVar('--color-chart-1'),
+    getCSSVar('--color-chart-2'),
+    getCSSVar('--color-chart-3'),
+    getCSSVar('--color-chart-4'),
+    getCSSVar('--color-chart-5'),
+    getCSSVar('--color-chart-6'),
+  ])
+
+  const baseOptions = computed<ApexOptions>(() => ({
     chart: {
-      fontFamily: 'Inter, system-ui, sans-serif',
+      fontFamily: 'Onest, system-ui, sans-serif',
       toolbar: { show: false },
       zoom: { enabled: false },
+      background: 'transparent',
     },
-    colors: ['#1B4D3E', '#F59E0B', '#0EA5E9', '#7C3AED', '#C2410C', '#16A34A'],
+    colors: colors.value,
     grid: {
-      borderColor: '#E5E5E0',
+      borderColor: getCSSVar('--color-border'),
       strokeDashArray: 4,
       padding: { left: 0, right: 0 },
     },
     tooltip: {
       theme: 'light',
-      style: { fontSize: '13px' },
+      style: { fontSize: '12px' },
     },
-    dataLabels: {
-      enabled: false,
-    },
+    dataLabels: { enabled: false },
     stroke: {
       curve: 'smooth',
       width: 2,
@@ -27,7 +42,7 @@ export function useChartTheme() {
     xaxis: {
       labels: {
         style: {
-          colors: '#737373',
+          colors: getCSSVar('--color-muted-foreground'),
           fontSize: '12px',
         },
       },
@@ -37,20 +52,20 @@ export function useChartTheme() {
     yaxis: {
       labels: {
         style: {
-          colors: '#737373',
+          colors: getCSSVar('--color-muted-foreground'),
           fontSize: '12px',
         },
       },
     },
     legend: {
       position: 'bottom',
-      fontSize: '13px',
+      fontSize: '12px',
       fontWeight: 500,
-      labels: { colors: '#737373' },
+      labels: { colors: getCSSVar('--color-muted-foreground') },
       markers: { size: 4, offsetX: -2 },
       itemMargin: { horizontal: 12 },
     },
-  }
+  }))
 
-  return { baseOptions }
+  return { baseOptions, colors }
 }

@@ -7,26 +7,46 @@ interface Change {
   direction: 'up' | 'down'
 }
 
-defineProps<{
-  label: string
-  value: string
-  change?: Change
-  icon?: Component
-  iconBg?: string
-  iconColor?: string
-}>()
+type Variant = 'primary' | 'success' | 'warning' | 'danger' | 'info' | 'neutral'
+
+const props = withDefaults(
+  defineProps<{
+    label: string
+    value: string
+    change?: Change
+    icon?: Component
+    variant?: Variant
+    iconBg?: string
+    iconColor?: string
+  }>(),
+  {
+    variant: 'primary',
+  },
+)
+
+const variantStyles: Record<Variant, { bg: string; text: string }> = {
+  primary: { bg: 'bg-primary/10', text: 'text-primary' },
+  success: { bg: 'bg-success-light', text: 'text-success' },
+  warning: { bg: 'bg-warning-light', text: 'text-warning' },
+  danger: { bg: 'bg-danger-light', text: 'text-danger' },
+  info: { bg: 'bg-info-light', text: 'text-info' },
+  neutral: { bg: 'bg-muted', text: 'text-muted-foreground' },
+}
+
+const iconBgClass = props.iconBg ?? variantStyles[props.variant].bg
+const iconColorClass = props.iconColor ?? variantStyles[props.variant].text
 </script>
 
 <template>
-  <div class="group bg-white rounded-2xl border border-border/60 p-5 shadow-sm hover:shadow-md transition-all duration-200">
+  <div class="card p-6">
     <div class="flex items-start justify-between">
       <div class="space-y-1.5 min-w-0 flex-1">
-        <p class="text-[13px] font-medium text-muted-foreground truncate">{{ label }}</p>
-        <p class="text-2xl font-bold text-foreground tracking-tight">{{ value }}</p>
-        <div v-if="change" class="flex items-center gap-1.5 pt-0.5">
+        <p class="text-sm font-medium text-muted-foreground truncate">{{ label }}</p>
+        <p class="text-3xl font-extrabold text-foreground tracking-tight">{{ value }}</p>
+        <div v-if="change" class="flex items-center gap-1.5 pt-1">
           <span
             :class="[
-              'inline-flex items-center gap-0.5 text-xs font-semibold px-1.5 py-0.5 rounded-md',
+              'inline-flex items-center gap-0.5 text-xs font-semibold px-2 py-0.5 rounded-full',
               change.direction === 'up' ? 'text-success-foreground bg-success-light' : 'text-danger-foreground bg-danger-light',
             ]"
           >
@@ -39,13 +59,13 @@ defineProps<{
       <div
         v-if="icon"
         :class="[
-          'flex h-11 w-11 items-center justify-center rounded-xl shrink-0 ml-3 transition-transform duration-200 group-hover:scale-105',
-          iconBg ?? 'bg-primary/10',
+          'flex h-12 w-12 items-center justify-center rounded-xl shrink-0 ml-4',
+          iconBgClass,
         ]"
       >
         <component
           :is="icon"
-          :class="['h-5 w-5', iconColor ?? 'text-primary']"
+          :class="['h-6 w-6', iconColorClass]"
         />
       </div>
     </div>

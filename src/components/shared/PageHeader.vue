@@ -6,10 +6,10 @@ defineProps<{
 </script>
 
 <template>
-  <div class="flex flex-wrap items-center justify-between gap-4">
+  <div class="flex flex-wrap items-center justify-between gap-6">
     <div>
       <h1 class="text-2xl font-bold tracking-tight text-foreground">{{ title }}</h1>
-      <p v-if="subtitle" class="mt-1 text-[13px] text-muted-foreground">
+      <p v-if="subtitle" class="mt-1 text-sm text-muted-foreground">
         {{ subtitle }}
       </p>
     </div>
