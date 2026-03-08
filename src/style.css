@@ -5,26 +5,33 @@
 
   --color-primary: #1B4D3E;
   --color-primary-light: #2D7A5F;
+  --color-primary-dark: #143D31;
   --color-primary-foreground: #FFFFFF;
 
   --color-secondary: #F59E0B;
   --color-secondary-light: #FBBF24;
   --color-secondary-foreground: #1A1A1A;
 
-  --color-background: #FAFAF8;
-  --color-foreground: #1A1A1A;
-  --color-muted: #F5F5F0;
-  --color-muted-foreground: #737373;
-  --color-border: #E5E5E0;
+  --color-background: #F8F9FC;
+  --color-foreground: #111827;
+  --color-surface: #FFFFFF;
+  --color-muted: #F1F5F9;
+  --color-muted-foreground: #64748B;
+  --color-border: #E2E8F0;
+  --color-border-light: #F1F5F9;
 
-  --color-success: #16A34A;
-  --color-success-light: #DCFCE7;
-  --color-warning: #F59E0B;
+  --color-success: #059669;
+  --color-success-light: #D1FAE5;
+  --color-success-foreground: #065F46;
+  --color-warning: #D97706;
   --color-warning-light: #FEF3C7;
+  --color-warning-foreground: #92400E;
   --color-danger: #DC2626;
   --color-danger-light: #FEE2E2;
-  --color-info: #0EA5E9;
+  --color-danger-foreground: #991B1B;
+  --color-info: #0284C7;
   --color-info-light: #E0F2FE;
+  --color-info-foreground: #075985;
 
   --color-executive: #1B4D3E;
   --color-finance: #1E3A5F;
@@ -33,7 +40,7 @@
   --color-admissions: #C2410C;
 
   --color-card: #FFFFFF;
-  --color-card-foreground: #1A1A1A;
+  --color-card-foreground: #111827;
 }
 
 * {
@@ -42,21 +49,37 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   font-family: var(--font-sans);
   background-color: var(--color-background);
   color: var(--color-foreground);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  line-height: 1.6;
+  letter-spacing: -0.011em;
 }
 
 #app {
   min-height: 100vh;
 }
 
+button, a, input, select, textarea {
+  transition: all 0.15s ease;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
@@ -65,9 +88,47 @@ body {
 
 ::-webkit-scrollbar-thumb {
   background: var(--color-border);
-  border-radius: 3px;
+  border-radius: 99px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-muted-foreground);
 }
+
+/* Card hover lift */
+.card-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px -5px rgb(0 0 0 / 0.08), 0 4px 10px -6px rgb(0 0 0 / 0.04);
+}
+
+/* Gradient text utility */
+.gradient-text {
+  background: linear-gradient(135deg, #1B4D3E, #2D7A5F);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Fade in animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.35s ease-out forwards;
+}
+
+.stagger-children > * {
+  opacity: 0;
+  animation: fadeIn 0.35s ease-out forwards;
+}
+.stagger-children > *:nth-child(1) { animation-delay: 0.04s; }
+.stagger-children > *:nth-child(2) { animation-delay: 0.08s; }
+.stagger-children > *:nth-child(3) { animation-delay: 0.12s; }
+.stagger-children > *:nth-child(4) { animation-delay: 0.16s; }
+.stagger-children > *:nth-child(5) { animation-delay: 0.2s; }
+.stagger-children > *:nth-child(6) { animation-delay: 0.24s; }

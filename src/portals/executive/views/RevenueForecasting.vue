@@ -227,10 +227,10 @@ const overallCollectionPct = computed(() =>
     </ChartCard>
 
     <!-- Monthly breakdown table -->
-    <div class="rounded-xl border border-border bg-card p-6">
+    <div class="bg-white rounded-2xl border border-border/60 shadow-sm p-6">
       <div class="mb-4">
-        <h3 class="font-semibold text-card-foreground">Monthly Breakdown</h3>
-        <p class="mt-0.5 text-sm text-muted-foreground">
+        <h3 class="font-semibold tracking-tight text-card-foreground">Monthly Breakdown</h3>
+        <p class="mt-0.5 text-[13px] text-muted-foreground">
           Detailed monthly revenue performance
         </p>
       </div>

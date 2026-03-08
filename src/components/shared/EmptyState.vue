@@ -9,18 +9,18 @@ defineProps<{
 </script>
 
 <template>
-  <div class="flex flex-col items-center justify-center py-12 text-center">
+  <div class="py-16 text-center">
     <div
       v-if="icon"
-      class="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted"
+      class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-muted"
     >
-      <component :is="icon" class="h-8 w-8 text-muted-foreground" />
+      <component :is="icon" class="h-7 w-7 text-muted-foreground/60" />
     </div>
-    <h3 class="text-lg font-semibold text-foreground">{{ title }}</h3>
-    <p class="mt-1 max-w-sm text-sm text-muted-foreground">
+    <h3 class="mb-2 text-lg font-semibold text-foreground">{{ title }}</h3>
+    <p class="mx-auto mb-6 max-w-sm text-sm text-muted-foreground">
       {{ description }}
     </p>
-    <div class="mt-4">
+    <div>
       <slot />
     </div>
   </div>

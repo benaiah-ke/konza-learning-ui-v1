@@ -176,7 +176,7 @@ function formatDate(dateStr: string): string {
 </script>
 
 <template>
-  <div class="space-y-4 pb-4">
+  <div class="space-y-5 pb-4">
     <!-- Progress Summary Card -->
     <div class="rounded-2xl bg-gradient-to-br from-violet-600 to-violet-700 p-4 text-white shadow-lg">
       <div class="flex items-center gap-3">
@@ -184,8 +184,8 @@ function formatDate(dateStr: string): string {
           AW
         </div>
         <div class="flex-1">
-          <h2 class="text-lg font-bold">{{ childName }}</h2>
-          <p class="text-sm text-violet-200">{{ childAge }} &middot; {{ childClass }}</p>
+          <h2 class="text-lg font-bold tracking-tight">{{ childName }}</h2>
+          <p class="text-[13px] text-violet-200">{{ childAge }} &middot; {{ childClass }}</p>
           <p class="text-xs text-violet-300">{{ childCampus }}</p>
         </div>
       </div>
@@ -193,7 +193,7 @@ function formatDate(dateStr: string): string {
         <div class="flex-1">
           <div class="flex items-center justify-between text-sm">
             <span class="text-violet-200">Overall Progress</span>
-            <span class="font-bold text-white">{{ overallProgress }}%</span>
+            <span class="font-bold tracking-tight text-white">{{ overallProgress }}%</span>
           </div>
           <div class="mt-2 h-2 overflow-hidden rounded-full bg-white/20">
             <div
@@ -211,9 +211,9 @@ function formatDate(dateStr: string): string {
     </div>
 
     <!-- Radar Chart -->
-    <div class="rounded-2xl bg-white p-4 shadow-sm">
-      <h3 class="text-sm font-semibold text-gray-900">Development Overview</h3>
-      <p class="text-xs text-gray-500">Progress across 5 key domains</p>
+    <div class="rounded-2xl border border-border/60 bg-white p-4 shadow-sm">
+      <h3 class="text-sm font-semibold tracking-tight text-foreground">Development Overview</h3>
+      <p class="text-[13px] text-muted-foreground">Progress across 5 key domains</p>
       <div class="mt-2">
         <VueApexCharts
           type="radar"
@@ -226,16 +226,16 @@ function formatDate(dateStr: string): string {
 
     <!-- Domain Breakdown -->
     <div>
-      <h3 class="mb-3 text-sm font-semibold text-gray-900">Domain Breakdown</h3>
+      <h3 class="mb-3 text-sm font-semibold tracking-tight text-foreground">Domain Breakdown</h3>
       <div class="space-y-2">
         <div
           v-for="domain in domains"
           :key="domain"
-          class="overflow-hidden rounded-2xl bg-white shadow-sm"
+          class="overflow-hidden rounded-2xl border border-border/60 bg-white shadow-sm"
         >
           <!-- Domain Header -->
           <button
-            class="flex w-full items-center gap-3 p-3"
+            class="flex w-full items-center gap-3 p-3 transition-all duration-200"
             @click="toggleDomain(domain)"
           >
             <div
@@ -251,21 +251,21 @@ function formatDate(dateStr: string): string {
             </div>
             <div class="flex-1 text-left">
               <div class="flex items-center justify-between">
-                <p class="text-sm font-medium text-gray-900">
+                <p class="text-sm font-medium text-foreground">
                   {{ domainConfig[domain].label }}
                 </p>
                 <div class="flex items-center gap-2">
-                  <span class="text-xs font-semibold" :class="domainConfig[domain].color">
+                  <span class="text-xs font-semibold tracking-tight" :class="domainConfig[domain].color">
                     {{ getDomainProgress(domain) }}%
                   </span>
                   <ChevronDown
                     v-if="expandedDomain !== domain"
-                    class="h-4 w-4 text-gray-400"
+                    class="h-4 w-4 text-muted-foreground/50"
                   />
-                  <ChevronUp v-else class="h-4 w-4 text-gray-400" />
+                  <ChevronUp v-else class="h-4 w-4 text-muted-foreground/50" />
                 </div>
               </div>
-              <div class="mt-1.5 h-1.5 overflow-hidden rounded-full bg-gray-100">
+              <div class="mt-1.5 h-1.5 overflow-hidden rounded-full bg-muted">
                 <div
                   class="h-full rounded-full transition-all duration-500"
                   :style="{
@@ -278,13 +278,13 @@ function formatDate(dateStr: string): string {
           </button>
 
           <!-- Milestones List -->
-          <div v-if="expandedDomain === domain" class="border-t border-gray-100 px-3 pb-3">
+          <div v-if="expandedDomain === domain" class="border-t border-border/60 px-3 pb-3">
             <div class="mt-2 space-y-2">
               <div
                 v-for="milestone in getDomainMilestones(domain)"
                 :key="milestone.id"
-                class="flex gap-2.5 rounded-xl p-2"
-                :class="milestone.achieved ? 'bg-gray-50' : ''"
+                class="flex gap-2.5 rounded-xl p-2 transition-all duration-200"
+                :class="milestone.achieved ? 'bg-muted' : ''"
               >
                 <div class="mt-0.5">
                   <div
@@ -296,31 +296,31 @@ function formatDate(dateStr: string): string {
                   </div>
                   <Circle
                     v-else
-                    class="h-5 w-5 text-gray-300"
+                    class="h-5 w-5 text-muted-foreground/30"
                   />
                 </div>
                 <div class="flex-1">
                   <p
                     class="text-sm font-medium"
-                    :class="milestone.achieved ? 'text-gray-900' : 'text-gray-500'"
+                    :class="milestone.achieved ? 'text-foreground' : 'text-muted-foreground'"
                   >
                     {{ milestone.title }}
                   </p>
-                  <p class="mt-0.5 text-xs text-gray-500">
+                  <p class="mt-0.5 text-xs text-muted-foreground">
                     {{ milestone.description }}
                   </p>
                   <div
                     v-if="milestone.achieved && milestone.achievedDate"
                     class="mt-1 flex items-center gap-1"
                   >
-                    <Calendar class="h-3 w-3 text-gray-400" />
-                    <span class="text-[11px] text-gray-400">
+                    <Calendar class="h-3 w-3 text-muted-foreground/50" />
+                    <span class="text-[11px] text-muted-foreground/70">
                       {{ formatDate(milestone.achievedDate) }}
                     </span>
                   </div>
                   <p
                     v-if="!milestone.achieved && milestone.notes"
-                    class="mt-1 text-[11px] italic text-gray-400"
+                    class="mt-1 text-[11px] italic text-muted-foreground/70"
                   >
                     {{ milestone.notes }}
                   </p>

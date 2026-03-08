@@ -154,8 +154,8 @@ function submitIncident() {
   <div class="space-y-6">
     <!-- Page Header -->
     <div>
-      <h1 class="text-2xl font-bold text-foreground">Incident & Health Log</h1>
-      <p class="text-muted-foreground">
+      <h1 class="text-2xl font-bold tracking-tight text-foreground">Incident & Health Log</h1>
+      <p class="text-[13px] text-muted-foreground">
         Log incidents, health observations, and medication records
       </p>
     </div>
@@ -166,8 +166,8 @@ function submitIncident() {
         label="Total Incidents"
         :value="String(totalIncidents)"
         :icon="FileWarning"
-        icon-bg="bg-[#0891B2]/10"
-        icon-color="text-[#0891B2]"
+        icon-bg="bg-teal-100"
+        icon-color="text-teal-600"
       />
       <StatCard
         label="Open (Parent Not Notified)"
@@ -193,8 +193,8 @@ function submitIncident() {
     </div>
 
     <!-- Recent Incidents Table -->
-    <div class="rounded-xl border border-border bg-card p-6">
-      <h2 class="mb-4 text-lg font-semibold text-foreground">Recent Incidents</h2>
+    <div class="rounded-2xl border border-border/60 bg-white p-6 shadow-sm">
+      <h2 class="mb-4 text-lg font-semibold tracking-tight text-foreground">Recent Incidents</h2>
       <DataTable :columns="columns" :data="tableData">
         <template #cell-date="{ value }">
           <span class="text-sm text-foreground">{{ value }}</span>
@@ -217,7 +217,7 @@ function submitIncident() {
           />
         </template>
         <template #cell-description="{ row }">
-          <span class="text-sm text-muted-foreground">{{ row.shortDescription }}</span>
+          <span class="text-[13px] text-muted-foreground">{{ row.shortDescription }}</span>
         </template>
         <template #cell-parentNotified="{ row }">
           <div class="flex justify-center">
@@ -229,10 +229,10 @@ function submitIncident() {
     </div>
 
     <!-- New Incident Form -->
-    <div class="rounded-xl border border-border bg-card p-6">
+    <div class="rounded-2xl border border-border/60 bg-white p-6 shadow-sm">
       <div class="mb-5 flex items-center gap-2">
-        <Plus class="h-5 w-5 text-[#0891B2]" />
-        <h2 class="text-lg font-semibold text-foreground">Report New Incident</h2>
+        <Plus class="h-5 w-5 text-teal-600" />
+        <h2 class="text-lg font-semibold tracking-tight text-foreground">Report New Incident</h2>
       </div>
 
       <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -247,7 +247,7 @@ function submitIncident() {
           <select
             id="incident-student"
             v-model="newIncident.studentId"
-            class="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground focus:border-[#0891B2] focus:outline-none focus:ring-1 focus:ring-[#0891B2]"
+            class="w-full rounded-xl border border-border/60 bg-white px-3 py-2 text-sm text-foreground shadow-sm focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-primary/10"
           >
             <option
               v-for="student in classStudents"
@@ -270,7 +270,7 @@ function submitIncident() {
           <select
             id="incident-type"
             v-model="newIncident.type"
-            class="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground focus:border-[#0891B2] focus:outline-none focus:ring-1 focus:ring-[#0891B2]"
+            class="w-full rounded-xl border border-border/60 bg-white px-3 py-2 text-sm text-foreground shadow-sm focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-primary/10"
           >
             <option value="injury">Injury</option>
             <option value="health">Health</option>
@@ -290,7 +290,7 @@ function submitIncident() {
           <select
             id="incident-severity"
             v-model="newIncident.severity"
-            class="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground focus:border-[#0891B2] focus:outline-none focus:ring-1 focus:ring-[#0891B2]"
+            class="w-full rounded-xl border border-border/60 bg-white px-3 py-2 text-sm text-foreground shadow-sm focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-primary/10"
           >
             <option value="low">Low</option>
             <option value="medium">Medium</option>
@@ -300,11 +300,11 @@ function submitIncident() {
 
         <!-- Notify Parent -->
         <div class="flex items-end">
-          <label class="flex items-center gap-2 rounded-lg border border-border px-3 py-2 cursor-pointer">
+          <label class="flex items-center gap-2 rounded-xl border border-border/60 px-3 py-2 cursor-pointer transition-all duration-200 hover:bg-muted/30">
             <input
               v-model="newIncident.parentNotified"
               type="checkbox"
-              class="h-4 w-4 rounded border-border text-[#0891B2] focus:ring-[#0891B2]"
+              class="h-4 w-4 rounded border-border/60 text-teal-600 focus:ring-teal-600"
             />
             <span class="text-sm font-medium text-foreground">Notify Parent</span>
           </label>
@@ -323,7 +323,7 @@ function submitIncident() {
             v-model="newIncident.description"
             rows="3"
             placeholder="Describe what happened..."
-            class="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-[#0891B2] focus:outline-none focus:ring-1 focus:ring-[#0891B2]"
+            class="w-full rounded-xl border border-border/60 bg-white px-3 py-2 text-sm text-foreground shadow-sm placeholder:text-muted-foreground focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-primary/10"
           />
         </div>
 
@@ -340,7 +340,7 @@ function submitIncident() {
             v-model="newIncident.actionTaken"
             rows="2"
             placeholder="Describe the action taken..."
-            class="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-[#0891B2] focus:outline-none focus:ring-1 focus:ring-[#0891B2]"
+            class="w-full rounded-xl border border-border/60 bg-white px-3 py-2 text-sm text-foreground shadow-sm placeholder:text-muted-foreground focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-primary/10"
           />
         </div>
       </div>
@@ -349,9 +349,9 @@ function submitIncident() {
         <button
           :disabled="!newIncident.description.trim()"
           :class="[
-            'inline-flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-medium text-white transition-colors',
+            'inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-all duration-200',
             newIncident.description.trim()
-              ? 'bg-[#0891B2] hover:bg-[#0891B2]/90'
+              ? 'bg-teal-600 hover:bg-teal-700'
               : 'bg-muted-foreground/30 cursor-not-allowed',
           ]"
           @click="submitIncident"

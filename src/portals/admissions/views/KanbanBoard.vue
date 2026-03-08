@@ -152,8 +152,8 @@ function advanceLead(leadId: string, nextStage: AdmissionLead['stage']) {
   <div class="space-y-6">
     <!-- Header -->
     <div>
-      <h1 class="text-2xl font-bold text-foreground">Admissions Pipeline</h1>
-      <p class="mt-1 text-sm text-muted-foreground">
+      <h1 class="text-2xl font-bold tracking-tight text-foreground">Admissions Pipeline</h1>
+      <p class="mt-1 text-[13px] text-muted-foreground">
         Kanban board tracking applications from enquiry to enrolment
       </p>
     </div>
@@ -193,8 +193,8 @@ function advanceLead(leadId: string, nextStage: AdmissionLead['stage']) {
     </div>
 
     <!-- Source Breakdown -->
-    <div class="rounded-xl border border-border bg-card p-4">
-      <h3 class="mb-3 text-sm font-medium text-muted-foreground uppercase tracking-wide">
+    <div class="bg-white rounded-2xl border border-border/60 shadow-sm p-5">
+      <h3 class="mb-3 text-sm font-semibold tracking-tight text-muted-foreground uppercase tracking-wide">
         Lead Sources
       </h3>
       <div class="flex flex-wrap gap-2">
@@ -202,9 +202,9 @@ function advanceLead(leadId: string, nextStage: AdmissionLead['stage']) {
           v-for="(count, source) in store.leadsBySource"
           :key="source"
           :class="[
-            'inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-medium',
-            sourceConfig[source]?.bg ?? 'bg-gray-100',
-            sourceConfig[source]?.text ?? 'text-gray-700',
+            'inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-medium transition-all duration-200',
+            sourceConfig[source]?.bg ?? 'bg-muted',
+            sourceConfig[source]?.text ?? 'text-muted-foreground',
           ]"
         >
           <Globe v-if="source === 'website'" class="h-3.5 w-3.5" />
@@ -216,7 +216,7 @@ function advanceLead(leadId: string, nextStage: AdmissionLead['stage']) {
           <span
             :class="[
               'inline-flex h-5 w-5 items-center justify-center rounded-full text-xs font-bold',
-              sourceConfig[source]?.bg ?? 'bg-gray-200',
+              sourceConfig[source]?.bg ?? 'bg-muted',
             ]"
           >
             {{ count }}
@@ -237,12 +237,12 @@ function advanceLead(leadId: string, nextStage: AdmissionLead['stage']) {
           <!-- Column Header -->
           <div
             :class="[
-              'rounded-t-lg border-t-4 bg-card px-3 py-3 border border-border',
+              'rounded-t-2xl border-t-4 bg-white px-3 py-3 border border-border/60',
               stage.borderColor,
             ]"
           >
             <div class="flex items-center justify-between">
-              <h3 :class="['text-sm font-semibold', stage.color]">
+              <h3 :class="['text-sm font-semibold tracking-tight', stage.color]">
                 {{ stage.label }}
               </h3>
               <span
@@ -260,7 +260,7 @@ function advanceLead(leadId: string, nextStage: AdmissionLead['stage']) {
           <!-- Column Body -->
           <div
             :class="[
-              'flex flex-1 flex-col gap-2 rounded-b-lg border border-t-0 border-border p-2',
+              'flex flex-1 flex-col gap-2.5 rounded-b-2xl border border-t-0 border-border/60 p-2.5',
               stage.bgColor,
             ]"
             style="min-height: 200px"
@@ -269,16 +269,16 @@ function advanceLead(leadId: string, nextStage: AdmissionLead['stage']) {
             <div
               v-for="lead in getLeadsForStage(stage.key)"
               :key="lead.id"
-              class="group rounded-lg border border-border bg-card p-3 shadow-sm transition-shadow hover:shadow-md"
+              class="group rounded-xl border border-border/60 bg-white p-3 shadow-sm transition-all duration-200 hover:shadow-md"
             >
               <!-- Drag Handle + Child Name -->
               <div class="flex items-start gap-2">
                 <GripVertical class="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground/40 cursor-grab" />
                 <div class="min-w-0 flex-1">
-                  <p class="font-semibold text-sm text-card-foreground truncate">
+                  <p class="font-semibold tracking-tight text-sm text-foreground truncate">
                     {{ lead.childName }}
                   </p>
-                  <p class="text-xs text-muted-foreground mt-0.5">
+                  <p class="text-[13px] text-muted-foreground mt-0.5">
                     Age {{ lead.childAge }} yrs
                   </p>
                 </div>
@@ -286,25 +286,25 @@ function advanceLead(leadId: string, nextStage: AdmissionLead['stage']) {
 
               <!-- Details -->
               <div class="mt-2 space-y-1.5 pl-6">
-                <p class="text-xs text-muted-foreground">
-                  <span class="font-medium text-card-foreground">{{ lead.parentName }}</span>
+                <p class="text-[13px] text-muted-foreground">
+                  <span class="font-medium text-foreground">{{ lead.parentName }}</span>
                 </p>
 
                 <!-- Source Badge -->
                 <span
                   :class="[
                     'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium',
-                    sourceConfig[lead.source]?.bg ?? 'bg-gray-100',
-                    sourceConfig[lead.source]?.text ?? 'text-gray-700',
+                    sourceConfig[lead.source]?.bg ?? 'bg-muted',
+                    sourceConfig[lead.source]?.text ?? 'text-muted-foreground',
                   ]"
                 >
                   {{ sourceConfig[lead.source]?.label ?? lead.source }}
                 </span>
 
-                <p class="text-xs text-muted-foreground">
+                <p class="text-[13px] text-muted-foreground">
                   {{ getCampusName(lead.campusPreference) }}
                 </p>
-                <p class="text-xs text-muted-foreground">
+                <p class="text-[13px] text-muted-foreground">
                   {{ formatDate(lead.date) }}
                 </p>
               </div>
@@ -312,7 +312,7 @@ function advanceLead(leadId: string, nextStage: AdmissionLead['stage']) {
               <!-- Advance Button -->
               <div v-if="stage.nextStage" class="mt-3 pl-6">
                 <button
-                  class="inline-flex items-center gap-1 rounded-md bg-[#C2410C]/10 px-2.5 py-1 text-xs font-medium text-[#C2410C] transition-colors hover:bg-[#C2410C]/20"
+                  class="inline-flex items-center gap-1 rounded-xl bg-orange-50 px-2.5 py-1 text-xs font-medium text-orange-700 shadow-sm transition-all duration-200 hover:bg-orange-100 hover:shadow"
                   @click="advanceLead(lead.id, stage.nextStage!)"
                 >
                   Advance
@@ -326,7 +326,7 @@ function advanceLead(leadId: string, nextStage: AdmissionLead['stage']) {
               v-if="getLeadsForStage(stage.key).length === 0"
               class="flex flex-1 items-center justify-center p-4"
             >
-              <p class="text-xs text-muted-foreground/60 italic">No leads</p>
+              <p class="text-[13px] text-muted-foreground/60 italic">No leads</p>
             </div>
           </div>
         </div>

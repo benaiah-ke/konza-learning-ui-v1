@@ -71,7 +71,7 @@ function formatDate(dateStr: string): string {
 </script>
 
 <template>
-  <div class="space-y-4 pb-4">
+  <div class="space-y-5 pb-4">
     <!-- Balance Card -->
     <div
       :class="[
@@ -83,17 +83,17 @@ function formatDate(dateStr: string): string {
     >
       <div class="flex items-center gap-2">
         <Wallet class="h-5 w-5 text-white/80" />
-        <p class="text-sm font-medium text-white/80">Outstanding Balance</p>
+        <p class="text-[13px] font-medium text-white/80">Outstanding Balance</p>
       </div>
-      <p class="mt-2 text-3xl font-bold text-white">{{ format(balance) }}</p>
+      <p class="mt-2 text-3xl font-bold tracking-tight text-white">{{ format(balance) }}</p>
 
       <div v-if="isPaid" class="mt-4 flex items-center gap-2 rounded-xl bg-white/20 px-4 py-2.5">
         <CircleCheck class="h-5 w-5 text-white" />
-        <span class="text-sm font-semibold text-white">All Paid - Term 1 2026</span>
+        <span class="text-sm font-semibold tracking-tight text-white">All Paid - Term 1 2026</span>
       </div>
       <button
         v-else
-        class="mt-4 w-full rounded-xl bg-green-500 px-4 py-3 text-sm font-semibold text-white shadow-md active:bg-green-600"
+        class="mt-4 w-full rounded-xl bg-green-500 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-all duration-200 active:bg-green-600"
         @click="openPaymentModal"
       >
         Pay Now via M-Pesa
@@ -101,9 +101,9 @@ function formatDate(dateStr: string): string {
     </div>
 
     <!-- Current Invoice -->
-    <div class="rounded-2xl bg-white shadow-sm">
+    <div class="rounded-2xl border border-border/60 bg-white shadow-sm">
       <button
-        class="flex w-full items-center justify-between p-4"
+        class="flex w-full items-center justify-between p-4 transition-all duration-200"
         @click="invoiceExpanded = !invoiceExpanded"
       >
         <div class="flex items-center gap-3">
@@ -111,8 +111,8 @@ function formatDate(dateStr: string): string {
             <Receipt class="h-5 w-5 text-violet-600" />
           </div>
           <div class="text-left">
-            <p class="text-sm font-semibold text-gray-900">Term 1 2026 Invoice</p>
-            <p class="text-xs text-gray-500">{{ format(studentInvoice?.totalAmount ?? 0) }}</p>
+            <p class="text-sm font-semibold tracking-tight text-foreground">Term 1 2026 Invoice</p>
+            <p class="text-[13px] text-muted-foreground">{{ format(studentInvoice?.totalAmount ?? 0) }}</p>
           </div>
         </div>
         <div class="flex items-center gap-2">
@@ -123,37 +123,37 @@ function formatDate(dateStr: string): string {
           />
           <ChevronDown
             v-if="!invoiceExpanded"
-            class="h-5 w-5 text-gray-400"
+            class="h-5 w-5 text-muted-foreground/50"
           />
-          <ChevronUp v-else class="h-5 w-5 text-gray-400" />
+          <ChevronUp v-else class="h-5 w-5 text-muted-foreground/50" />
         </div>
       </button>
 
-      <div v-if="invoiceExpanded" class="border-t border-gray-100 px-4 pb-4">
+      <div v-if="invoiceExpanded" class="border-t border-border/60 px-4 pb-4">
         <div class="mt-3 space-y-2.5">
           <div
             v-for="item in studentInvoice?.items"
             :key="item.description"
             class="flex items-center justify-between"
           >
-            <span class="text-sm text-gray-600">{{ item.description }}</span>
-            <span class="text-sm font-medium text-gray-900">{{ format(item.amount) }}</span>
+            <span class="text-sm text-muted-foreground">{{ item.description }}</span>
+            <span class="text-sm font-medium text-foreground">{{ format(item.amount) }}</span>
           </div>
         </div>
-        <div class="mt-3 border-t border-gray-100 pt-3">
+        <div class="mt-3 border-t border-border/60 pt-3">
           <div class="flex items-center justify-between">
-            <span class="text-sm font-semibold text-gray-900">Total</span>
-            <span class="text-sm font-bold text-gray-900">{{ format(studentInvoice?.totalAmount ?? 0) }}</span>
+            <span class="text-sm font-semibold tracking-tight text-foreground">Total</span>
+            <span class="text-sm font-bold tracking-tight text-foreground">{{ format(studentInvoice?.totalAmount ?? 0) }}</span>
           </div>
           <div class="mt-1 flex items-center justify-between">
-            <span class="text-xs text-gray-500">Amount Paid</span>
-            <span class="text-xs font-medium text-green-600">-{{ format(studentInvoice?.paidAmount ?? 0) }}</span>
+            <span class="text-[13px] text-muted-foreground">Amount Paid</span>
+            <span class="text-[13px] font-medium text-green-600">-{{ format(studentInvoice?.paidAmount ?? 0) }}</span>
           </div>
           <div class="mt-1 flex items-center justify-between">
-            <span class="text-sm font-semibold text-gray-900">Balance</span>
+            <span class="text-sm font-semibold tracking-tight text-foreground">Balance</span>
             <span
               :class="[
-                'text-sm font-bold',
+                'text-sm font-bold tracking-tight',
                 isPaid ? 'text-green-600' : 'text-red-600',
               ]"
             >
@@ -166,12 +166,12 @@ function formatDate(dateStr: string): string {
 
     <!-- Payment History -->
     <div>
-      <h2 class="mb-3 text-sm font-semibold text-gray-900">Payment History</h2>
+      <h2 class="mb-3 text-sm font-semibold tracking-tight text-foreground">Payment History</h2>
       <div class="space-y-2">
         <div
           v-for="tx in studentTransactions"
           :key="tx.id"
-          class="flex items-center gap-3 rounded-2xl bg-white p-3 shadow-sm"
+          class="flex items-center gap-3 rounded-2xl border border-border/60 bg-white p-3 shadow-sm transition-all duration-200"
         >
           <div
             :class="[
@@ -187,12 +187,12 @@ function formatDate(dateStr: string): string {
           </div>
           <div class="min-w-0 flex-1">
             <div class="flex items-center justify-between">
-              <p class="text-sm font-medium text-gray-900">{{ format(tx.amount) }}</p>
+              <p class="text-sm font-medium text-foreground">{{ format(tx.amount) }}</p>
               <StatusBadge status="success" label="Confirmed" size="sm" />
             </div>
             <div class="mt-0.5 flex items-center justify-between">
-              <span class="text-xs text-gray-500">{{ formatDate(tx.date) }}</span>
-              <span class="font-mono text-[11px] text-gray-400">{{ tx.reference }}</span>
+              <span class="text-[13px] text-muted-foreground">{{ formatDate(tx.date) }}</span>
+              <span class="font-mono text-[11px] text-muted-foreground/70">{{ tx.reference }}</span>
             </div>
             <div class="mt-1">
               <span
@@ -211,10 +211,10 @@ function formatDate(dateStr: string): string {
 
         <div
           v-if="studentTransactions.length === 0"
-          class="rounded-2xl bg-white p-6 text-center shadow-sm"
+          class="rounded-2xl border border-border/60 bg-white p-6 text-center shadow-sm"
         >
-          <CreditCard class="mx-auto h-8 w-8 text-gray-300" />
-          <p class="mt-2 text-sm text-gray-500">No payment history yet</p>
+          <CreditCard class="mx-auto h-8 w-8 text-muted-foreground/30" />
+          <p class="mt-2 text-[13px] text-muted-foreground">No payment history yet</p>
         </div>
       </div>
     </div>
@@ -233,14 +233,14 @@ function formatDate(dateStr: string): string {
               class="w-full max-w-lg rounded-t-3xl bg-white px-5 pb-8 pt-3"
             >
               <!-- Handle bar -->
-              <div class="mx-auto mb-4 h-1 w-10 rounded-full bg-gray-300" />
+              <div class="mx-auto mb-4 h-1 w-10 rounded-full bg-muted-foreground/20" />
 
               <!-- Form Step -->
               <template v-if="paymentStep === 'form'">
                 <div class="flex items-center justify-between">
-                  <h3 class="text-lg font-bold text-gray-900">M-Pesa Payment</h3>
+                  <h3 class="text-lg font-bold tracking-tight text-foreground">M-Pesa Payment</h3>
                   <button
-                    class="rounded-lg p-1 text-gray-400 hover:bg-gray-100"
+                    class="rounded-xl p-1 text-muted-foreground transition-all duration-200 hover:bg-muted"
                     @click="closePaymentModal"
                   >
                     <X class="h-5 w-5" />
@@ -249,29 +249,29 @@ function formatDate(dateStr: string): string {
 
                 <div class="mt-5 space-y-4">
                   <div>
-                    <label class="mb-1.5 block text-sm font-medium text-gray-700">
+                    <label class="mb-1.5 block text-sm font-medium text-foreground">
                       Phone Number
                     </label>
-                    <div class="flex items-center gap-2 rounded-xl border border-gray-200 px-3 py-2.5">
-                      <Phone class="h-4 w-4 text-gray-400" />
+                    <div class="flex items-center gap-2 rounded-xl border border-border/60 px-3 py-2.5 shadow-sm focus-within:ring-2 focus-within:ring-primary/10">
+                      <Phone class="h-4 w-4 text-muted-foreground" />
                       <input
                         v-model="phoneNumber"
                         type="tel"
-                        class="flex-1 text-sm text-gray-900 outline-none"
+                        class="flex-1 text-sm text-foreground outline-none"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label class="mb-1.5 block text-sm font-medium text-gray-700">
+                    <label class="mb-1.5 block text-sm font-medium text-foreground">
                       Amount (KES)
                     </label>
-                    <div class="flex items-center gap-2 rounded-xl border border-gray-200 px-3 py-2.5">
-                      <span class="text-sm font-medium text-gray-400">KES</span>
+                    <div class="flex items-center gap-2 rounded-xl border border-border/60 px-3 py-2.5 shadow-sm focus-within:ring-2 focus-within:ring-primary/10">
+                      <span class="text-sm font-medium text-muted-foreground">KES</span>
                       <input
                         v-model="paymentAmount"
                         type="number"
-                        class="flex-1 text-sm text-gray-900 outline-none"
+                        class="flex-1 text-sm text-foreground outline-none"
                       />
                     </div>
                   </div>
@@ -283,7 +283,7 @@ function formatDate(dateStr: string): string {
                   </div>
 
                   <button
-                    class="w-full rounded-xl bg-green-500 py-3.5 text-sm font-semibold text-white shadow active:bg-green-600"
+                    class="w-full rounded-xl bg-green-500 py-3.5 text-sm font-semibold text-white shadow-sm transition-all duration-200 active:bg-green-600"
                     @click="submitPayment"
                   >
                     Send M-Pesa Request
@@ -295,8 +295,8 @@ function formatDate(dateStr: string): string {
               <template v-if="paymentStep === 'processing'">
                 <div class="flex flex-col items-center py-8">
                   <Loader2 class="h-12 w-12 animate-spin text-green-500" />
-                  <p class="mt-4 text-lg font-semibold text-gray-900">Processing Payment...</p>
-                  <p class="mt-1 text-sm text-gray-500">Check your phone for the M-Pesa prompt</p>
+                  <p class="mt-4 text-lg font-semibold tracking-tight text-foreground">Processing Payment...</p>
+                  <p class="mt-1 text-[13px] text-muted-foreground">Check your phone for the M-Pesa prompt</p>
                 </div>
               </template>
 
@@ -306,15 +306,15 @@ function formatDate(dateStr: string): string {
                   <div class="flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
                     <CheckCircle class="h-10 w-10 text-green-500" />
                   </div>
-                  <p class="mt-4 text-lg font-bold text-gray-900">Payment Successful!</p>
-                  <p class="mt-1 text-sm text-gray-500">
+                  <p class="mt-4 text-lg font-bold tracking-tight text-foreground">Payment Successful!</p>
+                  <p class="mt-1 text-[13px] text-muted-foreground">
                     KES {{ Number(paymentAmount).toLocaleString('en-KE') }} received
                   </p>
-                  <p class="mt-3 rounded-lg bg-gray-100 px-3 py-1.5 font-mono text-xs text-gray-600">
+                  <p class="mt-3 rounded-xl bg-muted px-3 py-1.5 font-mono text-xs text-muted-foreground">
                     Ref: QKL7MPWX92
                   </p>
                   <button
-                    class="mt-6 w-full rounded-xl bg-violet-600 py-3 text-sm font-semibold text-white active:bg-violet-700"
+                    class="mt-6 w-full rounded-xl bg-violet-600 py-3 text-sm font-semibold text-white shadow-sm transition-all duration-200 active:bg-violet-700"
                     @click="closePaymentModal"
                   >
                     Done

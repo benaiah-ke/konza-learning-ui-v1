@@ -120,8 +120,8 @@ function saveMilestone() {
   <div class="space-y-6">
     <!-- Page Header -->
     <div>
-      <h1 class="text-2xl font-bold text-foreground">Milestones Logger</h1>
-      <p class="text-muted-foreground">
+      <h1 class="text-2xl font-bold tracking-tight text-foreground">Milestones Logger</h1>
+      <p class="text-[13px] text-muted-foreground">
         Record and track child developmental milestones
       </p>
     </div>
@@ -129,8 +129,8 @@ function saveMilestone() {
     <div class="grid grid-cols-1 gap-6 lg:grid-cols-4">
       <!-- Student Selector (left sidebar) -->
       <div class="lg:col-span-1">
-        <div class="rounded-xl border border-border bg-card p-4">
-          <h2 class="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+        <div class="rounded-2xl border border-border/60 bg-white p-4 shadow-sm">
+          <h2 class="mb-3 text-sm font-semibold tracking-tight uppercase tracking-wide text-muted-foreground">
             Select Student
           </h2>
           <div class="space-y-2">
@@ -138,9 +138,9 @@ function saveMilestone() {
               v-for="(student, index) in classStudents"
               :key="student.id"
               :class="[
-                'flex w-full items-center gap-3 rounded-lg p-3 text-left transition-colors',
+                'flex w-full items-center gap-3 rounded-xl p-3 text-left transition-all duration-200',
                 selectedStudentId === student.id
-                  ? 'bg-[#0891B2]/10 ring-1 ring-[#0891B2]/30'
+                  ? 'bg-teal-50 ring-1 ring-teal-600/30'
                   : 'hover:bg-muted/50',
               ]"
               @click="selectedStudentId = student.id"
@@ -158,13 +158,13 @@ function saveMilestone() {
                   :class="[
                     'truncate text-sm font-medium',
                     selectedStudentId === student.id
-                      ? 'text-[#0891B2]'
+                      ? 'text-teal-700'
                       : 'text-foreground',
                   ]"
                 >
                   {{ student.firstName }} {{ student.lastName }}
                 </p>
-                <p class="text-xs text-muted-foreground">Age {{ student.age }}</p>
+                <p class="text-[13px] text-muted-foreground">Age {{ student.age }}</p>
               </div>
             </button>
           </div>
@@ -176,7 +176,7 @@ function saveMilestone() {
         <!-- Selected Student Card -->
         <div
           v-if="selectedStudent"
-          class="flex items-center gap-4 rounded-xl border border-border bg-card p-5"
+          class="flex items-center gap-4 rounded-2xl border border-border/60 bg-white p-5 shadow-sm"
         >
           <div
             :class="[
@@ -189,30 +189,30 @@ function saveMilestone() {
             {{ selectedStudent.photoInitials }}
           </div>
           <div class="flex-1">
-            <h2 class="text-lg font-semibold text-foreground">
+            <h2 class="text-lg font-semibold tracking-tight text-foreground">
               {{ selectedStudent.firstName }} {{ selectedStudent.lastName }}
             </h2>
-            <p class="text-sm text-muted-foreground">
+            <p class="text-[13px] text-muted-foreground">
               Age {{ selectedStudent.age }} &middot; Butterfly Class
             </p>
           </div>
           <div class="flex items-center gap-6">
             <div class="text-center">
-              <p class="text-2xl font-bold text-[#0891B2]">
+              <p class="text-2xl font-bold tracking-tight text-teal-600">
                 {{ studentMilestoneStats.achieved }}
               </p>
-              <p class="text-xs text-muted-foreground">Achieved</p>
+              <p class="text-[13px] text-muted-foreground">Achieved</p>
             </div>
             <div class="text-center">
-              <p class="text-2xl font-bold text-foreground">
+              <p class="text-2xl font-bold tracking-tight text-foreground">
                 {{ studentMilestoneStats.total }}
               </p>
-              <p class="text-xs text-muted-foreground">Total</p>
+              <p class="text-[13px] text-muted-foreground">Total</p>
             </div>
             <div class="text-center">
               <div class="flex items-center gap-1">
                 <Star class="h-5 w-5 text-amber-400" />
-                <p class="text-2xl font-bold text-amber-500">
+                <p class="text-2xl font-bold tracking-tight text-amber-500">
                   {{
                     studentMilestoneStats.total > 0
                       ? Math.round(
@@ -224,20 +224,20 @@ function saveMilestone() {
                   }}%
                 </p>
               </div>
-              <p class="text-xs text-muted-foreground">Progress</p>
+              <p class="text-[13px] text-muted-foreground">Progress</p>
             </div>
           </div>
         </div>
 
         <!-- Domain Tabs -->
-        <div class="flex gap-1 overflow-x-auto rounded-lg bg-muted p-1">
+        <div class="flex gap-1 overflow-x-auto rounded-xl bg-muted p-1">
           <button
             v-for="domain in domains"
             :key="domain.key"
             :class="[
-              'flex items-center gap-2 whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium transition-colors',
+              'flex items-center gap-2 whitespace-nowrap rounded-xl px-4 py-2 text-sm font-medium transition-all duration-200',
               activeDomain === domain.key
-                ? 'bg-[#0891B2] text-white shadow-sm'
+                ? 'bg-teal-600 text-white shadow-sm'
                 : 'text-muted-foreground hover:text-foreground',
             ]"
             @click="activeDomain = domain.key"
@@ -251,10 +251,10 @@ function saveMilestone() {
         <div class="space-y-3">
           <div
             v-if="filteredMilestones.length === 0"
-            class="rounded-xl border border-border bg-card p-10 text-center"
+            class="rounded-2xl border border-border/60 bg-white p-10 text-center shadow-sm"
           >
             <Award class="mx-auto mb-3 h-10 w-10 text-muted-foreground/40" />
-            <p class="text-sm text-muted-foreground">
+            <p class="text-[13px] text-muted-foreground">
               No milestones recorded for this domain yet.
             </p>
           </div>
@@ -263,10 +263,10 @@ function saveMilestone() {
             v-for="milestone in filteredMilestones"
             :key="milestone.id"
             :class="[
-              'flex items-start gap-4 rounded-xl border p-4 transition-colors',
+              'flex items-start gap-4 rounded-xl border p-4 transition-all duration-200',
               milestone.achieved
                 ? 'border-success/30 bg-success/5'
-                : 'border-border bg-card',
+                : 'border-border/60 bg-white shadow-sm',
             ]"
           >
             <!-- Checkbox -->
@@ -282,18 +282,18 @@ function saveMilestone() {
             <div class="flex-1 space-y-1">
               <h3
                 :class="[
-                  'text-sm font-semibold',
+                  'text-sm font-semibold tracking-tight',
                   milestone.achieved ? 'text-success' : 'text-foreground',
                 ]"
               >
                 {{ milestone.title }}
               </h3>
-              <p class="text-sm text-muted-foreground">
+              <p class="text-[13px] text-muted-foreground">
                 {{ milestone.description }}
               </p>
               <div
                 v-if="milestone.achieved && milestone.achievedDate"
-                class="flex items-center gap-3 text-xs text-muted-foreground"
+                class="flex items-center gap-3 text-[13px] text-muted-foreground"
               >
                 <span class="inline-flex items-center gap-1">
                   <CalendarDays class="h-3.5 w-3.5" />
@@ -303,7 +303,7 @@ function saveMilestone() {
               </div>
               <p
                 v-if="milestone.notes"
-                class="text-xs italic text-muted-foreground"
+                class="text-[13px] italic text-muted-foreground"
               >
                 "{{ milestone.notes }}"
               </p>
@@ -312,7 +312,7 @@ function saveMilestone() {
             <!-- Action -->
             <div v-if="!milestone.achieved">
               <button
-                class="whitespace-nowrap rounded-lg bg-[#0891B2] px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-[#0891B2]/90"
+                class="whitespace-nowrap rounded-xl bg-teal-600 px-3 py-1.5 text-xs font-medium text-white shadow-sm transition-all duration-200 hover:bg-teal-700"
                 @click="openLogModal(milestone.id)"
               >
                 Log Achievement
@@ -330,11 +330,11 @@ function saveMilestone() {
         class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
         @click.self="closeLogModal"
       >
-        <div class="w-full max-w-md rounded-xl border border-border bg-card p-6 shadow-xl">
+        <div class="w-full max-w-md rounded-2xl border border-border/60 bg-white p-6 shadow-xl">
           <div class="mb-5 flex items-center justify-between">
-            <h3 class="text-lg font-semibold text-foreground">Log Achievement</h3>
+            <h3 class="text-lg font-semibold tracking-tight text-foreground">Log Achievement</h3>
             <button
-              class="rounded-lg p-1.5 text-muted-foreground hover:bg-muted"
+              class="rounded-xl p-1.5 text-muted-foreground transition-all duration-200 hover:bg-muted"
               @click="closeLogModal"
             >
               <X class="h-5 w-5" />
@@ -353,7 +353,7 @@ function saveMilestone() {
                 id="log-date"
                 v-model="logDate"
                 type="date"
-                class="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground focus:border-[#0891B2] focus:outline-none focus:ring-1 focus:ring-[#0891B2]"
+                class="w-full rounded-xl border border-border/60 bg-white px-3 py-2 text-sm text-foreground shadow-sm focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-primary/10"
               />
             </div>
 
@@ -369,19 +369,19 @@ function saveMilestone() {
                 v-model="logNotes"
                 rows="3"
                 placeholder="Add any observations or comments..."
-                class="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-[#0891B2] focus:outline-none focus:ring-1 focus:ring-[#0891B2]"
+                class="w-full rounded-xl border border-border/60 bg-white px-3 py-2 text-sm text-foreground shadow-sm placeholder:text-muted-foreground focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-primary/10"
               />
             </div>
 
             <div class="flex justify-end gap-3">
               <button
-                class="rounded-lg border border-border px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-muted"
+                class="rounded-xl border border-border/60 px-4 py-2 text-sm font-medium text-muted-foreground transition-all duration-200 hover:bg-muted"
                 @click="closeLogModal"
               >
                 Cancel
               </button>
               <button
-                class="rounded-lg bg-[#0891B2] px-4 py-2 text-sm font-medium text-white hover:bg-[#0891B2]/90"
+                class="rounded-xl bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:bg-teal-700"
                 @click="saveMilestone"
               >
                 Save

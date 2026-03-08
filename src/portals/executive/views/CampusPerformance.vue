@@ -173,12 +173,12 @@ const classTableData = computed(() => {
     />
 
     <!-- Campus selector tabs -->
-    <div class="flex gap-1 rounded-lg bg-muted p-1">
+    <div class="flex gap-1 rounded-xl bg-muted p-1">
       <button
         v-for="tab in tabs"
         :key="tab.value"
         :class="[
-          'flex-1 rounded-md px-4 py-2 text-sm font-medium transition-colors',
+          'flex-1 rounded-xl px-4 py-2 text-[13px] font-medium transition-all duration-200',
           selectedCampus === tab.value
             ? 'bg-card text-card-foreground shadow-sm'
             : 'text-muted-foreground hover:text-card-foreground',
@@ -199,18 +199,18 @@ const classTableData = computed(() => {
       <div
         v-for="campus in visibleCampuses"
         :key="campus.name"
-        class="rounded-xl border border-border bg-card p-6 space-y-5"
+        class="bg-white rounded-2xl border border-border/60 shadow-sm p-6 space-y-5"
       >
         <div class="flex items-center gap-3">
           <div class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
             <Building2 class="h-5 w-5 text-primary" />
           </div>
-          <h3 class="text-lg font-semibold text-card-foreground">{{ campus.name }}</h3>
+          <h3 class="text-lg font-semibold tracking-tight text-card-foreground">{{ campus.name }}</h3>
         </div>
 
         <!-- Enrollment -->
         <div class="space-y-2">
-          <div class="flex items-center justify-between text-sm">
+          <div class="flex items-center justify-between text-[13px]">
             <span class="text-muted-foreground">Enrollment</span>
             <span class="font-medium text-card-foreground">
               {{ campus.enrollment }} / {{ campus.capacity }}
@@ -235,19 +235,19 @@ const classTableData = computed(() => {
         <!-- Staff & Collection -->
         <div class="grid grid-cols-2 gap-4">
           <div class="space-y-1">
-            <p class="text-sm text-muted-foreground">Staff</p>
-            <p class="text-2xl font-bold text-card-foreground">{{ campus.staffCount }}</p>
+            <p class="text-[13px] text-muted-foreground">Staff</p>
+            <p class="text-2xl font-bold tracking-tight text-card-foreground">{{ campus.staffCount }}</p>
           </div>
           <div class="space-y-1">
-            <p class="text-sm text-muted-foreground">Collection Rate</p>
-            <p class="text-2xl font-bold text-card-foreground">{{ campus.collectionRate }}%</p>
+            <p class="text-[13px] text-muted-foreground">Collection Rate</p>
+            <p class="text-2xl font-bold tracking-tight text-card-foreground">{{ campus.collectionRate }}%</p>
           </div>
         </div>
 
         <!-- Revenue -->
-        <div class="space-y-1 border-t border-border pt-4">
-          <p class="text-sm text-muted-foreground">Revenue Billed</p>
-          <p class="text-xl font-semibold text-card-foreground">
+        <div class="space-y-1 border-t border-border/60 pt-4">
+          <p class="text-[13px] text-muted-foreground">Revenue Billed</p>
+          <p class="text-xl font-semibold tracking-tight text-card-foreground">
             {{ formatCompact(campus.revenue) }}
           </p>
         </div>
@@ -271,10 +271,10 @@ const classTableData = computed(() => {
     </ChartCard>
 
     <!-- Class utilization table -->
-    <div class="rounded-xl border border-border bg-card p-6">
+    <div class="bg-white rounded-2xl border border-border/60 shadow-sm p-6">
       <div class="mb-4">
-        <h3 class="font-semibold text-card-foreground">Class Utilization</h3>
-        <p class="mt-0.5 text-sm text-muted-foreground">
+        <h3 class="font-semibold tracking-tight text-card-foreground">Class Utilization</h3>
+        <p class="mt-0.5 text-[13px] text-muted-foreground">
           Enrollment by class across {{ selectedCampus === 'all' ? 'both campuses' : 'selected campus' }}
         </p>
       </div>

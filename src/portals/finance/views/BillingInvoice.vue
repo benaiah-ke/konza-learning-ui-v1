@@ -119,7 +119,7 @@ function formatDate(dateStr: string): string {
       subtitle="Create, preview, and send invoices to parents"
     >
       <button
-        class="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-primary/90"
+        class="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-[13px] font-medium text-white shadow-sm transition-all duration-200 hover:bg-primary/90"
       >
         <FilePlus class="h-4 w-4" />
         Generate Invoice
@@ -159,11 +159,11 @@ function formatDate(dateStr: string): string {
     </div>
 
     <!-- Invoice Table Section -->
-    <div class="rounded-xl border border-border bg-card p-6">
+    <div class="bg-white rounded-2xl border border-border/60 shadow-sm p-6">
       <div class="mb-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h3 class="font-semibold text-card-foreground">All Invoices</h3>
-          <p class="mt-0.5 text-sm text-muted-foreground">
+          <h3 class="font-semibold tracking-tight text-card-foreground">All Invoices</h3>
+          <p class="mt-0.5 text-[13px] text-muted-foreground">
             Showing {{ totalFiltered }} of {{ totalInvoices }} invoices
           </p>
         </div>
@@ -175,7 +175,7 @@ function formatDate(dateStr: string): string {
           />
           <select
             v-model="statusFilter"
-            class="rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+            class="rounded-xl border border-border/60 bg-card px-3 py-2 text-[13px] text-foreground transition-all duration-200 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
           >
             <option value="all">All Statuses</option>
             <option value="paid">Paid</option>
@@ -198,7 +198,7 @@ function formatDate(dateStr: string): string {
         </template>
 
         <template #cell-className="{ value }">
-          <span class="text-sm text-muted-foreground">{{ value }}</span>
+          <span class="text-[13px] text-muted-foreground">{{ value }}</span>
         </template>
 
         <template #cell-totalAmount="{ value }">
@@ -224,7 +224,7 @@ function formatDate(dateStr: string): string {
         </template>
 
         <template #cell-dueDate="{ value }">
-          <span class="text-sm text-muted-foreground">{{ formatDate(value) }}</span>
+          <span class="text-[13px] text-muted-foreground">{{ formatDate(value) }}</span>
         </template>
       </DataTable>
     </div>

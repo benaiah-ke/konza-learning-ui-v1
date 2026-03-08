@@ -317,8 +317,8 @@ const alertIconBg: Record<string, string> = {
           <TrendingUp class="h-5 w-5 text-primary" />
         </div>
         <div>
-          <h1 class="text-2xl font-bold text-foreground">Command Dashboard</h1>
-          <p class="text-sm text-muted-foreground">
+          <h1 class="text-2xl font-bold tracking-tight text-foreground">Command Dashboard</h1>
+          <p class="text-[13px] text-muted-foreground">
             Real-time metrics across all Konza Learning Centre campuses
           </p>
         </div>
@@ -434,16 +434,16 @@ const alertIconBg: Record<string, string> = {
       </ChartCard>
 
       <!-- Recent Alerts & Activity -->
-      <div class="rounded-xl border border-border bg-card p-6">
+      <div class="bg-white rounded-2xl border border-border/60 shadow-sm p-6">
         <div class="flex items-start justify-between">
           <div>
-            <h3 class="font-semibold text-card-foreground">Recent Activity</h3>
-            <p class="mt-0.5 text-sm text-muted-foreground">
+            <h3 class="font-semibold tracking-tight text-card-foreground">Recent Activity</h3>
+            <p class="mt-0.5 text-[13px] text-muted-foreground">
               Latest alerts and notifications
             </p>
           </div>
           <div
-            class="flex h-8 items-center rounded-full bg-danger/10 px-3 text-xs font-medium text-danger"
+            class="flex h-8 items-center rounded-lg bg-danger/10 px-3 text-xs font-medium text-danger ring-1 ring-danger/10"
           >
             {{ finance.overdueInvoices.length }} overdue
           </div>
@@ -452,7 +452,7 @@ const alertIconBg: Record<string, string> = {
           <div
             v-for="alert in alerts"
             :key="alert.id"
-            class="group flex items-start gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-muted/50"
+            class="group flex items-start gap-3 rounded-lg px-3 py-3 transition-all duration-200 hover:bg-muted/50"
           >
             <!-- Icon -->
             <div
@@ -468,7 +468,7 @@ const alertIconBg: Record<string, string> = {
             </div>
             <!-- Content -->
             <div class="min-w-0 flex-1">
-              <p class="text-sm leading-snug text-card-foreground">
+              <p class="text-[13px] leading-snug text-card-foreground">
                 {{ alert.message }}
               </p>
               <p class="mt-1 text-xs text-muted-foreground">

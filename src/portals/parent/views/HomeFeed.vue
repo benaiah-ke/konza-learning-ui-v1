@@ -97,7 +97,7 @@ const notifIconColor: Record<string, string> = {
 </script>
 
 <template>
-  <div class="space-y-4 pb-4">
+  <div class="space-y-5 pb-4">
     <!-- Greeting Banner -->
     <div class="rounded-2xl bg-gradient-to-br from-violet-600 to-violet-700 p-4 text-white shadow-lg">
       <div class="flex items-center gap-3">
@@ -105,8 +105,8 @@ const notifIconColor: Record<string, string> = {
           GM
         </div>
         <div class="flex-1">
-          <h1 class="text-lg font-bold">{{ greeting }}, {{ parentName }}</h1>
-          <p class="text-sm text-violet-200">{{ formattedDate }}</p>
+          <h1 class="text-lg font-bold tracking-tight">{{ greeting }}, {{ parentName }}</h1>
+          <p class="text-[13px] text-violet-200">{{ formattedDate }}</p>
         </div>
         <Sun class="h-8 w-8 text-amber-300" />
       </div>
@@ -121,59 +121,59 @@ const notifIconColor: Record<string, string> = {
 
     <!-- Quick Stats Row -->
     <div class="grid grid-cols-3 gap-2">
-      <div class="rounded-2xl bg-white p-3 shadow-sm">
+      <div class="rounded-2xl border border-border/60 bg-white p-3 shadow-sm">
         <div class="flex h-8 w-8 items-center justify-center rounded-full bg-orange-100">
           <Flame class="h-4 w-4 text-orange-600" />
         </div>
-        <p class="mt-2 text-lg font-bold text-gray-900">12</p>
-        <p class="text-[11px] text-gray-500">Day streak</p>
+        <p class="mt-2 text-lg font-bold tracking-tight text-foreground">12</p>
+        <p class="text-[11px] text-muted-foreground">Day streak</p>
       </div>
-      <div class="rounded-2xl bg-white p-3 shadow-sm">
+      <div class="rounded-2xl border border-border/60 bg-white p-3 shadow-sm">
         <div class="flex h-8 w-8 items-center justify-center rounded-full bg-violet-100">
           <Trophy class="h-4 w-4 text-violet-600" />
         </div>
-        <p class="mt-2 text-xs font-semibold text-gray-900 leading-tight">Sports Day</p>
-        <p class="text-[11px] text-gray-500">Mar 15</p>
+        <p class="mt-2 text-xs font-semibold tracking-tight text-foreground leading-tight">Sports Day</p>
+        <p class="text-[11px] text-muted-foreground">Mar 15</p>
       </div>
-      <div class="rounded-2xl bg-white p-3 shadow-sm">
+      <div class="rounded-2xl border border-border/60 bg-white p-3 shadow-sm">
         <div class="flex h-8 w-8 items-center justify-center rounded-full bg-green-100">
           <CreditCard class="h-4 w-4 text-green-600" />
         </div>
         <StatusBadge status="success" label="Paid" size="sm" class="mt-2" />
-        <p class="text-[11px] text-gray-500 mt-0.5">Fee status</p>
+        <p class="text-[11px] text-muted-foreground mt-0.5">Fee status</p>
       </div>
     </div>
 
     <!-- Today's Activities -->
     <div>
       <div class="mb-3 flex items-center justify-between">
-        <h2 class="text-sm font-semibold text-gray-900">Today's Activities</h2>
-        <span class="text-xs text-gray-500">{{ todayActivities.length }} updates</span>
+        <h2 class="text-sm font-semibold tracking-tight text-foreground">Today's Activities</h2>
+        <span class="text-[13px] text-muted-foreground">{{ todayActivities.length }} updates</span>
       </div>
       <div class="space-y-2">
         <div
           v-for="activity in todayActivities"
           :key="activity.id"
-          class="flex gap-3 rounded-2xl bg-white p-3 shadow-sm"
+          class="flex gap-3 rounded-2xl border border-border/60 bg-white p-3 shadow-sm transition-all duration-200"
         >
           <div class="flex flex-col items-center pt-0.5">
-            <span class="text-[11px] font-medium text-gray-500">{{ formatTime(activity.time) }}</span>
-            <div class="mt-1.5 h-full w-px bg-gray-200" />
+            <span class="text-[11px] font-medium text-muted-foreground">{{ formatTime(activity.time) }}</span>
+            <div class="mt-1.5 h-full w-px bg-border/60" />
           </div>
           <div
             :class="[
               'flex h-9 w-9 shrink-0 items-center justify-center rounded-xl',
-              activityConfig[activity.type]?.bg ?? 'bg-gray-100',
+              activityConfig[activity.type]?.bg ?? 'bg-muted',
             ]"
           >
             <component
               :is="activityConfig[activity.type]?.icon ?? BookOpen"
-              :class="['h-4 w-4', activityConfig[activity.type]?.color ?? 'text-gray-600']"
+              :class="['h-4 w-4', activityConfig[activity.type]?.color ?? 'text-muted-foreground']"
             />
           </div>
           <div class="min-w-0 flex-1">
-            <p class="text-sm font-medium text-gray-900">{{ activity.title }}</p>
-            <p class="mt-0.5 text-xs leading-relaxed text-gray-500">{{ activity.description }}</p>
+            <p class="text-sm font-medium text-foreground">{{ activity.title }}</p>
+            <p class="mt-0.5 text-xs leading-relaxed text-muted-foreground">{{ activity.description }}</p>
           </div>
         </div>
       </div>
@@ -182,8 +182,8 @@ const notifIconColor: Record<string, string> = {
     <!-- Upcoming Events -->
     <div>
       <div class="mb-3 flex items-center justify-between">
-        <h2 class="text-sm font-semibold text-gray-900">Upcoming Events</h2>
-        <button class="flex items-center text-xs font-medium text-violet-600">
+        <h2 class="text-sm font-semibold tracking-tight text-foreground">Upcoming Events</h2>
+        <button class="flex items-center text-xs font-medium text-violet-600 transition-all duration-200 hover:text-violet-700">
           View all
           <ChevronRight class="h-3.5 w-3.5" />
         </button>
@@ -192,7 +192,7 @@ const notifIconColor: Record<string, string> = {
         <div
           v-for="event in upcomingEvents"
           :key="event.title"
-          class="flex items-center gap-3 rounded-2xl bg-white p-3 shadow-sm"
+          class="flex items-center gap-3 rounded-2xl border border-border/60 bg-white p-3 shadow-sm transition-all duration-200"
         >
           <div
             :class="[
@@ -203,17 +203,17 @@ const notifIconColor: Record<string, string> = {
             <component :is="event.icon" :class="['h-5 w-5', event.color]" />
           </div>
           <div class="flex-1">
-            <p class="text-sm font-medium text-gray-900">{{ event.title }}</p>
-            <p class="text-xs text-gray-500">{{ event.date }}</p>
+            <p class="text-sm font-medium text-foreground">{{ event.title }}</p>
+            <p class="text-[13px] text-muted-foreground">{{ event.date }}</p>
           </div>
-          <ChevronRight class="h-4 w-4 text-gray-400" />
+          <ChevronRight class="h-4 w-4 text-muted-foreground/50" />
         </div>
       </div>
     </div>
 
     <!-- Announcements -->
     <div>
-      <h2 class="mb-3 text-sm font-semibold text-gray-900">Announcements</h2>
+      <h2 class="mb-3 text-sm font-semibold tracking-tight text-foreground">Announcements</h2>
       <div class="space-y-2">
         <div
           v-for="notif in parentNotifications"
@@ -229,9 +229,9 @@ const notifIconColor: Record<string, string> = {
               :class="['mt-0.5 h-4 w-4 shrink-0', notifIconColor[notif.type]]"
             />
             <div>
-              <p class="text-sm font-medium text-gray-900">{{ notif.title }}</p>
-              <p class="mt-0.5 text-xs leading-relaxed text-gray-600">{{ notif.message }}</p>
-              <p class="mt-1.5 text-[11px] text-gray-400">{{ notif.date }}</p>
+              <p class="text-sm font-medium text-foreground">{{ notif.title }}</p>
+              <p class="mt-0.5 text-xs leading-relaxed text-muted-foreground">{{ notif.message }}</p>
+              <p class="mt-1.5 text-[11px] text-muted-foreground/70">{{ notif.date }}</p>
             </div>
           </div>
         </div>

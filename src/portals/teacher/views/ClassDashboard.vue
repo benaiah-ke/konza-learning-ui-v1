@@ -117,20 +117,20 @@ const today = new Date().toLocaleDateString('en-GB', {
     <!-- Class Info Header -->
     <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1 class="text-2xl font-bold text-foreground">My Class Dashboard</h1>
-        <p class="text-muted-foreground">Overview of your class, attendance, and daily schedule</p>
+        <h1 class="text-2xl font-bold tracking-tight text-foreground">My Class Dashboard</h1>
+        <p class="text-[13px] text-muted-foreground">Overview of your class, attendance, and daily schedule</p>
       </div>
-      <div class="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+      <div class="flex flex-wrap items-center gap-4 text-[13px] text-muted-foreground">
         <span class="inline-flex items-center gap-1.5">
-          <Users class="h-4 w-4 text-[#0891B2]" />
+          <Users class="h-4 w-4 text-teal-600" />
           Butterfly Class
         </span>
         <span class="inline-flex items-center gap-1.5">
-          <MapPin class="h-4 w-4 text-[#0891B2]" />
+          <MapPin class="h-4 w-4 text-teal-600" />
           Karen Campus
         </span>
         <span class="inline-flex items-center gap-1.5">
-          <Calendar class="h-4 w-4 text-[#0891B2]" />
+          <Calendar class="h-4 w-4 text-teal-600" />
           {{ today }}
         </span>
       </div>
@@ -142,8 +142,8 @@ const today = new Date().toLocaleDateString('en-GB', {
         label="Total Students"
         :value="String(totalStudents)"
         :icon="Users"
-        icon-bg="bg-[#0891B2]/10"
-        icon-color="text-[#0891B2]"
+        icon-bg="bg-teal-100"
+        icon-color="text-teal-600"
       />
       <StatCard
         label="Present Today"
@@ -171,13 +171,13 @@ const today = new Date().toLocaleDateString('en-GB', {
     <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
       <!-- Attendance Grid -->
       <div class="lg:col-span-2">
-        <div class="rounded-xl border border-border bg-card p-6">
-          <h2 class="mb-4 text-lg font-semibold text-foreground">Attendance</h2>
+        <div class="rounded-2xl border border-border/60 bg-white p-6 shadow-sm">
+          <h2 class="mb-4 text-lg font-semibold tracking-tight text-foreground">Attendance</h2>
           <div class="space-y-3">
             <div
               v-for="(student, index) in classStudents"
               :key="student.id"
-              class="flex items-center justify-between rounded-lg border border-border p-3 transition-colors hover:bg-muted/30"
+              class="flex items-center justify-between rounded-xl border border-border/60 p-3 transition-all duration-200 hover:bg-muted/30"
             >
               <div class="flex items-center gap-3">
                 <div
@@ -192,15 +192,15 @@ const today = new Date().toLocaleDateString('en-GB', {
                   <p class="font-medium text-foreground">
                     {{ student.firstName }} {{ student.lastName }}
                   </p>
-                  <p class="text-xs text-muted-foreground">Age {{ student.age }}</p>
+                  <p class="text-[13px] text-muted-foreground">Age {{ student.age }}</p>
                 </div>
               </div>
               <div class="flex gap-2">
                 <button
                   :class="[
-                    'inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors',
+                    'inline-flex items-center gap-1 rounded-xl px-3 py-1.5 text-xs font-medium transition-all duration-200',
                     attendance[student.id] === 'present'
-                      ? 'bg-success text-white'
+                      ? 'bg-success text-white shadow-sm'
                       : 'bg-muted text-muted-foreground hover:bg-success/20 hover:text-success',
                   ]"
                   @click="setAttendance(student.id, 'present')"
@@ -210,9 +210,9 @@ const today = new Date().toLocaleDateString('en-GB', {
                 </button>
                 <button
                   :class="[
-                    'inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors',
+                    'inline-flex items-center gap-1 rounded-xl px-3 py-1.5 text-xs font-medium transition-all duration-200',
                     attendance[student.id] === 'absent'
-                      ? 'bg-danger text-white'
+                      ? 'bg-danger text-white shadow-sm'
                       : 'bg-muted text-muted-foreground hover:bg-danger/20 hover:text-danger',
                   ]"
                   @click="setAttendance(student.id, 'absent')"
@@ -222,9 +222,9 @@ const today = new Date().toLocaleDateString('en-GB', {
                 </button>
                 <button
                   :class="[
-                    'inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors',
+                    'inline-flex items-center gap-1 rounded-xl px-3 py-1.5 text-xs font-medium transition-all duration-200',
                     attendance[student.id] === 'late'
-                      ? 'bg-warning text-white'
+                      ? 'bg-warning text-white shadow-sm'
                       : 'bg-muted text-muted-foreground hover:bg-warning/20 hover:text-warning',
                   ]"
                   @click="setAttendance(student.id, 'late')"
@@ -240,8 +240,8 @@ const today = new Date().toLocaleDateString('en-GB', {
 
       <!-- Today's Schedule -->
       <div>
-        <div class="rounded-xl border border-border bg-card p-6">
-          <h2 class="mb-4 text-lg font-semibold text-foreground">Today's Schedule</h2>
+        <div class="rounded-2xl border border-border/60 bg-white p-6 shadow-sm">
+          <h2 class="mb-4 text-lg font-semibold tracking-tight text-foreground">Today's Schedule</h2>
           <div class="relative space-y-0">
             <div
               v-for="(item, index) in schedule"
@@ -252,19 +252,19 @@ const today = new Date().toLocaleDateString('en-GB', {
               <div class="flex flex-col items-center">
                 <div
                   :class="[
-                    'z-10 h-3 w-3 rounded-full border-2',
+                    'z-10 h-3 w-3 rounded-full border-2 transition-all duration-200',
                     index === currentScheduleIndex
-                      ? 'border-[#0891B2] bg-[#0891B2]'
+                      ? 'border-teal-600 bg-teal-600'
                       : index < currentScheduleIndex
-                        ? 'border-[#0891B2]/40 bg-[#0891B2]/40'
-                        : 'border-border bg-card',
+                        ? 'border-teal-600/40 bg-teal-600/40'
+                        : 'border-border/60 bg-white',
                   ]"
                 />
                 <div
                   v-if="index < schedule.length - 1"
                   :class="[
                     'w-0.5 flex-1',
-                    index < currentScheduleIndex ? 'bg-[#0891B2]/30' : 'bg-border',
+                    index < currentScheduleIndex ? 'bg-teal-600/30' : 'bg-border/60',
                   ]"
                 />
               </div>
@@ -272,22 +272,22 @@ const today = new Date().toLocaleDateString('en-GB', {
               <div :class="['flex-1 -mt-0.5', index === currentScheduleIndex ? '' : '']">
                 <div
                   :class="[
-                    'rounded-lg p-2.5 transition-colors',
+                    'rounded-xl p-2.5 transition-all duration-200',
                     index === currentScheduleIndex
-                      ? 'bg-[#0891B2]/10 ring-1 ring-[#0891B2]/30'
+                      ? 'bg-teal-50 ring-1 ring-teal-600/30'
                       : '',
                   ]"
                 >
                   <p
                     :class="[
                       'text-xs font-medium',
-                      index === currentScheduleIndex ? 'text-[#0891B2]' : 'text-muted-foreground',
+                      index === currentScheduleIndex ? 'text-teal-600' : 'text-muted-foreground',
                     ]"
                   >
                     {{ item.time }}
                     <span
                       v-if="index === currentScheduleIndex"
-                      class="ml-1.5 inline-flex items-center rounded-full bg-[#0891B2] px-1.5 py-0.5 text-[10px] font-semibold text-white"
+                      class="ml-1.5 inline-flex items-center rounded-full bg-teal-600 px-1.5 py-0.5 text-[10px] font-semibold text-white"
                     >
                       NOW
                     </span>
@@ -295,13 +295,13 @@ const today = new Date().toLocaleDateString('en-GB', {
                   <p
                     :class="[
                       'text-sm font-medium',
-                      index === currentScheduleIndex ? 'text-[#0891B2]' : 'text-foreground',
+                      index === currentScheduleIndex ? 'text-teal-700' : 'text-foreground',
                       index < currentScheduleIndex ? 'text-muted-foreground' : '',
                     ]"
                   >
                     {{ item.activity }}
                   </p>
-                  <p class="text-xs text-muted-foreground">{{ item.description }}</p>
+                  <p class="text-[13px] text-muted-foreground">{{ item.description }}</p>
                 </div>
               </div>
             </div>
