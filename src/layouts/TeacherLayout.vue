@@ -114,7 +114,7 @@ function isActive(to: string): boolean {
     <!-- Content -->
     <main class="flex-1 overflow-y-auto bg-background p-6">
       <RouterView v-slot="{ Component, route: matchedRoute }">
-        <component :is="Component" :key="matchedRoute.fullPath" />
+        <component :is="Component" :key="matchedRoute.path" />
       </RouterView>
     </main>
   </div>

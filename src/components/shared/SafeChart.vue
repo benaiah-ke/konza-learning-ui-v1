@@ -1,42 +1,87 @@
 <script setup lang="ts">
-import { ref, onBeforeUnmount, nextTick } from 'vue'
-import VueApexCharts from 'vue3-apexcharts'
+import { ref, onMounted, onBeforeUnmount, watch, toRaw, nextTick } from 'vue'
+import ApexCharts from 'apexcharts'
 
-defineProps<{
+const props = defineProps<{
   type: string
   height: string | number
   options: Record<string, any>
   series: any[]
 }>()
 
-const chartRef = ref<InstanceType<typeof VueApexCharts> | null>(null)
-const alive = ref(true)
+const chartEl = ref<HTMLDivElement | null>(null)
+let chart: ApexCharts | null = null
+
+function buildOptions(): Record<string, any> {
+  const raw = toRaw(props.options) ?? {}
+  return {
+    ...raw,
+    chart: {
+      ...(raw.chart ?? {}),
+      type: props.type,
+      height: Number(props.height),
+    },
+    series: toRaw(props.series) ?? [],
+  }
+}
+
+function initChart() {
+  if (chart || !chartEl.value) return
+  // Guard: options must be a valid object with at least a chart config
+  if (!props.options || typeof props.options !== 'object') return
+  try {
+    chart = new ApexCharts(chartEl.value, buildOptions())
+    chart.render()
+  } catch (err) {
+    console.warn('[SafeChart] Failed to initialise chart:', err)
+    chart = null
+  }
+}
+
+onMounted(() => {
+  initChart()
+})
+
+// If options arrive after mount (e.g. computed resolves later), init then
+watch(
+  () => props.options,
+  (newOpts) => {
+    if (!chart && newOpts) {
+      nextTick(initChart)
+    } else if (chart && newOpts) {
+      try {
+        chart.updateOptions(buildOptions(), true, true)
+      } catch (err) {
+        console.warn('[SafeChart] Failed to update options:', err)
+      }
+    }
+  },
+  { deep: true },
+)
+
+watch(
+  () => props.series,
+  (newSeries) => {
+    if (chart && newSeries) {
+      try {
+        chart.updateSeries(toRaw(newSeries), true)
+      } catch (err) {
+        console.warn('[SafeChart] Failed to update series:', err)
+      }
+    }
+  },
+  { deep: true },
+)
 
 onBeforeUnmount(() => {
-  // Destroy chart instance BEFORE Vue's unmount cycle removes DOM nodes.
-  // This prevents the "Cannot read properties of null (reading 'exposed')"
-  // crash that occurs when ApexCharts' internal DOM cleanup races with
-  // Vue 3.5's component teardown.
-  alive.value = false
-
-  try {
-    const inst = chartRef.value as any
-    if (inst?.chart) {
-      inst.chart.destroy()
-    }
-  } catch {
-    // Swallow — chart may already be gone
-  }
+  // Nullify reference only — do NOT call chart.destroy().
+  // ApexCharts.destroy() removes DOM nodes synchronously, which corrupts
+  // Vue's VDOM tree during the unmount phase. Vue will remove the DOM
+  // elements itself; the chart instance will be garbage collected.
+  chart = null
 })
 </script>
 
 <template>
-  <VueApexCharts
-    v-if="alive"
-    ref="chartRef"
-    :type="type"
-    :height="height"
-    :options="options"
-    :series="series"
-  />
+  <div ref="chartEl" />
 </template>
