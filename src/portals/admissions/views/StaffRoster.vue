@@ -71,17 +71,17 @@ const filteredStaff = computed(() => {
 
 // ── Role Color Map ──────────────────────────────────────────
 const roleColors: Record<string, { bg: string; text: string; avatarBg: string }> = {
-  'Lead Teacher': { bg: 'bg-blue-100', text: 'text-blue-700', avatarBg: 'bg-blue-500' },
-  'Assistant Teacher': { bg: 'bg-teal-100', text: 'text-teal-700', avatarBg: 'bg-teal-500' },
-  'School Nurse': { bg: 'bg-rose-100', text: 'text-rose-700', avatarBg: 'bg-rose-500' },
-  'Campus Manager': { bg: 'bg-purple-100', text: 'text-purple-700', avatarBg: 'bg-purple-500' },
-  Cook: { bg: 'bg-amber-100', text: 'text-amber-700', avatarBg: 'bg-amber-500' },
-  Driver: { bg: 'bg-sky-100', text: 'text-sky-700', avatarBg: 'bg-sky-500' },
-  Security: { bg: 'bg-muted', text: 'text-muted-foreground', avatarBg: 'bg-gray-500' },
+  'Lead Teacher': { bg: 'bg-primary/10', text: 'text-primary', avatarBg: 'bg-primary' },
+  'Assistant Teacher': { bg: 'bg-success-light', text: 'text-success-foreground', avatarBg: 'bg-success' },
+  'School Nurse': { bg: 'bg-danger-light', text: 'text-danger-foreground', avatarBg: 'bg-danger' },
+  'Campus Manager': { bg: 'bg-muted', text: 'text-muted-foreground', avatarBg: 'bg-muted-foreground' },
+  Cook: { bg: 'bg-warning-light', text: 'text-warning-foreground', avatarBg: 'bg-warning' },
+  Driver: { bg: 'bg-info-light', text: 'text-info-foreground', avatarBg: 'bg-info' },
+  Security: { bg: 'bg-muted', text: 'text-muted-foreground', avatarBg: 'bg-muted-foreground' },
 }
 
 function getRoleColor(role: string) {
-  return roleColors[role] ?? { bg: 'bg-muted', text: 'text-muted-foreground', avatarBg: 'bg-gray-500' }
+  return roleColors[role] ?? { bg: 'bg-muted', text: 'text-muted-foreground', avatarBg: 'bg-muted-foreground' }
 }
 
 // ── Helpers ─────────────────────────────────────────────────
@@ -101,7 +101,7 @@ function formatDate(dateStr: string): string {
     <!-- Header -->
     <div>
       <h1 class="text-2xl font-bold tracking-tight text-foreground">Staff Roster</h1>
-      <p class="mt-1 text-[13px] text-muted-foreground">
+      <p class="mt-1 text-sm text-muted-foreground">
         View and manage staff across all campuses
       </p>
     </div>
@@ -139,7 +139,7 @@ function formatDate(dateStr: string): string {
     </div>
 
     <!-- Search & Filters -->
-    <div class="bg-white rounded-2xl border border-border/60 shadow-sm p-5">
+    <div class="card p-5">
       <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
         <SearchInput
           v-model="searchQuery"
@@ -148,7 +148,7 @@ function formatDate(dateStr: string): string {
         />
         <select
           v-model="campusFilter"
-          class="rounded-xl border border-border/60 bg-white px-3 py-2 text-sm text-foreground transition-all duration-200 focus:border-[#C2410C] focus:outline-none focus:ring-1 focus:ring-[#C2410C]"
+          class="rounded-xl border border-border bg-white px-3 py-2 text-sm text-foreground transition-all duration-200 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
         >
           <option value="all">All Campuses</option>
           <option v-for="campus in campuses" :key="campus.id" :value="campus.id">
@@ -157,7 +157,7 @@ function formatDate(dateStr: string): string {
         </select>
         <select
           v-model="roleFilter"
-          class="rounded-xl border border-border/60 bg-white px-3 py-2 text-sm text-foreground transition-all duration-200 focus:border-[#C2410C] focus:outline-none focus:ring-1 focus:ring-[#C2410C]"
+          class="rounded-xl border border-border bg-white px-3 py-2 text-sm text-foreground transition-all duration-200 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
         >
           <option value="all">All Roles</option>
           <option v-for="role in uniqueRoles" :key="role" :value="role">
@@ -165,7 +165,7 @@ function formatDate(dateStr: string): string {
           </option>
         </select>
       </div>
-      <p class="mt-2 text-[13px] text-muted-foreground">
+      <p class="mt-2 text-sm text-muted-foreground">
         Showing {{ filteredStaff.length }} of {{ totalStaff }} staff members
       </p>
     </div>
@@ -175,7 +175,7 @@ function formatDate(dateStr: string): string {
       <div
         v-for="member in filteredStaff"
         :key="member.id"
-        class="group bg-white rounded-2xl border border-border/60 p-5 shadow-sm transition-all duration-200 hover:shadow-md hover:border-orange-600/30"
+        class="group card p-5 transition-all duration-200 hover:shadow-md hover:border-primary/30"
       >
         <!-- Top Row: Avatar + Name + Status -->
         <div class="flex items-start gap-4">
@@ -218,26 +218,26 @@ function formatDate(dateStr: string): string {
 
         <!-- Details -->
         <div class="mt-4 space-y-2 pl-16">
-          <div class="text-[13px] text-muted-foreground">
+          <div class="text-sm text-muted-foreground">
             <span class="font-medium text-foreground">{{ member.department }}</span>
           </div>
 
-          <div class="flex items-center gap-1.5 text-[13px] text-muted-foreground">
+          <div class="flex items-center gap-1.5 text-sm text-muted-foreground">
             <MapPin class="h-3.5 w-3.5 shrink-0" />
             {{ getCampusName(member.campusId) }}
           </div>
 
-          <div class="flex items-center gap-1.5 text-[13px] text-muted-foreground">
+          <div class="flex items-center gap-1.5 text-sm text-muted-foreground">
             <Phone class="h-3.5 w-3.5 shrink-0" />
             {{ member.phone }}
           </div>
 
-          <div class="flex items-center gap-1.5 text-[13px] text-muted-foreground">
+          <div class="flex items-center gap-1.5 text-sm text-muted-foreground">
             <Mail class="h-3.5 w-3.5 shrink-0" />
             <span class="truncate">{{ member.email }}</span>
           </div>
 
-          <div class="flex items-center gap-1.5 text-[13px] text-muted-foreground">
+          <div class="flex items-center gap-1.5 text-sm text-muted-foreground">
             <Calendar class="h-3.5 w-3.5 shrink-0" />
             Joined {{ formatDate(member.joinDate) }}
           </div>
@@ -248,12 +248,12 @@ function formatDate(dateStr: string): string {
     <!-- Empty State -->
     <div
       v-if="filteredStaff.length === 0"
-      class="flex flex-col items-center justify-center bg-white rounded-2xl border border-border/60 shadow-sm py-16"
+      class="flex flex-col items-center justify-center card py-16"
     >
       <Users class="h-10 w-10 text-muted-foreground/40 mb-3" />
-      <p class="text-[13px] text-muted-foreground">No staff members match your filters</p>
+      <p class="text-sm text-muted-foreground">No staff members match your filters</p>
       <button
-        class="mt-3 text-sm font-medium text-orange-700 transition-all duration-200 hover:underline"
+        class="mt-3 text-sm font-medium text-primary transition-all duration-200 hover:underline"
         @click="searchQuery = ''; campusFilter = 'all'; roleFilter = 'all'"
       >
         Clear all filters

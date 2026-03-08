@@ -184,30 +184,26 @@ const overallCollectionPct = computed(() =>
         label="Total Annual Revenue"
         :value="formatCompact(totalAnnualRevenue)"
         :icon="DollarSign"
-        icon-bg="bg-primary/10"
-        icon-color="text-primary"
+        variant="primary"
       />
       <StatCard
         label="YTD Collected"
         :value="formatCompact(ytdCollected)"
         :icon="TrendingUp"
-        icon-bg="bg-success/10"
-        icon-color="text-success"
+        variant="success"
         :change="{ value: overallCollectionPct, direction: overallCollectionPct >= 90 ? 'up' : 'down' }"
       />
       <StatCard
         label="Projected Shortfall"
         :value="formatCompact(projectedShortfall)"
         :icon="TrendingDown"
-        icon-bg="bg-danger/10"
-        icon-color="text-danger"
+        variant="danger"
       />
       <StatCard
         label="Avg Monthly Collection"
         :value="formatCompact(avgMonthlyCollection)"
         :icon="Calculator"
-        icon-bg="bg-info/10"
-        icon-color="text-info"
+        variant="info"
       />
     </div>
 
@@ -227,10 +223,10 @@ const overallCollectionPct = computed(() =>
     </ChartCard>
 
     <!-- Monthly breakdown table -->
-    <div class="bg-white rounded-2xl border border-border/60 shadow-sm p-6">
+    <div class="card p-6">
       <div class="mb-4">
         <h3 class="font-semibold tracking-tight text-card-foreground">Monthly Breakdown</h3>
-        <p class="mt-0.5 text-[13px] text-muted-foreground">
+        <p class="mt-0.5 text-sm text-muted-foreground">
           Detailed monthly revenue performance
         </p>
       </div>

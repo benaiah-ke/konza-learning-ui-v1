@@ -66,7 +66,6 @@ const revenueOptions = computed<ApexOptions>(() => ({
     type: 'area',
     height: 300,
   },
-  colors: ['#1B4D3E', '#F59E0B'],
   fill: {
     type: 'gradient',
     gradient: {
@@ -124,7 +123,6 @@ const enrollmentOptions = computed<ApexOptions>(() => ({
     type: 'bar',
     height: 300,
   },
-  colors: ['#0EA5E9', '#E5E5E0'],
   plotOptions: {
     bar: {
       horizontal: false,
@@ -180,7 +178,6 @@ const arrearsOptions = computed<ApexOptions>(() => ({
     type: 'donut',
     height: 300,
   },
-  colors: ['#F59E0B', '#F97316', '#EF4444', '#991B1B'],
   labels: ['Current', '30 Days', '60 Days', '90+ Days'],
   plotOptions: {
     pie: {
@@ -299,10 +296,10 @@ const alertIconColor: Record<string, string> = {
 }
 
 const alertIconBg: Record<string, string> = {
-  success: 'bg-success/10',
-  warning: 'bg-warning/10',
-  info: 'bg-info/10',
-  danger: 'bg-danger/10',
+  success: 'bg-success-light',
+  warning: 'bg-warning-light',
+  info: 'bg-info-light',
+  danger: 'bg-danger-light',
 }
 </script>
 
@@ -318,7 +315,7 @@ const alertIconBg: Record<string, string> = {
         </div>
         <div>
           <h1 class="text-2xl font-bold tracking-tight text-foreground">Command Dashboard</h1>
-          <p class="text-[13px] text-muted-foreground">
+          <p class="text-sm text-muted-foreground">
             Real-time metrics across all Konza Learning Centre campuses
           </p>
         </div>
@@ -326,38 +323,34 @@ const alertIconBg: Record<string, string> = {
     </div>
 
     <!-- KPI Cards Row -->
-    <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+    <div class="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
       <StatCard
         label="Total Revenue"
         :value="formatCompact(finance.totalRevenue)"
         :change="{ value: 8.3, direction: 'up' }"
         :icon="DollarSign"
-        icon-bg="bg-primary/10"
-        icon-color="text-primary"
+        variant="primary"
       />
       <StatCard
         label="Total Enrollment"
         :value="`${totalEnrollment} / ${totalCapacity}`"
         :change="{ value: 12.4, direction: 'up' }"
         :icon="Users"
-        icon-bg="bg-info/10"
-        icon-color="text-info"
+        variant="info"
       />
       <StatCard
         label="Collection Rate"
         :value="`${finance.collectionRate}%`"
         :change="{ value: 3.2, direction: 'up' }"
         :icon="TrendingUp"
-        icon-bg="bg-success/10"
-        icon-color="text-success"
+        variant="success"
       />
       <StatCard
         label="Outstanding Arrears"
         :value="formatCompact(finance.totalArrears)"
         :change="{ value: 15.6, direction: 'up' }"
         :icon="AlertTriangle"
-        icon-bg="bg-danger/10"
-        icon-color="text-danger"
+        variant="danger"
       />
     </div>
 
@@ -434,16 +427,16 @@ const alertIconBg: Record<string, string> = {
       </ChartCard>
 
       <!-- Recent Alerts & Activity -->
-      <div class="bg-white rounded-2xl border border-border/60 shadow-sm p-6">
+      <div class="card p-6">
         <div class="flex items-start justify-between">
           <div>
             <h3 class="font-semibold tracking-tight text-card-foreground">Recent Activity</h3>
-            <p class="mt-0.5 text-[13px] text-muted-foreground">
+            <p class="mt-0.5 text-sm text-muted-foreground">
               Latest alerts and notifications
             </p>
           </div>
           <div
-            class="flex h-8 items-center rounded-lg bg-danger/10 px-3 text-xs font-medium text-danger ring-1 ring-danger/10"
+            class="flex h-8 items-center rounded-lg bg-danger-light px-3 text-xs font-medium text-danger ring-1 ring-danger/10"
           >
             {{ finance.overdueInvoices.length }} overdue
           </div>
@@ -468,7 +461,7 @@ const alertIconBg: Record<string, string> = {
             </div>
             <!-- Content -->
             <div class="min-w-0 flex-1">
-              <p class="text-[13px] leading-snug text-card-foreground">
+              <p class="text-sm leading-snug text-card-foreground">
                 {{ alert.message }}
               </p>
               <p class="mt-1 text-xs text-muted-foreground">

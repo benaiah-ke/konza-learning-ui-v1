@@ -107,8 +107,8 @@ function selectStudent(id: string) {
     <div class="grid grid-cols-1 gap-6 lg:grid-cols-12">
       <!-- Left sidebar - Student selector -->
       <div class="lg:col-span-4 xl:col-span-3">
-        <div class="bg-white rounded-2xl border border-border/60 shadow-sm p-4">
-          <h3 class="mb-3 text-[13px] font-semibold tracking-tight text-card-foreground">Select Student</h3>
+        <div class="card p-4">
+          <h3 class="mb-3 text-sm font-semibold tracking-tight text-card-foreground">Select Student</h3>
           <SearchInput
             v-model="searchQuery"
             placeholder="Search by name or class..."
@@ -139,7 +139,7 @@ function selectStudent(id: string) {
               <div class="min-w-0 flex-1">
                 <p
                   :class="[
-                    'truncate text-[13px] font-medium',
+                    'truncate text-sm font-medium',
                     selectedStudentId === student.id
                       ? 'text-primary'
                       : 'text-card-foreground',
@@ -160,7 +160,7 @@ function selectStudent(id: string) {
       <div class="space-y-6 lg:col-span-8 xl:col-span-9">
         <template v-if="selectedStudent">
           <!-- Student profile card -->
-          <div class="bg-white rounded-2xl border border-border/60 shadow-sm p-6">
+          <div class="card p-6">
             <div class="flex flex-col gap-4 sm:flex-row sm:items-start">
               <div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-primary text-xl font-bold text-white">
                 {{ selectedStudent.photoInitials }}
@@ -169,10 +169,10 @@ function selectStudent(id: string) {
                 <h2 class="text-xl font-bold tracking-tight text-card-foreground">
                   {{ selectedStudent.firstName }} {{ selectedStudent.lastName }}
                 </h2>
-                <p class="mt-0.5 text-[13px] text-muted-foreground">
+                <p class="mt-0.5 text-sm text-muted-foreground">
                   {{ selectedStudent.className }} Class &middot; {{ campusNames[selectedStudent.campusId] ?? selectedStudent.campusId }}
                 </p>
-                <div v-if="selectedParent" class="mt-3 flex flex-wrap items-center gap-4 text-[13px] text-muted-foreground">
+                <div v-if="selectedParent" class="mt-3 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
                   <span class="inline-flex items-center gap-1.5">
                     <User class="h-3.5 w-3.5" />
                     {{ selectedParent.firstName }} {{ selectedParent.lastName }}
@@ -196,25 +196,22 @@ function selectStudent(id: string) {
               label="Total Billed"
               :value="formatCurrency(totalBilled)"
               :icon="Receipt"
-              icon-bg="bg-primary/10"
-              icon-color="text-primary"
+              variant="primary"
             />
             <StatCard
               label="Total Paid"
               :value="formatCurrency(totalPaid)"
               :icon="Wallet"
-              icon-bg="bg-success/10"
-              icon-color="text-success"
+              variant="success"
             />
             <StatCard
               label="Outstanding Balance"
               :value="formatCurrency(outstandingBalance)"
               :icon="AlertTriangle"
-              :icon-bg="outstandingBalance > 0 ? 'bg-danger/10' : 'bg-muted'"
-              :icon-color="outstandingBalance > 0 ? 'text-danger' : 'text-muted-foreground'"
+              :variant="outstandingBalance > 0 ? 'danger' : 'neutral'"
             />
-            <div class="flex flex-col justify-center bg-white rounded-2xl border border-border/60 shadow-sm p-6">
-              <p class="text-[13px] text-muted-foreground">Payment Status</p>
+            <div class="flex flex-col justify-center card p-6">
+              <p class="text-sm text-muted-foreground">Payment Status</p>
               <div class="mt-2">
                 <StatusBadge
                   :status="paymentStatusMap[paymentStatus] ?? 'neutral'"
@@ -225,13 +222,13 @@ function selectStudent(id: string) {
           </div>
 
           <!-- Invoice Line Items -->
-          <div v-if="studentInvoice" class="bg-white rounded-2xl border border-border/60 shadow-sm p-6">
+          <div v-if="studentInvoice" class="card p-6">
             <div class="mb-4 flex items-start justify-between">
               <div>
                 <h3 class="font-semibold tracking-tight text-card-foreground">
                   Invoice {{ studentInvoice.id.toUpperCase() }}
                 </h3>
-                <p class="mt-0.5 text-[13px] text-muted-foreground">
+                <p class="mt-0.5 text-sm text-muted-foreground">
                   {{ studentInvoice.term }} &middot; Issued {{ formatDate(studentInvoice.issuedDate) }} &middot; Due {{ formatDate(studentInvoice.dueDate) }}
                 </p>
               </div>
@@ -240,7 +237,7 @@ function selectStudent(id: string) {
                 :label="paymentStatusLabel[studentInvoice.status] ?? studentInvoice.status"
               />
             </div>
-            <div class="overflow-hidden rounded-xl border border-border/60">
+            <div class="overflow-hidden rounded-xl border border-border">
               <table class="w-full">
                 <thead>
                   <tr class="bg-muted/50">
@@ -256,38 +253,38 @@ function selectStudent(id: string) {
                   <tr
                     v-for="(item, idx) in studentInvoice.items"
                     :key="idx"
-                    class="border-b border-border/60 last:border-b-0"
+                    class="border-b border-border last:border-b-0"
                   >
-                    <td class="px-4 py-3 text-[13px] text-card-foreground">
+                    <td class="px-4 py-3 text-sm text-card-foreground">
                       {{ item.description }}
                     </td>
-                    <td class="px-4 py-3 text-right text-[13px] text-card-foreground">
+                    <td class="px-4 py-3 text-right text-sm text-card-foreground">
                       {{ formatCurrency(item.amount) }}
                     </td>
                   </tr>
                 </tbody>
                 <tfoot>
-                  <tr class="border-t-2 border-border/60 bg-muted/30">
-                    <td class="px-4 py-3 text-[13px] font-semibold text-card-foreground">
+                  <tr class="border-t-2 border-border bg-muted/30">
+                    <td class="px-4 py-3 text-sm font-semibold text-card-foreground">
                       Total
                     </td>
-                    <td class="px-4 py-3 text-right text-[13px] font-bold tracking-tight text-card-foreground">
+                    <td class="px-4 py-3 text-right text-sm font-bold tracking-tight text-card-foreground">
                       {{ formatCurrency(studentInvoice.totalAmount) }}
                     </td>
                   </tr>
                   <tr v-if="studentInvoice.paidAmount > 0" class="bg-muted/30">
-                    <td class="px-4 py-3 text-[13px] text-success">
+                    <td class="px-4 py-3 text-sm text-success">
                       Paid
                     </td>
-                    <td class="px-4 py-3 text-right text-[13px] font-medium text-success">
+                    <td class="px-4 py-3 text-right text-sm font-medium text-success">
                       -{{ formatCurrency(studentInvoice.paidAmount) }}
                     </td>
                   </tr>
                   <tr v-if="studentInvoice.balance > 0" class="bg-muted/30">
-                    <td class="px-4 py-3 text-[13px] font-semibold text-danger">
+                    <td class="px-4 py-3 text-sm font-semibold text-danger">
                       Balance Due
                     </td>
-                    <td class="px-4 py-3 text-right text-[13px] font-bold tracking-tight text-danger">
+                    <td class="px-4 py-3 text-right text-sm font-bold tracking-tight text-danger">
                       {{ formatCurrency(studentInvoice.balance) }}
                     </td>
                   </tr>
@@ -297,7 +294,7 @@ function selectStudent(id: string) {
           </div>
 
           <!-- Payment History Timeline -->
-          <div class="bg-white rounded-2xl border border-border/60 shadow-sm p-6">
+          <div class="card p-6">
             <h3 class="mb-4 font-semibold tracking-tight text-card-foreground">Payment History</h3>
             <div v-if="studentTransactions.length > 0" class="relative">
               <!-- Timeline line -->
@@ -317,10 +314,10 @@ function selectStudent(id: string) {
                     ]"
                   />
                   <!-- Content -->
-                  <div class="flex-1 rounded-xl border border-border/60 bg-muted/30 p-4">
+                  <div class="flex-1 rounded-xl border border-border bg-muted/30 p-4">
                     <div class="flex items-start justify-between">
                       <div>
-                        <p class="text-[13px] font-medium text-card-foreground">
+                        <p class="text-sm font-medium text-card-foreground">
                           {{ formatCurrency(tx.amount) }}
                         </p>
                         <p class="mt-0.5 text-xs text-muted-foreground">
@@ -356,7 +353,7 @@ function selectStudent(id: string) {
             </div>
             <div v-else class="flex flex-col items-center justify-center py-12 text-center">
               <BookOpen class="h-10 w-10 text-muted-foreground/50" />
-              <p class="mt-3 text-[13px] text-muted-foreground">
+              <p class="mt-3 text-sm text-muted-foreground">
                 No payment transactions recorded for this student.
               </p>
             </div>
@@ -364,10 +361,10 @@ function selectStudent(id: string) {
         </template>
 
         <!-- No student selected state -->
-        <div v-else class="flex flex-col items-center justify-center bg-white rounded-2xl border border-border/60 shadow-sm py-24 text-center">
+        <div v-else class="flex flex-col items-center justify-center card py-24 text-center">
           <BookOpen class="h-12 w-12 text-muted-foreground/40" />
           <p class="mt-4 text-lg font-medium tracking-tight text-muted-foreground">Select a Student</p>
-          <p class="mt-1 text-[13px] text-muted-foreground">
+          <p class="mt-1 text-sm text-muted-foreground">
             Choose a student from the list to view their financial ledger.
           </p>
         </div>

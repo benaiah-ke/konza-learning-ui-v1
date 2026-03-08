@@ -127,7 +127,7 @@ function useTemplate(template: string) {
 // Send to all
 function sendToAll() {
   alert(
-    'Class-wide announcement would be sent to all parents of Butterfly Class. (Demo only)',
+    'Class-wide announcement would be sent to all parents of Butterfly Class.',
   )
 }
 
@@ -154,12 +154,12 @@ function formatTime(timestamp: string): string {
 
 // Avatar colors
 const avatarColors = [
-  'bg-teal-500',
-  'bg-amber-500',
-  'bg-emerald-500',
-  'bg-sky-500',
-  'bg-violet-500',
-  'bg-rose-500',
+  'bg-primary',
+  'bg-primary/80',
+  'bg-primary-light',
+  'bg-info',
+  'bg-muted-foreground',
+  'bg-foreground/70',
 ]
 
 function getAvatarColor(index: number): string {
@@ -188,12 +188,12 @@ function selectParent(parentId: string) {
     <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
         <h1 class="text-2xl font-bold tracking-tight text-foreground">Parent Communication</h1>
-        <p class="text-[13px] text-muted-foreground">
+        <p class="text-sm text-muted-foreground">
           Send updates, reports, and messages to parents
         </p>
       </div>
       <button
-        class="inline-flex items-center gap-2 rounded-xl bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:bg-teal-700"
+        class="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:bg-primary/90"
         @click="sendToAll"
       >
         <Megaphone class="h-4 w-4" />
@@ -202,27 +202,27 @@ function selectParent(parentId: string) {
     </div>
 
     <!-- Two-panel layout -->
-    <div class="grid grid-cols-1 gap-0 overflow-hidden rounded-2xl border border-border/60 bg-white shadow-sm lg:grid-cols-3" style="height: 600px">
+    <div class="grid grid-cols-1 gap-0 overflow-hidden rounded-xl border border-border bg-white shadow-sm lg:grid-cols-3" style="height: 600px">
       <!-- Left Panel: Parent List -->
       <div
         :class="[
-          'border-r border-border/60 lg:col-span-1 overflow-y-auto',
+          'border-r border-border lg:col-span-1 overflow-y-auto',
           showChat ? 'hidden lg:block' : '',
         ]"
       >
-        <div class="border-b border-border/60 p-4">
+        <div class="border-b border-border p-4">
           <h2 class="text-sm font-semibold tracking-tight uppercase tracking-wide text-muted-foreground">
             Parents &middot; Butterfly Class
           </h2>
         </div>
-        <div class="divide-y divide-border/60">
+        <div class="divide-y divide-border">
           <button
             v-for="(contact, index) in parentContacts"
             :key="contact.parentId"
             :class="[
               'flex w-full items-center gap-3 px-4 py-3 text-left transition-all duration-200',
               selectedParentId === contact.parentId
-                ? 'bg-teal-50'
+                ? 'bg-primary/5'
                 : 'hover:bg-muted/50',
             ]"
             @click="selectParent(contact.parentId)"
@@ -241,7 +241,7 @@ function selectParent(parentId: string) {
                   :class="[
                     'truncate text-sm font-medium',
                     selectedParentId === contact.parentId
-                      ? 'text-teal-700'
+                      ? 'text-primary'
                       : 'text-foreground',
                   ]"
                 >
@@ -249,12 +249,12 @@ function selectParent(parentId: string) {
                 </p>
                 <span
                   v-if="unreadCount(contact.parentId) > 0"
-                  class="flex h-5 w-5 items-center justify-center rounded-full bg-teal-600 text-[10px] font-bold text-white"
+                  class="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-white"
                 >
                   {{ unreadCount(contact.parentId) }}
                 </span>
               </div>
-              <p class="truncate text-[13px] text-muted-foreground">
+              <p class="truncate text-sm text-muted-foreground">
                 Parent of {{ contact.studentName }}
               </p>
             </div>
@@ -271,7 +271,7 @@ function selectParent(parentId: string) {
         ]"
       >
         <!-- Chat Header -->
-        <div class="flex items-center gap-3 border-b border-border/60 px-4 py-3">
+        <div class="flex items-center gap-3 border-b border-border px-4 py-3">
           <button
             class="rounded-xl p-1.5 text-muted-foreground transition-all duration-200 hover:bg-muted lg:hidden"
             @click="showChat = false"
@@ -295,13 +295,13 @@ function selectParent(parentId: string) {
               <p class="text-sm font-semibold tracking-tight text-foreground">
                 {{ selectedContact.parentName }}
               </p>
-              <p class="text-[13px] text-muted-foreground">
+              <p class="text-sm text-muted-foreground">
                 Parent of {{ selectedContact.studentName }}
               </p>
             </div>
           </template>
           <template v-else>
-            <p class="text-[13px] text-muted-foreground">Select a parent to start messaging</p>
+            <p class="text-sm text-muted-foreground">Select a parent to start messaging</p>
           </template>
         </div>
 
@@ -316,7 +316,7 @@ function selectParent(parentId: string) {
             class="flex h-full flex-col items-center justify-center text-center"
           >
             <MessageCircle class="mb-3 h-10 w-10 text-muted-foreground/30" />
-            <p class="text-[13px] text-muted-foreground">
+            <p class="text-sm text-muted-foreground">
               No messages yet. Start a conversation!
             </p>
           </div>
@@ -331,16 +331,16 @@ function selectParent(parentId: string) {
           >
             <div
               :class="[
-                'max-w-[80%] rounded-2xl px-4 py-2.5 shadow-sm',
+                'max-w-[80%] rounded-xl px-4 py-2.5 shadow-sm',
                 msg.senderRole === 'teacher'
-                  ? 'bg-teal-600 text-white rounded-br-md'
+                  ? 'bg-primary text-white rounded-br-md'
                   : 'bg-white text-foreground rounded-bl-md',
               ]"
             >
               <p class="text-sm leading-relaxed">{{ msg.content }}</p>
               <p
                 :class="[
-                  'mt-1 text-[10px]',
+                  'mt-1 text-xs',
                   msg.senderRole === 'teacher'
                     ? 'text-white/70'
                     : 'text-muted-foreground',
@@ -358,7 +358,7 @@ function selectParent(parentId: string) {
         >
           <div class="text-center">
             <MessageCircle class="mx-auto mb-3 h-12 w-12 text-muted-foreground/20" />
-            <p class="text-[13px] text-muted-foreground">
+            <p class="text-sm text-muted-foreground">
               Select a parent from the list to view messages
             </p>
           </div>
@@ -367,14 +367,14 @@ function selectParent(parentId: string) {
         <!-- Quick Templates + Input -->
         <div
           v-if="selectedContact"
-          class="border-t border-border/60"
+          class="border-t border-border"
         >
           <!-- Template Buttons -->
           <div class="flex gap-2 overflow-x-auto px-4 pt-3 pb-2">
             <button
               v-for="template in templates"
               :key="template"
-              class="shrink-0 rounded-full border border-teal-600/30 bg-teal-50 px-3 py-1 text-xs font-medium text-teal-700 transition-all duration-200 hover:bg-teal-100"
+              class="shrink-0 rounded-full border border-primary/30 bg-primary/5 px-3 py-1 text-xs font-medium text-primary transition-all duration-200 hover:bg-primary/10"
               @click="useTemplate(template)"
             >
               {{ template }}
@@ -387,7 +387,7 @@ function selectParent(parentId: string) {
               v-model="messageInput"
               rows="1"
               placeholder="Type a message..."
-              class="flex-1 resize-none rounded-xl border border-border/60 bg-muted/50 px-4 py-2.5 text-sm text-foreground shadow-sm placeholder:text-muted-foreground focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-primary/10"
+              class="flex-1 resize-none rounded-xl border border-border bg-muted/50 px-4 py-2.5 text-sm text-foreground shadow-sm placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
               @keydown.enter.exact.prevent="sendMessage"
             />
             <button
@@ -395,7 +395,7 @@ function selectParent(parentId: string) {
               :class="[
                 'flex h-10 w-10 shrink-0 items-center justify-center rounded-xl shadow-sm transition-all duration-200',
                 messageInput.trim()
-                  ? 'bg-teal-600 text-white hover:bg-teal-700'
+                  ? 'bg-primary text-white hover:bg-primary/90'
                   : 'bg-muted text-muted-foreground cursor-not-allowed',
               ]"
               @click="sendMessage"

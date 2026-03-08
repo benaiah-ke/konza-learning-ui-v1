@@ -164,14 +164,13 @@ function handleDecline(id: string) {
     <div class="flex items-start justify-between">
       <div>
         <h1 class="text-2xl font-bold tracking-tight text-foreground">Leave Management</h1>
-        <p class="mt-1 text-[13px] text-muted-foreground">
+        <p class="mt-1 text-sm text-muted-foreground">
           Submit, approve, and track staff leave requests
         </p>
       </div>
       <button
         class="inline-flex items-center gap-2 rounded-xl bg-[#C2410C] px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:bg-[#C2410C]/90"
         disabled
-        title="Demo only"
       >
         <Plus class="h-4 w-4" />
         New Request
@@ -211,10 +210,10 @@ function handleDecline(id: string) {
     </div>
 
     <!-- Leave Requests Table -->
-    <div class="bg-white rounded-2xl border border-border/60 shadow-sm p-6">
+    <div class="card p-6">
       <div class="mb-5">
         <h3 class="font-semibold tracking-tight text-foreground">Leave Requests</h3>
-        <p class="mt-0.5 text-[13px] text-muted-foreground">
+        <p class="mt-0.5 text-sm text-muted-foreground">
           {{ tableData.length }} total requests &middot; {{ pendingCount }} pending review
         </p>
       </div>
@@ -225,7 +224,7 @@ function handleDecline(id: string) {
         </template>
 
         <template #cell-role="{ value }">
-          <span class="text-[13px] text-muted-foreground">{{ value }}</span>
+          <span class="text-sm text-muted-foreground">{{ value }}</span>
         </template>
 
         <template #cell-leaveType="{ row }">
@@ -273,16 +272,16 @@ function handleDecline(id: string) {
               <X class="h-4 w-4" />
             </button>
           </div>
-          <span v-else class="text-[13px] text-muted-foreground">--</span>
+          <span v-else class="text-sm text-muted-foreground">--</span>
         </template>
       </DataTable>
     </div>
 
     <!-- Leave Calendar Visualization -->
-    <div class="bg-white rounded-2xl border border-border/60 shadow-sm p-6">
+    <div class="card p-6">
       <div class="mb-5">
         <h3 class="font-semibold tracking-tight text-foreground">Leave Calendar - March 2026</h3>
-        <p class="mt-0.5 text-[13px] text-muted-foreground">
+        <p class="mt-0.5 text-sm text-muted-foreground">
           Staff leave overview for the current month
         </p>
       </div>
@@ -291,14 +290,14 @@ function handleDecline(id: string) {
         <table class="w-full min-w-[800px]">
           <thead>
             <tr>
-              <th class="sticky left-0 z-10 bg-white px-3 py-2 text-left text-[13px] font-medium text-muted-foreground uppercase tracking-wide min-w-[160px]">
+              <th class="sticky left-0 z-10 bg-white px-3 py-2 text-left text-sm font-medium text-muted-foreground uppercase tracking-wide min-w-[160px]">
                 Staff
               </th>
               <th
                 v-for="day in marchDays"
                 :key="day"
                 :class="[
-                  'px-0 py-2 text-center text-[13px] font-medium min-w-[28px]',
+                  'px-0 py-2 text-center text-sm font-medium min-w-[28px]',
                   day === 8 ? 'text-info font-bold' : 'text-muted-foreground',
                 ]"
               >
@@ -310,7 +309,7 @@ function handleDecline(id: string) {
             <tr
               v-for="entry in leaveCalendarStaff"
               :key="entry.id"
-              class="border-t border-border/60"
+              class="border-t border-border"
             >
               <td class="sticky left-0 z-10 bg-white px-3 py-2">
                 <div class="flex items-center gap-2">
@@ -333,7 +332,7 @@ function handleDecline(id: string) {
                   v-if="entry.days.includes(day)"
                   :class="[
                     'mx-auto h-5 w-5 rounded-md transition-all duration-200',
-                    entry.status === 'approved' ? 'bg-orange-100' : 'bg-warning/20',
+                    entry.status === 'approved' ? 'bg-warning-light' : 'bg-warning/20',
                   ]"
                   :title="`${entry.staffName} - ${leaveTypeLabel[entry.type]} (${entry.status})`"
                 />
@@ -344,9 +343,9 @@ function handleDecline(id: string) {
       </div>
 
       <!-- Legend -->
-      <div class="mt-4 flex items-center gap-6 text-[13px] text-muted-foreground">
+      <div class="mt-4 flex items-center gap-6 text-sm text-muted-foreground">
         <span class="inline-flex items-center gap-1.5">
-          <span class="inline-block h-3 w-3 rounded-md bg-orange-100"></span>
+          <span class="inline-block h-3 w-3 rounded-md bg-warning-light"></span>
           Approved Leave
         </span>
         <span class="inline-flex items-center gap-1.5">

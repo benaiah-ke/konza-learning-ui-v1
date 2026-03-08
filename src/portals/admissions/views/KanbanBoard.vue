@@ -37,90 +37,90 @@ const stages: StageConfig[] = [
   {
     key: 'inquiry',
     label: 'Inquiry',
-    color: 'text-gray-700',
-    bgColor: 'bg-gray-50',
-    borderColor: 'border-t-gray-400',
-    badgeBg: 'bg-gray-100',
-    badgeText: 'text-gray-700',
+    color: 'text-muted-foreground',
+    bgColor: 'bg-muted/50',
+    borderColor: 'border-t-border',
+    badgeBg: 'bg-muted',
+    badgeText: 'text-muted-foreground',
     nextStage: 'tour-scheduled',
   },
   {
     key: 'tour-scheduled',
     label: 'Tour Scheduled',
-    color: 'text-blue-700',
-    bgColor: 'bg-blue-50',
-    borderColor: 'border-t-blue-400',
-    badgeBg: 'bg-blue-100',
-    badgeText: 'text-blue-700',
+    color: 'text-muted-foreground',
+    bgColor: 'bg-muted/50',
+    borderColor: 'border-t-border',
+    badgeBg: 'bg-muted',
+    badgeText: 'text-muted-foreground',
     nextStage: 'tour-completed',
   },
   {
     key: 'tour-completed',
     label: 'Tour Completed',
-    color: 'text-teal-700',
-    bgColor: 'bg-teal-50',
-    borderColor: 'border-t-teal-400',
-    badgeBg: 'bg-teal-100',
-    badgeText: 'text-teal-700',
+    color: 'text-muted-foreground',
+    bgColor: 'bg-muted/50',
+    borderColor: 'border-t-border',
+    badgeBg: 'bg-muted',
+    badgeText: 'text-muted-foreground',
     nextStage: 'application',
   },
   {
     key: 'application',
     label: 'Application',
-    color: 'text-purple-700',
-    bgColor: 'bg-purple-50',
-    borderColor: 'border-t-purple-400',
-    badgeBg: 'bg-purple-100',
-    badgeText: 'text-purple-700',
+    color: 'text-muted-foreground',
+    bgColor: 'bg-muted/50',
+    borderColor: 'border-t-border',
+    badgeBg: 'bg-muted',
+    badgeText: 'text-muted-foreground',
     nextStage: 'assessment',
   },
   {
     key: 'assessment',
     label: 'Assessment',
-    color: 'text-amber-700',
-    bgColor: 'bg-amber-50',
-    borderColor: 'border-t-amber-400',
-    badgeBg: 'bg-amber-100',
-    badgeText: 'text-amber-700',
+    color: 'text-muted-foreground',
+    bgColor: 'bg-muted/50',
+    borderColor: 'border-t-border',
+    badgeBg: 'bg-muted',
+    badgeText: 'text-muted-foreground',
     nextStage: 'offered',
   },
   {
     key: 'offered',
     label: 'Offered',
-    color: 'text-green-700',
-    bgColor: 'bg-green-50',
-    borderColor: 'border-t-green-400',
-    badgeBg: 'bg-green-100',
-    badgeText: 'text-green-700',
+    color: 'text-success-foreground',
+    bgColor: 'bg-success-light/50',
+    borderColor: 'border-t-success',
+    badgeBg: 'bg-success-light',
+    badgeText: 'text-success-foreground',
     nextStage: 'enrolled',
   },
   {
     key: 'enrolled',
     label: 'Enrolled',
-    color: 'text-emerald-700',
-    bgColor: 'bg-emerald-50',
-    borderColor: 'border-t-emerald-700',
-    badgeBg: 'bg-emerald-100',
-    badgeText: 'text-emerald-700',
+    color: 'text-success-foreground',
+    bgColor: 'bg-success-light/50',
+    borderColor: 'border-t-success',
+    badgeBg: 'bg-success-light',
+    badgeText: 'text-success-foreground',
   },
   {
     key: 'waitlisted',
     label: 'Waitlisted',
-    color: 'text-orange-700',
-    bgColor: 'bg-orange-50',
-    borderColor: 'border-t-orange-400',
-    badgeBg: 'bg-orange-100',
-    badgeText: 'text-orange-700',
+    color: 'text-warning-foreground',
+    bgColor: 'bg-warning-light/50',
+    borderColor: 'border-t-warning',
+    badgeBg: 'bg-warning-light',
+    badgeText: 'text-warning-foreground',
   },
 ]
 
 // ── Source Config ────────────────────────────────────────────
 const sourceConfig: Record<string, { label: string; bg: string; text: string }> = {
-  website: { label: 'Website', bg: 'bg-blue-100', text: 'text-blue-700' },
-  referral: { label: 'Referral', bg: 'bg-green-100', text: 'text-green-700' },
-  'social-media': { label: 'Social Media', bg: 'bg-purple-100', text: 'text-purple-700' },
-  'walk-in': { label: 'Walk-in', bg: 'bg-amber-100', text: 'text-amber-700' },
-  event: { label: 'Event', bg: 'bg-rose-100', text: 'text-rose-700' },
+  website: { label: 'Website', bg: 'bg-info-light', text: 'text-info-foreground' },
+  referral: { label: 'Referral', bg: 'bg-success-light', text: 'text-success-foreground' },
+  'social-media': { label: 'Social Media', bg: 'bg-muted', text: 'text-muted-foreground' },
+  'walk-in': { label: 'Walk-in', bg: 'bg-warning-light', text: 'text-warning-foreground' },
+  event: { label: 'Event', bg: 'bg-danger-light', text: 'text-danger-foreground' },
 }
 
 // ── KPI Stats ───────────────────────────────────────────────
@@ -153,7 +153,7 @@ function advanceLead(leadId: string, nextStage: AdmissionLead['stage']) {
     <!-- Header -->
     <div>
       <h1 class="text-2xl font-bold tracking-tight text-foreground">Admissions Pipeline</h1>
-      <p class="mt-1 text-[13px] text-muted-foreground">
+      <p class="mt-1 text-sm text-muted-foreground">
         Kanban board tracking applications from enquiry to enrolment
       </p>
     </div>
@@ -165,35 +165,31 @@ function advanceLead(leadId: string, nextStage: AdmissionLead['stage']) {
         :value="store.totalInquiries.toString()"
         :change="{ value: 15, direction: 'up' }"
         :icon="UserPlus"
-        icon-bg="bg-[#C2410C]/10"
-        icon-color="text-[#C2410C]"
+        variant="primary"
       />
       <StatCard
         label="Active Pipeline"
         :value="store.activePipeline.length.toString()"
         :icon="Users"
-        icon-bg="bg-info/10"
-        icon-color="text-info"
+        variant="info"
       />
       <StatCard
         label="Conversion Rate"
         :value="`${store.conversionRate}%`"
         :change="{ value: 2.5, direction: 'up' }"
         :icon="TrendingUp"
-        icon-bg="bg-success/10"
-        icon-color="text-success"
+        variant="success"
       />
       <StatCard
         label="Enrolled (This Term)"
         :value="enrolledCount.toString()"
         :icon="CheckCircle2"
-        icon-bg="bg-emerald-500/10"
-        icon-color="text-emerald-600"
+        variant="success"
       />
     </div>
 
     <!-- Source Breakdown -->
-    <div class="bg-white rounded-2xl border border-border/60 shadow-sm p-5">
+    <div class="card p-5">
       <h3 class="mb-3 text-sm font-semibold tracking-tight text-muted-foreground uppercase tracking-wide">
         Lead Sources
       </h3>
@@ -237,7 +233,7 @@ function advanceLead(leadId: string, nextStage: AdmissionLead['stage']) {
           <!-- Column Header -->
           <div
             :class="[
-              'rounded-t-2xl border-t-4 bg-white px-3 py-3 border border-border/60',
+              'rounded-t-xl border-t-4 bg-white px-3 py-3 border border-border',
               stage.borderColor,
             ]"
           >
@@ -260,7 +256,7 @@ function advanceLead(leadId: string, nextStage: AdmissionLead['stage']) {
           <!-- Column Body -->
           <div
             :class="[
-              'flex flex-1 flex-col gap-2.5 rounded-b-2xl border border-t-0 border-border/60 p-2.5',
+              'flex flex-1 flex-col gap-2.5 rounded-b-xl border border-t-0 border-border p-2.5',
               stage.bgColor,
             ]"
             style="min-height: 200px"
@@ -269,7 +265,7 @@ function advanceLead(leadId: string, nextStage: AdmissionLead['stage']) {
             <div
               v-for="lead in getLeadsForStage(stage.key)"
               :key="lead.id"
-              class="group rounded-xl border border-border/60 bg-white p-3 shadow-sm transition-all duration-200 hover:shadow-md"
+              class="group rounded-xl border border-border bg-white p-3 shadow-sm transition-all duration-200 hover:shadow-md"
             >
               <!-- Drag Handle + Child Name -->
               <div class="flex items-start gap-2">
@@ -278,7 +274,7 @@ function advanceLead(leadId: string, nextStage: AdmissionLead['stage']) {
                   <p class="font-semibold tracking-tight text-sm text-foreground truncate">
                     {{ lead.childName }}
                   </p>
-                  <p class="text-[13px] text-muted-foreground mt-0.5">
+                  <p class="text-sm text-muted-foreground mt-0.5">
                     Age {{ lead.childAge }} yrs
                   </p>
                 </div>
@@ -286,7 +282,7 @@ function advanceLead(leadId: string, nextStage: AdmissionLead['stage']) {
 
               <!-- Details -->
               <div class="mt-2 space-y-1.5 pl-6">
-                <p class="text-[13px] text-muted-foreground">
+                <p class="text-sm text-muted-foreground">
                   <span class="font-medium text-foreground">{{ lead.parentName }}</span>
                 </p>
 
@@ -301,10 +297,10 @@ function advanceLead(leadId: string, nextStage: AdmissionLead['stage']) {
                   {{ sourceConfig[lead.source]?.label ?? lead.source }}
                 </span>
 
-                <p class="text-[13px] text-muted-foreground">
+                <p class="text-sm text-muted-foreground">
                   {{ getCampusName(lead.campusPreference) }}
                 </p>
-                <p class="text-[13px] text-muted-foreground">
+                <p class="text-sm text-muted-foreground">
                   {{ formatDate(lead.date) }}
                 </p>
               </div>
@@ -312,7 +308,7 @@ function advanceLead(leadId: string, nextStage: AdmissionLead['stage']) {
               <!-- Advance Button -->
               <div v-if="stage.nextStage" class="mt-3 pl-6">
                 <button
-                  class="inline-flex items-center gap-1 rounded-xl bg-orange-50 px-2.5 py-1 text-xs font-medium text-orange-700 shadow-sm transition-all duration-200 hover:bg-orange-100 hover:shadow"
+                  class="inline-flex items-center gap-1 rounded-xl bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary shadow-sm transition-all duration-200 hover:bg-primary/20 hover:shadow"
                   @click="advanceLead(lead.id, stage.nextStage!)"
                 >
                   Advance
@@ -326,7 +322,7 @@ function advanceLead(leadId: string, nextStage: AdmissionLead['stage']) {
               v-if="getLeadsForStage(stage.key).length === 0"
               class="flex flex-1 items-center justify-center p-4"
             >
-              <p class="text-[13px] text-muted-foreground/60 italic">No leads</p>
+              <p class="text-sm text-muted-foreground/60 italic">No leads</p>
             </div>
           </div>
         </div>

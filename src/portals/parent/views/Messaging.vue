@@ -162,17 +162,17 @@ const groupedMessages = computed(() => {
 <template>
   <div class="-m-4 flex h-[calc(100vh-7.5rem)] flex-col">
     <!-- Chat Header -->
-    <div class="flex items-center gap-3 border-b border-border/60 bg-white px-4 py-3">
-      <div class="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100 text-sm font-semibold text-emerald-700">
+    <div class="flex items-center gap-3 border-b border-border bg-white px-4 py-3">
+      <div class="flex h-10 w-10 items-center justify-center rounded-full bg-success-light text-sm font-semibold text-success-foreground">
         AN
       </div>
       <div class="flex-1">
         <p class="text-sm font-semibold tracking-tight text-foreground">{{ teacherName }}</p>
-        <p class="text-[13px] text-muted-foreground">{{ teacherClass }}</p>
+        <p class="text-sm text-muted-foreground">{{ teacherClass }}</p>
       </div>
       <div class="flex items-center gap-1.5">
-        <Circle class="h-2.5 w-2.5 fill-green-500 text-green-500" />
-        <span class="text-[13px] text-muted-foreground">Online</span>
+        <Circle class="h-2.5 w-2.5 fill-success text-success" />
+        <span class="text-sm text-muted-foreground">Online</span>
       </div>
     </div>
 
@@ -187,7 +187,7 @@ const groupedMessages = computed(() => {
       >
         <!-- Date Divider -->
         <div class="my-3 flex items-center justify-center">
-          <span class="rounded-full bg-muted-foreground/10 px-3 py-0.5 text-[11px] font-medium text-muted-foreground">
+          <span class="rounded-full bg-muted-foreground/10 px-3 py-0.5 text-xs font-medium text-muted-foreground">
             {{ formatMessageDate(group.date) }}
           </span>
         </div>
@@ -206,10 +206,10 @@ const groupedMessages = computed(() => {
             <!-- Avatar -->
             <div
               :class="[
-                'mt-auto flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[10px] font-semibold',
+                'mt-auto flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold',
                 isFromParent(msg)
-                  ? 'bg-violet-600 text-white'
-                  : 'bg-emerald-100 text-emerald-700',
+                  ? 'bg-parent text-white'
+                  : 'bg-success-light text-success-foreground',
               ]"
             >
               {{ getInitials(msg.senderName) }}
@@ -219,16 +219,16 @@ const groupedMessages = computed(() => {
             <div>
               <div
                 :class="[
-                  'rounded-2xl px-3.5 py-2.5 shadow-sm',
+                  'rounded-xl px-3.5 py-2.5 shadow-sm',
                   isFromParent(msg)
-                    ? 'rounded-br-md bg-violet-600 text-white'
+                    ? 'rounded-br-md bg-parent text-white'
                     : 'rounded-bl-md bg-white text-foreground',
                 ]"
               >
-                <p class="text-[13px] leading-relaxed">{{ msg.content }}</p>
+                <p class="text-sm leading-relaxed">{{ msg.content }}</p>
               </div>
               <p
-                class="mt-0.5 text-[10px]"
+                class="mt-0.5 text-xs"
                 :class="isFromParent(msg) ? 'text-right text-muted-foreground/70' : 'text-muted-foreground/70'"
               >
                 {{ formatMessageTime(msg.timestamp) }}
@@ -240,7 +240,7 @@ const groupedMessages = computed(() => {
     </div>
 
     <!-- Message Input -->
-    <div class="border-t border-border/60 bg-white px-3 py-2.5">
+    <div class="border-t border-border bg-white px-3 py-2.5">
       <div class="flex items-end gap-2">
         <button class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-all duration-200 hover:bg-muted">
           <Paperclip class="h-5 w-5" />
@@ -250,7 +250,7 @@ const groupedMessages = computed(() => {
             v-model="newMessage"
             placeholder="Type a message..."
             rows="1"
-            class="max-h-24 w-full resize-none rounded-2xl border border-border/60 bg-muted px-4 py-2.5 text-sm text-foreground shadow-sm outline-none placeholder:text-muted-foreground focus:border-violet-300 focus:bg-white focus:ring-2 focus:ring-primary/10"
+            class="max-h-24 w-full resize-none rounded-xl border border-border bg-muted px-4 py-2.5 text-sm text-foreground shadow-sm outline-none placeholder:text-muted-foreground focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/10"
             @keydown="handleKeydown"
           />
         </div>
@@ -258,7 +258,7 @@ const groupedMessages = computed(() => {
           class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-all duration-200"
           :class="
             newMessage.trim()
-              ? 'bg-violet-600 text-white shadow-sm active:bg-violet-700'
+              ? 'bg-parent text-white shadow-sm active:bg-parent/90'
               : 'bg-muted text-muted-foreground/30'
           "
           :disabled="!newMessage.trim()"

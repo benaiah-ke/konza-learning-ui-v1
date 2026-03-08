@@ -218,29 +218,25 @@ function handleRecordCall(id: string) {
           label="Total Arrears"
           :value="formatCompact(totalArrearsAmount)"
           :icon="CircleDollarSign"
-          icon-bg="bg-danger/10"
-          icon-color="text-danger"
+          variant="danger"
         />
         <StatCard
           label="Accounts in Arrears"
           :value="accountsInArrears.toString()"
           :icon="Users"
-          icon-bg="bg-warning/10"
-          icon-color="text-warning"
+          variant="warning"
         />
         <StatCard
           label="Promise to Pay"
           :value="promiseToPayCount.toString()"
           :icon="Handshake"
-          icon-bg="bg-info/10"
-          icon-color="text-info"
+          variant="info"
         />
         <StatCard
           label="Escalated"
           :value="escalatedCount.toString()"
           :icon="AlertTriangle"
-          icon-bg="bg-danger/10"
-          icon-color="text-danger"
+          variant="danger"
         />
       </div>
 
@@ -261,15 +257,15 @@ function handleRecordCall(id: string) {
     </div>
 
     <!-- Follow-up Queue Table -->
-    <div class="bg-white rounded-2xl border border-border/60 shadow-sm p-6">
+    <div class="card p-6">
       <div class="mb-4">
         <h3 class="font-semibold tracking-tight text-card-foreground">Follow-up Queue</h3>
-        <p class="mt-0.5 text-[13px] text-muted-foreground">
+        <p class="mt-0.5 text-sm text-muted-foreground">
           {{ queueData.length }} arrears records requiring attention
         </p>
       </div>
 
-      <div class="overflow-hidden rounded-xl border border-border/60">
+      <div class="overflow-hidden rounded-xl border border-border">
         <table class="w-full">
           <thead>
             <tr class="bg-muted/50">
@@ -301,7 +297,7 @@ function handleRecordCall(id: string) {
             <template v-for="row in queueData" :key="row.id">
               <!-- Main row -->
               <tr
-                class="border-b border-border/60 transition-all duration-200 hover:bg-muted/30"
+                class="border-b border-border transition-all duration-200 hover:bg-muted/30"
                 :class="{ 'bg-muted/20': expandedRows.has(row.id) }"
               >
                 <!-- Expand toggle -->
@@ -320,7 +316,7 @@ function handleRecordCall(id: string) {
                 </td>
                 <!-- Parent / Phone -->
                 <td class="px-4 py-3">
-                  <div class="text-[13px] text-card-foreground">{{ row.parentName }}</div>
+                  <div class="text-sm text-card-foreground">{{ row.parentName }}</div>
                   <div class="text-xs text-muted-foreground">{{ row.parentPhone }}</div>
                 </td>
                 <!-- Amount -->
@@ -346,7 +342,7 @@ function handleRecordCall(id: string) {
                 <!-- Last Contact -->
                 <td class="px-4 py-3">
                   <template v-if="row.lastContactDate">
-                    <div class="text-[13px] text-card-foreground">
+                    <div class="text-sm text-card-foreground">
                       {{ formatDate(row.lastContactDate) }}
                     </div>
                     <div class="text-xs text-muted-foreground">
@@ -385,11 +381,11 @@ function handleRecordCall(id: string) {
                 </td>
               </tr>
               <!-- Expanded notes row -->
-              <tr v-if="expandedRows.has(row.id)" class="border-b border-border/60 bg-muted/10">
+              <tr v-if="expandedRows.has(row.id)" class="border-b border-border bg-muted/10">
                 <td colspan="8" class="px-4 py-3">
-                  <div class="ml-8 rounded-xl border border-border/60 bg-card p-4">
+                  <div class="ml-8 rounded-xl border border-border bg-card p-4">
                     <p class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Notes</p>
-                    <p class="mt-1 text-[13px] text-card-foreground">
+                    <p class="mt-1 text-sm text-card-foreground">
                       {{ row.notes || 'No notes recorded for this record.' }}
                     </p>
                   </div>

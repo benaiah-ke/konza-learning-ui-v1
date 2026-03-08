@@ -203,7 +203,7 @@ function formatDate(dateStr: string): string {
     <!-- Header -->
     <div>
       <h1 class="text-2xl font-bold tracking-tight text-foreground">Tour Scheduling</h1>
-      <p class="mt-1 text-[13px] text-muted-foreground">
+      <p class="mt-1 text-sm text-muted-foreground">
         Schedule and manage campus tours for prospective families
       </p>
     </div>
@@ -244,13 +244,13 @@ function formatDate(dateStr: string): string {
     <!-- Calendar + Chart Row -->
     <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
       <!-- Monthly Calendar -->
-      <div class="lg:col-span-2 bg-white rounded-2xl border border-border/60 shadow-sm p-6">
+      <div class="lg:col-span-2 card p-6">
         <div class="flex items-center justify-between mb-5">
           <div>
             <h3 class="font-semibold tracking-tight text-foreground">March 2026</h3>
-            <p class="text-[13px] text-muted-foreground mt-0.5">Tour schedule overview</p>
+            <p class="text-sm text-muted-foreground mt-0.5">Tour schedule overview</p>
           </div>
-          <div class="flex items-center gap-3 text-[13px] text-muted-foreground">
+          <div class="flex items-center gap-3 text-sm text-muted-foreground">
             <span class="inline-flex items-center gap-1.5">
               <span class="inline-block h-2.5 w-2.5 rounded-full bg-[#C2410C]"></span>
               Tours
@@ -268,7 +268,7 @@ function formatDate(dateStr: string): string {
           <div
             v-for="day in weekDays"
             :key="day"
-            class="py-2 text-center text-[13px] font-medium text-muted-foreground uppercase tracking-wide"
+            class="py-2 text-center text-sm font-medium text-muted-foreground uppercase tracking-wide"
           >
             {{ day }}
           </div>
@@ -281,7 +281,7 @@ function formatDate(dateStr: string): string {
               'relative flex flex-col items-center justify-start rounded-xl p-2 min-h-[64px] transition-all duration-200',
               cell.day === null ? '' : 'hover:bg-muted/50',
               cell.isToday ? 'bg-info/10 ring-2 ring-info/25' : '',
-              cell.tours > 0 && !cell.isToday ? 'bg-orange-50' : '',
+              cell.tours > 0 && !cell.isToday ? 'bg-warning-light/50' : '',
             ]"
           >
             <span
@@ -294,7 +294,7 @@ function formatDate(dateStr: string): string {
               {{ cell.day }}
             </span>
             <div v-if="cell.tours > 0" class="mt-1 flex items-center gap-0.5">
-              <span class="inline-flex h-5 items-center rounded-full bg-orange-100 px-1.5 text-[10px] font-bold text-orange-700">
+              <span class="inline-flex h-5 items-center rounded-full bg-warning-light px-1.5 text-xs font-bold text-warning-foreground">
                 {{ cell.tours }} {{ cell.tours === 1 ? 'tour' : 'tours' }}
               </span>
             </div>
@@ -319,10 +319,10 @@ function formatDate(dateStr: string): string {
     </div>
 
     <!-- Upcoming Tours List -->
-    <div class="bg-white rounded-2xl border border-border/60 shadow-sm p-6">
+    <div class="card p-6">
       <div class="mb-5">
         <h3 class="font-semibold tracking-tight text-foreground">Upcoming Tours</h3>
-        <p class="mt-0.5 text-[13px] text-muted-foreground">
+        <p class="mt-0.5 text-sm text-muted-foreground">
           {{ upcomingTours.length }} tours scheduled
         </p>
       </div>
@@ -331,18 +331,18 @@ function formatDate(dateStr: string): string {
         <div
           v-for="tour in upcomingTours"
           :key="tour.id"
-          class="flex flex-col gap-3 rounded-xl border border-border/60 p-4 transition-all duration-200 hover:bg-muted/30 hover:shadow-sm sm:flex-row sm:items-center sm:justify-between"
+          class="flex flex-col gap-3 rounded-xl border border-border p-4 transition-all duration-200 hover:bg-muted/30 hover:shadow-sm sm:flex-row sm:items-center sm:justify-between"
         >
           <!-- Left: Date/Time -->
           <div class="flex items-center gap-4">
-            <div class="flex h-12 w-12 shrink-0 flex-col items-center justify-center rounded-xl bg-orange-50">
-              <CalendarDays class="h-5 w-5 text-orange-700" />
+            <div class="flex h-12 w-12 shrink-0 flex-col items-center justify-center rounded-xl bg-warning-light">
+              <CalendarDays class="h-5 w-5 text-warning-foreground" />
             </div>
             <div>
               <p class="text-sm font-semibold tracking-tight text-foreground">
                 {{ formatDate(tour.date) }}
               </p>
-              <p class="text-[13px] text-muted-foreground">{{ tour.time }}</p>
+              <p class="text-sm text-muted-foreground">{{ tour.time }}</p>
             </div>
           </div>
 
@@ -351,18 +351,18 @@ function formatDate(dateStr: string): string {
             <p class="text-sm font-medium text-foreground">
               {{ tour.parentName }}
             </p>
-            <p class="text-[13px] text-muted-foreground">
+            <p class="text-sm text-muted-foreground">
               {{ tour.childName }} (Age {{ tour.childAge }})
             </p>
           </div>
 
           <!-- Contact -->
           <div class="flex items-center gap-4">
-            <div class="flex items-center gap-1.5 text-[13px] text-muted-foreground">
+            <div class="flex items-center gap-1.5 text-sm text-muted-foreground">
               <Phone class="h-3.5 w-3.5" />
               {{ tour.phone }}
             </div>
-            <div class="flex items-center gap-1.5 text-[13px] text-muted-foreground">
+            <div class="flex items-center gap-1.5 text-sm text-muted-foreground">
               <MapPin class="h-3.5 w-3.5" />
               {{ tour.campus }}
             </div>
@@ -383,7 +383,7 @@ function formatDate(dateStr: string): string {
         class="flex flex-col items-center justify-center py-12 text-muted-foreground"
       >
         <CalendarDays class="h-8 w-8 mb-2 opacity-40" />
-        <p class="text-[13px]">No upcoming tours scheduled</p>
+        <p class="text-sm">No upcoming tours scheduled</p>
       </div>
     </div>
   </div>

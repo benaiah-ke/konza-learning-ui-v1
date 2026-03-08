@@ -130,38 +130,34 @@ function handleReconcile(txId: string) {
         label="Total Transactions"
         :value="totalTransactions.toString()"
         :icon="ArrowLeftRight"
-        icon-bg="bg-primary/10"
-        icon-color="text-primary"
+        variant="primary"
       />
       <StatCard
         label="Matched"
         :value="matchedCount.toString()"
         :icon="CheckCircle2"
-        icon-bg="bg-success/10"
-        icon-color="text-success"
+        variant="success"
       />
       <StatCard
         label="Unmatched"
         :value="unmatchedCount.toString()"
         :icon="AlertCircle"
-        icon-bg="bg-warning/10"
-        icon-color="text-warning"
+        variant="warning"
       />
       <StatCard
         label="Pending"
         :value="pendingCount.toString()"
         :icon="Clock"
-        icon-bg="bg-info/10"
-        icon-color="text-info"
+        variant="info"
       />
     </div>
 
     <!-- Table Section -->
-    <div class="bg-white rounded-2xl border border-border/60 shadow-sm p-6">
+    <div class="card p-6">
       <div class="mb-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h3 class="font-semibold tracking-tight text-card-foreground">Transaction Log</h3>
-          <p class="mt-0.5 text-[13px] text-muted-foreground">
+          <p class="mt-0.5 text-sm text-muted-foreground">
             Showing {{ totalFiltered }} of {{ totalTransactions }} transactions
           </p>
         </div>
@@ -173,7 +169,7 @@ function handleReconcile(txId: string) {
           />
           <select
             v-model="statusFilter"
-            class="rounded-xl border border-border/60 bg-card px-3 py-2 text-[13px] text-foreground transition-all duration-200 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+            class="rounded-xl border border-border bg-card px-3 py-2 text-sm text-foreground transition-all duration-200 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
           >
             <option value="all">All Statuses</option>
             <option value="matched">Matched</option>
@@ -185,7 +181,7 @@ function handleReconcile(txId: string) {
 
       <DataTable :columns="columns" :data="tableData">
         <template #cell-date="{ value }">
-          <span class="text-[13px] text-card-foreground">{{ formatDate(value) }}</span>
+          <span class="text-sm text-card-foreground">{{ formatDate(value) }}</span>
         </template>
 
         <template #cell-reference="{ value }">
@@ -228,7 +224,7 @@ function handleReconcile(txId: string) {
         <template #cell-action="{ row }">
           <button
             v-if="row.status === 'unmatched'"
-            class="rounded-xl bg-primary px-3 py-1.5 text-[13px] font-medium text-white shadow-sm transition-all duration-200 hover:bg-primary/90"
+            class="rounded-xl bg-primary px-3 py-1.5 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:bg-primary/90"
             @click="handleReconcile(row.id)"
           >
             Reconcile

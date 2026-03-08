@@ -64,11 +64,11 @@ const studentMilestones = computed(() =>
 type DomainKey = 'physical' | 'cognitive' | 'social' | 'language' | 'creative'
 
 const domainConfig: Record<DomainKey, { label: string; icon: typeof Dumbbell; color: string; bg: string; chartColor: string }> = {
-  physical: { label: 'Physical', icon: Dumbbell, color: 'text-blue-600', bg: 'bg-blue-100', chartColor: '#2563EB' },
-  cognitive: { label: 'Cognitive', icon: Brain, color: 'text-green-600', bg: 'bg-green-100', chartColor: '#16A34A' },
-  social: { label: 'Social', icon: Users, color: 'text-purple-600', bg: 'bg-purple-100', chartColor: '#7C3AED' },
-  language: { label: 'Language', icon: Languages, color: 'text-amber-600', bg: 'bg-amber-100', chartColor: '#D97706' },
-  creative: { label: 'Creative', icon: Paintbrush, color: 'text-pink-600', bg: 'bg-pink-100', chartColor: '#DB2777' },
+  physical: { label: 'Physical', icon: Dumbbell, color: 'text-info', bg: 'bg-info-light', chartColor: '#2563EB' },
+  cognitive: { label: 'Cognitive', icon: Brain, color: 'text-success', bg: 'bg-success-light', chartColor: '#16A34A' },
+  social: { label: 'Social', icon: Users, color: 'text-primary', bg: 'bg-primary/10', chartColor: '#1B4D3E' },
+  language: { label: 'Language', icon: Languages, color: 'text-warning', bg: 'bg-warning-light', chartColor: '#D97706' },
+  creative: { label: 'Creative', icon: Paintbrush, color: 'text-danger', bg: 'bg-danger-light', chartColor: '#DB2777' },
 }
 
 const domains: DomainKey[] = ['physical', 'cognitive', 'social', 'language', 'creative']
@@ -110,18 +110,14 @@ const radarOptions = computed(() => ({
     type: 'radar' as const,
     height: 280,
   },
-  colors: ['#7C3AED'],
   fill: {
     opacity: 0.25,
-    colors: ['#7C3AED'],
   },
   stroke: {
     width: 2,
-    colors: ['#7C3AED'],
   },
   markers: {
     size: 4,
-    colors: ['#7C3AED'],
     strokeColors: '#fff',
     strokeWidth: 2,
   },
@@ -178,21 +174,21 @@ function formatDate(dateStr: string): string {
 <template>
   <div class="space-y-5 pb-4">
     <!-- Progress Summary Card -->
-    <div class="rounded-2xl bg-gradient-to-br from-violet-600 to-violet-700 p-4 text-white shadow-lg">
+    <div class="rounded-xl bg-parent p-4 text-white shadow-lg">
       <div class="flex items-center gap-3">
-        <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/20 text-xl font-bold">
+        <div class="flex h-14 w-14 items-center justify-center rounded-xl bg-white/20 text-xl font-bold">
           AW
         </div>
         <div class="flex-1">
           <h2 class="text-lg font-bold tracking-tight">{{ childName }}</h2>
-          <p class="text-[13px] text-violet-200">{{ childAge }} &middot; {{ childClass }}</p>
-          <p class="text-xs text-violet-300">{{ childCampus }}</p>
+          <p class="text-sm text-white/70">{{ childAge }} &middot; {{ childClass }}</p>
+          <p class="text-xs text-white/50">{{ childCampus }}</p>
         </div>
       </div>
       <div class="mt-4 flex items-center gap-3 rounded-xl bg-white/10 p-3">
         <div class="flex-1">
           <div class="flex items-center justify-between text-sm">
-            <span class="text-violet-200">Overall Progress</span>
+            <span class="text-white/70">Overall Progress</span>
             <span class="font-bold tracking-tight text-white">{{ overallProgress }}%</span>
           </div>
           <div class="mt-2 h-2 overflow-hidden rounded-full bg-white/20">
@@ -203,17 +199,17 @@ function formatDate(dateStr: string): string {
           </div>
         </div>
         <div class="flex flex-col items-center rounded-lg bg-white/10 px-3 py-1.5">
-          <Star class="h-4 w-4 text-amber-300" />
+          <Star class="h-4 w-4 text-white/80" />
           <span class="mt-0.5 text-lg font-bold">{{ achievedCount }}</span>
-          <span class="text-[10px] text-violet-300">of {{ studentMilestones.length }}</span>
+          <span class="text-xs text-white/50">of {{ studentMilestones.length }}</span>
         </div>
       </div>
     </div>
 
     <!-- Radar Chart -->
-    <div class="rounded-2xl border border-border/60 bg-white p-4 shadow-sm">
+    <div class="card p-4">
       <h3 class="text-sm font-semibold tracking-tight text-foreground">Development Overview</h3>
-      <p class="text-[13px] text-muted-foreground">Progress across 5 key domains</p>
+      <p class="text-sm text-muted-foreground">Progress across 5 key domains</p>
       <div class="mt-2">
         <VueApexCharts
           type="radar"
@@ -231,7 +227,7 @@ function formatDate(dateStr: string): string {
         <div
           v-for="domain in domains"
           :key="domain"
-          class="overflow-hidden rounded-2xl border border-border/60 bg-white shadow-sm"
+          class="overflow-hidden card"
         >
           <!-- Domain Header -->
           <button
@@ -278,7 +274,7 @@ function formatDate(dateStr: string): string {
           </button>
 
           <!-- Milestones List -->
-          <div v-if="expandedDomain === domain" class="border-t border-border/60 px-3 pb-3">
+          <div v-if="expandedDomain === domain" class="border-t border-border px-3 pb-3">
             <div class="mt-2 space-y-2">
               <div
                 v-for="milestone in getDomainMilestones(domain)"
@@ -314,13 +310,13 @@ function formatDate(dateStr: string): string {
                     class="mt-1 flex items-center gap-1"
                   >
                     <Calendar class="h-3 w-3 text-muted-foreground/50" />
-                    <span class="text-[11px] text-muted-foreground/70">
+                    <span class="text-xs text-muted-foreground/70">
                       {{ formatDate(milestone.achievedDate) }}
                     </span>
                   </div>
                   <p
                     v-if="!milestone.achieved && milestone.notes"
-                    class="mt-1 text-[11px] italic text-muted-foreground/70"
+                    class="mt-1 text-xs italic text-muted-foreground/70"
                   >
                     {{ milestone.notes }}
                   </p>

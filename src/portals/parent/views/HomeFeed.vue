@@ -47,11 +47,11 @@ const todayActivities = computed(() => {
 })
 
 const activityConfig: Record<string, { icon: typeof UtensilsCrossed; color: string; bg: string }> = {
-  meal: { icon: UtensilsCrossed, color: 'text-orange-600', bg: 'bg-orange-100' },
-  nap: { icon: Moon, color: 'text-purple-600', bg: 'bg-purple-100' },
-  activity: { icon: Palette, color: 'text-blue-600', bg: 'bg-blue-100' },
-  learning: { icon: BookOpen, color: 'text-green-600', bg: 'bg-green-100' },
-  outdoor: { icon: TreePine, color: 'text-teal-600', bg: 'bg-teal-100' },
+  meal: { icon: UtensilsCrossed, color: 'text-warning', bg: 'bg-warning-light' },
+  nap: { icon: Moon, color: 'text-muted-foreground', bg: 'bg-muted' },
+  activity: { icon: Palette, color: 'text-info', bg: 'bg-info-light' },
+  learning: { icon: BookOpen, color: 'text-success', bg: 'bg-success-light' },
+  outdoor: { icon: TreePine, color: 'text-primary', bg: 'bg-primary/10' },
 }
 
 function formatTime(time: string): string {
@@ -63,9 +63,9 @@ function formatTime(time: string): string {
 }
 
 const upcomingEvents = [
-  { title: 'Sports Day', date: 'March 15, 2026', icon: Trophy, color: 'text-amber-600', bg: 'bg-amber-100' },
-  { title: 'Parent-Teacher Conference', date: 'March 22, 2026', icon: CalendarDays, color: 'text-violet-600', bg: 'bg-violet-100' },
-  { title: 'End of Term 1', date: 'April 3, 2026', icon: CalendarDays, color: 'text-emerald-600', bg: 'bg-emerald-100' },
+  { title: 'Sports Day', date: 'March 15, 2026', icon: Trophy, color: 'text-muted-foreground', bg: 'bg-muted' },
+  { title: 'Parent-Teacher Conference', date: 'March 22, 2026', icon: CalendarDays, color: 'text-muted-foreground', bg: 'bg-muted' },
+  { title: 'End of Term 1', date: 'April 3, 2026', icon: CalendarDays, color: 'text-muted-foreground', bg: 'bg-muted' },
 ]
 
 const parentNotifications = computed(() => {
@@ -82,65 +82,65 @@ const notifIcon: Record<string, typeof Info> = {
 }
 
 const notifStyle: Record<string, string> = {
-  info: 'border-l-blue-500 bg-blue-50',
-  warning: 'border-l-amber-500 bg-amber-50',
-  success: 'border-l-green-500 bg-green-50',
-  danger: 'border-l-red-500 bg-red-50',
+  info: 'border-l-info bg-info-light',
+  warning: 'border-l-warning bg-warning-light',
+  success: 'border-l-success bg-success-light',
+  danger: 'border-l-danger bg-danger-light',
 }
 
 const notifIconColor: Record<string, string> = {
-  info: 'text-blue-500',
-  warning: 'text-amber-500',
-  success: 'text-green-500',
-  danger: 'text-red-500',
+  info: 'text-info',
+  warning: 'text-warning',
+  success: 'text-success',
+  danger: 'text-danger',
 }
 </script>
 
 <template>
   <div class="space-y-5 pb-4">
     <!-- Greeting Banner -->
-    <div class="rounded-2xl bg-gradient-to-br from-violet-600 to-violet-700 p-4 text-white shadow-lg">
+    <div class="rounded-xl bg-parent p-4 text-white shadow-lg">
       <div class="flex items-center gap-3">
         <div class="flex h-12 w-12 items-center justify-center rounded-full bg-white/20 text-lg font-bold">
           GM
         </div>
         <div class="flex-1">
           <h1 class="text-lg font-bold tracking-tight">{{ greeting }}, {{ parentName }}</h1>
-          <p class="text-[13px] text-violet-200">{{ formattedDate }}</p>
+          <p class="text-sm text-white/70">{{ formattedDate }}</p>
         </div>
-        <Sun class="h-8 w-8 text-amber-300" />
+        <Sun class="h-8 w-8 text-white/80" />
       </div>
-      <div class="mt-3 flex items-center gap-2 rounded-xl bg-white/10 px-3 py-2">
+      <div class="mt-3 flex items-center gap-2 rounded-lg bg-white/10 px-3 py-2">
         <div class="flex h-7 w-7 items-center justify-center rounded-full bg-white/20 text-xs font-bold">
           AW
         </div>
         <span class="text-sm font-medium">{{ childName }}'s Day</span>
-        <span class="ml-auto text-xs text-violet-200">Butterfly Class</span>
+        <span class="ml-auto text-xs text-white/70">Butterfly Class</span>
       </div>
     </div>
 
     <!-- Quick Stats Row -->
     <div class="grid grid-cols-3 gap-2">
-      <div class="rounded-2xl border border-border/60 bg-white p-3 shadow-sm">
-        <div class="flex h-8 w-8 items-center justify-center rounded-full bg-orange-100">
-          <Flame class="h-4 w-4 text-orange-600" />
+      <div class="card p-3">
+        <div class="flex h-8 w-8 items-center justify-center rounded-full bg-warning-light">
+          <Flame class="h-4 w-4 text-warning" />
         </div>
         <p class="mt-2 text-lg font-bold tracking-tight text-foreground">12</p>
-        <p class="text-[11px] text-muted-foreground">Day streak</p>
+        <p class="text-xs text-muted-foreground">Day streak</p>
       </div>
-      <div class="rounded-2xl border border-border/60 bg-white p-3 shadow-sm">
-        <div class="flex h-8 w-8 items-center justify-center rounded-full bg-violet-100">
-          <Trophy class="h-4 w-4 text-violet-600" />
+      <div class="card p-3">
+        <div class="flex h-8 w-8 items-center justify-center rounded-full bg-muted">
+          <Trophy class="h-4 w-4 text-muted-foreground" />
         </div>
         <p class="mt-2 text-xs font-semibold tracking-tight text-foreground leading-tight">Sports Day</p>
-        <p class="text-[11px] text-muted-foreground">Mar 15</p>
+        <p class="text-xs text-muted-foreground">Mar 15</p>
       </div>
-      <div class="rounded-2xl border border-border/60 bg-white p-3 shadow-sm">
-        <div class="flex h-8 w-8 items-center justify-center rounded-full bg-green-100">
-          <CreditCard class="h-4 w-4 text-green-600" />
+      <div class="card p-3">
+        <div class="flex h-8 w-8 items-center justify-center rounded-full bg-success-light">
+          <CreditCard class="h-4 w-4 text-success" />
         </div>
         <StatusBadge status="success" label="Paid" size="sm" class="mt-2" />
-        <p class="text-[11px] text-muted-foreground mt-0.5">Fee status</p>
+        <p class="text-xs text-muted-foreground mt-0.5">Fee status</p>
       </div>
     </div>
 
@@ -148,17 +148,17 @@ const notifIconColor: Record<string, string> = {
     <div>
       <div class="mb-3 flex items-center justify-between">
         <h2 class="text-sm font-semibold tracking-tight text-foreground">Today's Activities</h2>
-        <span class="text-[13px] text-muted-foreground">{{ todayActivities.length }} updates</span>
+        <span class="text-sm text-muted-foreground">{{ todayActivities.length }} updates</span>
       </div>
       <div class="space-y-2">
         <div
           v-for="activity in todayActivities"
           :key="activity.id"
-          class="flex gap-3 rounded-2xl border border-border/60 bg-white p-3 shadow-sm transition-all duration-200"
+          class="flex gap-3 card p-3 transition-all duration-200"
         >
           <div class="flex flex-col items-center pt-0.5">
-            <span class="text-[11px] font-medium text-muted-foreground">{{ formatTime(activity.time) }}</span>
-            <div class="mt-1.5 h-full w-px bg-border/60" />
+            <span class="text-xs font-medium text-muted-foreground">{{ formatTime(activity.time) }}</span>
+            <div class="mt-1.5 h-full w-px bg-border" />
           </div>
           <div
             :class="[
@@ -183,7 +183,7 @@ const notifIconColor: Record<string, string> = {
     <div>
       <div class="mb-3 flex items-center justify-between">
         <h2 class="text-sm font-semibold tracking-tight text-foreground">Upcoming Events</h2>
-        <button class="flex items-center text-xs font-medium text-violet-600 transition-all duration-200 hover:text-violet-700">
+        <button class="flex items-center text-xs font-medium text-parent transition-all duration-200 hover:text-parent/80">
           View all
           <ChevronRight class="h-3.5 w-3.5" />
         </button>
@@ -192,7 +192,7 @@ const notifIconColor: Record<string, string> = {
         <div
           v-for="event in upcomingEvents"
           :key="event.title"
-          class="flex items-center gap-3 rounded-2xl border border-border/60 bg-white p-3 shadow-sm transition-all duration-200"
+          class="flex items-center gap-3 card p-3 transition-all duration-200"
         >
           <div
             :class="[
@@ -204,7 +204,7 @@ const notifIconColor: Record<string, string> = {
           </div>
           <div class="flex-1">
             <p class="text-sm font-medium text-foreground">{{ event.title }}</p>
-            <p class="text-[13px] text-muted-foreground">{{ event.date }}</p>
+            <p class="text-sm text-muted-foreground">{{ event.date }}</p>
           </div>
           <ChevronRight class="h-4 w-4 text-muted-foreground/50" />
         </div>
@@ -219,7 +219,7 @@ const notifIconColor: Record<string, string> = {
           v-for="notif in parentNotifications"
           :key="notif.id"
           :class="[
-            'rounded-2xl border-l-4 p-3 shadow-sm',
+            'rounded-xl border-l-4 p-3 shadow-sm',
             notifStyle[notif.type],
           ]"
         >
@@ -231,7 +231,7 @@ const notifIconColor: Record<string, string> = {
             <div>
               <p class="text-sm font-medium text-foreground">{{ notif.title }}</p>
               <p class="mt-0.5 text-xs leading-relaxed text-muted-foreground">{{ notif.message }}</p>
-              <p class="mt-1.5 text-[11px] text-muted-foreground/70">{{ notif.date }}</p>
+              <p class="mt-1.5 text-xs text-muted-foreground/70">{{ notif.date }}</p>
             </div>
           </div>
         </div>

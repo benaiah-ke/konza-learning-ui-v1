@@ -189,29 +189,25 @@ const detailData = computed(() =>
         label="Total Arrears"
         :value="formatCompact(totalArrearsAmount)"
         :icon="CircleDollarSign"
-        icon-bg="bg-danger/10"
-        icon-color="text-danger"
+        variant="danger"
       />
       <StatCard
         label="Accounts in Arrears"
         :value="accountsInArrears.toString()"
         :icon="Users"
-        icon-bg="bg-warning/10"
-        icon-color="text-warning"
+        variant="warning"
       />
       <StatCard
         label="Avg Days Outstanding"
         :value="`${avgDaysOutstanding} days`"
         :icon="Clock"
-        icon-bg="bg-info/10"
-        icon-color="text-info"
+        variant="info"
       />
       <StatCard
         label="Highest Single Arrear"
         :value="formatCompact(highestArrear)"
         :icon="AlertTriangle"
-        icon-bg="bg-danger/10"
-        icon-color="text-danger"
+        variant="danger"
       />
     </div>
 
@@ -231,10 +227,10 @@ const detailData = computed(() =>
     </ChartCard>
 
     <!-- Arrears detail table -->
-    <div class="bg-white rounded-2xl border border-border/60 shadow-sm p-6">
+    <div class="card p-6">
       <div class="mb-4">
         <h3 class="font-semibold tracking-tight text-card-foreground">Arrears Detail</h3>
-        <p class="mt-0.5 text-[13px] text-muted-foreground">
+        <p class="mt-0.5 text-sm text-muted-foreground">
           Individual arrears records with contact history
         </p>
       </div>
@@ -265,7 +261,7 @@ const detailData = computed(() =>
         </template>
 
         <template #cell-notes="{ value }">
-          <span class="max-w-xs truncate text-[13px] text-muted-foreground">{{ value }}</span>
+          <span class="max-w-xs truncate text-sm text-muted-foreground">{{ value }}</span>
         </template>
       </DataTable>
     </div>
