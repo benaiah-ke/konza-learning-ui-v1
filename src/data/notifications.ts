@@ -1,0 +1,68 @@
+import type { Notification } from '@/types'
+
+export const notifications: Notification[] = [
+  {
+    id: 'notif-001',
+    title: 'Term 1 Fee Reminder',
+    message: 'Outstanding Term 1 2026 balances are now overdue. Please clear all arrears before 15 March to avoid late payment penalties.',
+    type: 'warning',
+    date: '2026-03-01',
+    read: false,
+  },
+  {
+    id: 'notif-002',
+    title: 'Sports Day - Karen Campus',
+    message: 'Annual Sports Day is scheduled for Friday 20 March at Karen campus. Parents are welcome to attend from 9:00 AM. Light refreshments will be provided.',
+    type: 'info',
+    date: '2026-03-05',
+    read: false,
+  },
+  {
+    id: 'notif-003',
+    title: 'New Staff Member Onboarded',
+    message: 'Welcome to Miriam Gathogo who joins Westlands campus as Assistant Teacher for the Elephant Class, filling in during Diana Kendi\'s maternity leave.',
+    type: 'success',
+    date: '2026-02-28',
+    read: true,
+  },
+  {
+    id: 'notif-004',
+    title: 'Unmatched M-Pesa Payments',
+    message: '2 M-Pesa transactions totalling KES 165,000 remain unmatched. Please review and reconcile in the Finance portal.',
+    type: 'danger',
+    date: '2026-03-06',
+    read: false,
+  },
+  {
+    id: 'notif-005',
+    title: 'Parent-Teacher Conferences',
+    message: 'Term 1 parent-teacher conferences are scheduled for 25-27 March. Teachers should prepare progress reports for all students by 20 March.',
+    type: 'info',
+    date: '2026-03-04',
+    read: true,
+  },
+  {
+    id: 'notif-006',
+    title: 'Admissions Target Update',
+    message: 'Karen campus is at 82% capacity. Westlands is at 90%. Focus admissions outreach on Karen campus for Term 2 intake.',
+    type: 'info',
+    date: '2026-03-02',
+    read: true,
+  },
+  {
+    id: 'notif-007',
+    title: 'Leave Request Pending',
+    message: '3 staff leave requests are pending approval. Please review in the Staff Management section.',
+    type: 'warning',
+    date: '2026-03-07',
+    read: false,
+  },
+  {
+    id: 'notif-008',
+    title: 'Revenue Collection Target Met',
+    message: 'February 2026 collections reached 94.8% of target. Well done to the finance team for improved follow-up processes.',
+    type: 'success',
+    date: '2026-03-01',
+    read: true,
+  },
+]
