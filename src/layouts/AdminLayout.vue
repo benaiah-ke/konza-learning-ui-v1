@@ -39,49 +39,45 @@ const navItems = [
     <!-- Sidebar -->
     <aside
       :class="[
-        'fixed inset-y-0 left-0 z-40 flex w-64 flex-col shadow-xl shadow-black/10 transition-transform duration-300 ease-in-out lg:static lg:translate-x-0',
+        'fixed inset-y-0 left-0 z-40 flex w-[280px] flex-col shadow-xl shadow-black/10 transition-transform duration-300 ease-in-out lg:static lg:translate-x-0',
         sidebarOpen ? 'translate-x-0' : '-translate-x-full',
       ]"
       style="background: linear-gradient(180deg, #C2410C 0%, #9A3309 100%)"
     >
       <!-- Logo -->
-      <div class="px-5 pb-4 pt-6">
+      <div class="px-6 py-6">
         <div class="flex items-center gap-3">
-          <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-white/15 font-bold text-white ring-1 ring-white/20 backdrop-blur-sm">
+          <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-white/15 font-bold text-white ring-1 ring-white/20 backdrop-blur-sm">
             K
           </div>
-          <span class="text-lg font-semibold tracking-tight text-white">Konza Learning</span>
+          <span class="text-lg font-bold tracking-tight text-white">Konza Learning</span>
         </div>
-        <div class="mt-4 border-b border-white/10" />
+        <div class="mt-5 border-b border-white/10" />
       </div>
 
       <!-- Nav items -->
-      <nav class="flex-1 space-y-1 px-3 py-2">
+      <nav class="flex-1 space-y-1 px-4 py-4">
         <RouterLink
           v-for="item in navItems"
           :key="item.to"
           :to="item.to"
-          class="group flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-[13px] font-medium text-white/60 transition-all duration-200 hover:bg-white/[0.08] hover:text-white"
-          active-class="!bg-white/[0.12] !text-white shadow-sm shadow-black/10"
+          class="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-white/60 transition-all duration-200 hover:bg-white/[0.08] hover:text-white"
+          active-class="!bg-white/[0.15] !text-white shadow-sm shadow-black/10"
           @click="sidebarOpen = false"
         >
-          <span
-            class="absolute left-0 h-6 w-[3px] rounded-r-full bg-amber-400 opacity-0 transition-opacity duration-200"
-            :class="{ '!opacity-100': $route.path === item.to || (item.to !== '/admin' && $route.path.startsWith(item.to)) || (item.to === '/admin' && $route.path === '/admin') }"
-          />
-          <component :is="item.icon" class="h-[18px] w-[18px] shrink-0" />
+          <component :is="item.icon" class="h-5 w-5 shrink-0" />
           {{ item.label }}
         </RouterLink>
       </nav>
 
       <!-- Back to portal -->
-      <div class="px-3 pb-5 pt-2">
+      <div class="px-4 pb-6">
         <div class="mb-3 border-t border-white/10" />
         <RouterLink
           to="/"
-          class="group flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-[13px] font-medium text-white/50 transition-all duration-200 hover:bg-white/[0.08] hover:text-white"
+          class="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-white/50 transition-all duration-200 hover:bg-white/[0.08] hover:text-white"
         >
-          <ArrowLeft class="h-[18px] w-[18px] shrink-0 transition-transform duration-200 group-hover:-translate-x-0.5" />
+          <ArrowLeft class="h-5 w-5 shrink-0 transition-transform duration-200 group-hover:-translate-x-0.5" />
           Back to Portal
         </RouterLink>
       </div>
@@ -90,10 +86,10 @@ const navItems = [
     <!-- Main area -->
     <div class="flex flex-1 flex-col overflow-hidden">
       <!-- Top bar -->
-      <header class="flex h-16 items-center justify-between border-b border-border/40 bg-white/95 px-4 backdrop-blur-sm lg:px-6">
+      <header class="flex h-16 items-center justify-between border-b border-border bg-white/95 px-6 backdrop-blur-sm lg:px-8">
         <div class="flex items-center gap-3">
           <button
-            class="rounded-xl p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground lg:hidden"
+            class="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground lg:hidden"
             @click="sidebarOpen = !sidebarOpen"
           >
             <Menu v-if="!sidebarOpen" class="h-5 w-5" />
@@ -102,13 +98,12 @@ const navItems = [
           <h1 class="text-lg font-semibold tracking-tight text-foreground lg:hidden">Dashboard</h1>
         </div>
         <div class="flex items-center gap-3">
-          <button class="relative rounded-xl p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+          <button class="relative rounded-lg p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
             <Bell class="h-5 w-5" />
-            <span class="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white" />
+            <span class="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-danger ring-2 ring-white" />
           </button>
           <div
-            class="flex h-9 w-9 items-center justify-center rounded-full text-sm font-semibold text-white ring-2 ring-white/20"
-            style="background-color: #C2410C"
+            class="flex h-10 w-10 items-center justify-center rounded-full bg-admissions text-sm font-semibold text-white ring-2 ring-border"
           >
             {{ userInitials }}
           </div>
