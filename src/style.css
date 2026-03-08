@@ -1,0 +1,73 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+
+  --color-primary: #1B4D3E;
+  --color-primary-light: #2D7A5F;
+  --color-primary-foreground: #FFFFFF;
+
+  --color-secondary: #F59E0B;
+  --color-secondary-light: #FBBF24;
+  --color-secondary-foreground: #1A1A1A;
+
+  --color-background: #FAFAF8;
+  --color-foreground: #1A1A1A;
+  --color-muted: #F5F5F0;
+  --color-muted-foreground: #737373;
+  --color-border: #E5E5E0;
+
+  --color-success: #16A34A;
+  --color-success-light: #DCFCE7;
+  --color-warning: #F59E0B;
+  --color-warning-light: #FEF3C7;
+  --color-danger: #DC2626;
+  --color-danger-light: #FEE2E2;
+  --color-info: #0EA5E9;
+  --color-info-light: #E0F2FE;
+
+  --color-executive: #1B4D3E;
+  --color-finance: #1E3A5F;
+  --color-parent: #7C3AED;
+  --color-teacher: #0891B2;
+  --color-admissions: #C2410C;
+
+  --color-card: #FFFFFF;
+  --color-card-foreground: #1A1A1A;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#app {
+  min-height: 100vh;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-muted-foreground);
+}
