@@ -6,6 +6,7 @@ import {
   Building2,
   TrendingUp,
   AlertTriangle,
+  Wallet,
   GraduationCap,
   Bell,
   ArrowLeft,
@@ -25,6 +26,7 @@ const navItems = [
   { label: 'Campus Performance', to: '/executive/campus-performance', icon: Building2 },
   { label: 'Revenue Forecasting', to: '/executive/revenue-forecasting', icon: TrendingUp },
   { label: 'Arrears Aging', to: '/executive/arrears-aging', icon: AlertTriangle },
+  { label: 'Expenses', to: '/executive/expenses', icon: Wallet },
   { label: 'Academic Performance', to: '/executive/academic-performance', icon: GraduationCap },
 ]
 
