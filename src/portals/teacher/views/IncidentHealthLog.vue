@@ -1,11 +1,18 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, reactive } from 'vue'
 import { students } from '@/data/students'
 import { incidents as allIncidents } from '@/data/milestones'
 import type { Incident } from '@/types'
 import StatCard from '@/components/shared/StatCard.vue'
 import StatusBadge from '@/components/shared/StatusBadge.vue'
 import DataTable from '@/components/shared/DataTable.vue'
+import AppModal from '@/components/shared/AppModal.vue'
+import FormSelect from '@/components/shared/FormSelect.vue'
+import FormTextarea from '@/components/shared/FormTextarea.vue'
+import FormCheckbox from '@/components/shared/FormCheckbox.vue'
+import { useToast } from '@/composables/useToast'
+import { useConfirm } from '@/composables/useConfirm'
+import { generateId } from '@/utils/generateId'
 import {
   AlertTriangle,
   FileWarning,
@@ -13,6 +20,8 @@ import {
   CheckCircle,
   XCircle,
   Plus,
+  Pencil,
+  Trash2,
 } from 'lucide-vue-next'
 
 // Filter students for Butterfly class at Karen campus
@@ -59,6 +68,7 @@ const columns = [
   { key: 'severity', label: 'Severity' },
   { key: 'description', label: 'Description' },
   { key: 'parentNotified', label: 'Parent Notified', align: 'center' as const },
+  { key: 'actions', label: 'Actions', align: 'center' as const },
 ]
 
 // Table data
@@ -100,8 +110,34 @@ function getSeverityBadge(severity: string): { status: 'info' | 'warning' | 'dan
   }
 }
 
-// New Incident Form
-const newIncident = ref({
+// ── Modal CRUD ─────────────────────────────────────────────
+const toast = useToast()
+const { confirm } = useConfirm()
+
+const showIncidentModal = ref(false)
+const editingIncidentId = ref<string | null>(null)
+
+const studentOptions = computed(() =>
+  classStudents.value.map((s) => ({
+    value: s.id,
+    label: `${s.firstName} ${s.lastName}`,
+  })),
+)
+
+const typeOptions = [
+  { value: 'injury', label: 'Injury' },
+  { value: 'health', label: 'Health' },
+  { value: 'behavioral', label: 'Behavioral' },
+  { value: 'other', label: 'Other' },
+]
+
+const severityOptions = [
+  { value: 'low', label: 'Low' },
+  { value: 'medium', label: 'Medium' },
+  { value: 'high', label: 'High' },
+]
+
+const defaultIncidentForm = () => ({
   studentId: classStudents.value[0]?.id ?? '',
   type: 'injury' as Incident['type'],
   severity: 'low' as Incident['severity'],
@@ -110,43 +146,97 @@ const newIncident = ref({
   parentNotified: false,
 })
 
-function submitIncident() {
-  if (!newIncident.value.description.trim()) return
+const incidentForm = reactive(defaultIncidentForm())
 
-  const incident: Incident = {
-    id: `inc-${Date.now()}`,
-    studentId: newIncident.value.studentId,
-    type: newIncident.value.type,
-    severity: newIncident.value.severity,
-    description: newIncident.value.description,
-    actionTaken: newIncident.value.actionTaken,
-    reportedBy: 'stf-001',
-    date: new Date().toISOString().split('T')[0] ?? '',
-    parentNotified: newIncident.value.parentNotified,
-  }
-
-  incidentsData.value.unshift(incident)
-
-  // Reset form
-  newIncident.value = {
-    studentId: classStudents.value[0]?.id ?? '',
-    type: 'injury',
-    severity: 'low',
-    description: '',
-    actionTaken: '',
-    parentNotified: false,
-  }
+function openCreateModal() {
+  editingIncidentId.value = null
+  Object.assign(incidentForm, defaultIncidentForm())
+  showIncidentModal.value = true
 }
+
+function openEditModal(incident: Incident) {
+  editingIncidentId.value = incident.id
+  Object.assign(incidentForm, {
+    studentId: incident.studentId,
+    type: incident.type,
+    severity: incident.severity,
+    description: incident.description,
+    actionTaken: incident.actionTaken,
+    parentNotified: incident.parentNotified,
+  })
+  showIncidentModal.value = true
+}
+
+function saveIncident() {
+  if (!incidentForm.description.trim()) return
+
+  if (editingIncidentId.value) {
+    // Update existing
+    const index = incidentsData.value.findIndex((i) => i.id === editingIncidentId.value)
+    const existing = index !== -1 ? incidentsData.value[index] : undefined
+    if (existing) {
+      incidentsData.value[index] = {
+        ...existing,
+        studentId: incidentForm.studentId,
+        type: incidentForm.type,
+        severity: incidentForm.severity,
+        description: incidentForm.description,
+        actionTaken: incidentForm.actionTaken,
+        parentNotified: incidentForm.parentNotified,
+      }
+    }
+    toast.success('Incident updated successfully')
+  } else {
+    // Create new
+    const incident: Incident = {
+      id: generateId('inc'),
+      studentId: incidentForm.studentId,
+      type: incidentForm.type,
+      severity: incidentForm.severity,
+      description: incidentForm.description,
+      actionTaken: incidentForm.actionTaken,
+      reportedBy: 'stf-001',
+      date: new Date().toISOString().slice(0, 10) ?? '',
+      parentNotified: incidentForm.parentNotified,
+    }
+    incidentsData.value.unshift(incident)
+    toast.success('Incident reported successfully')
+  }
+
+  showIncidentModal.value = false
+}
+
+async function deleteIncident(incidentId: string) {
+  const ok = await confirm({
+    title: 'Delete Incident',
+    message: 'Are you sure you want to delete this incident? This action cannot be undone.',
+    variant: 'danger',
+  })
+  if (!ok) return
+
+  incidentsData.value = incidentsData.value.filter((i) => i.id !== incidentId)
+  toast.success('Incident deleted')
+}
+
 </script>
 
 <template>
   <div class="space-y-6">
     <!-- Page Header -->
-    <div>
-      <h1 class="text-2xl font-bold tracking-tight text-foreground">Incident & Health Log</h1>
-      <p class="text-sm text-muted-foreground">
-        Log incidents, health observations, and medication records
-      </p>
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <h1 class="text-2xl font-bold tracking-tight text-foreground">Incident & Health Log</h1>
+        <p class="text-sm text-muted-foreground">
+          Log incidents, health observations, and medication records
+        </p>
+      </div>
+      <button
+        class="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:bg-primary/90"
+        @click="openCreateModal"
+      >
+        <Plus class="h-4 w-4" />
+        Report Incident
+      </button>
     </div>
 
     <!-- Stats Row -->
@@ -210,141 +300,100 @@ function submitIncident() {
             <XCircle v-else class="h-5 w-5 text-danger" />
           </div>
         </template>
+        <template #cell-actions="{ row }">
+          <div class="flex items-center justify-center gap-1">
+            <button
+              class="rounded-lg p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              title="Edit"
+              @click="openEditModal(row as unknown as Incident)"
+            >
+              <Pencil class="h-4 w-4" />
+            </button>
+            <button
+              class="rounded-lg p-1.5 text-muted-foreground transition-colors hover:bg-danger/10 hover:text-danger"
+              title="Delete"
+              @click="deleteIncident(row.id)"
+            >
+              <Trash2 class="h-4 w-4" />
+            </button>
+          </div>
+        </template>
       </DataTable>
     </div>
 
-    <!-- New Incident Form -->
-    <div class="card p-6">
-      <div class="mb-5 flex items-center gap-2">
-        <Plus class="h-5 w-5 text-primary" />
-        <h2 class="text-lg font-semibold tracking-tight text-foreground">Report New Incident</h2>
-      </div>
-
+    <!-- Incident Create/Edit Modal -->
+    <AppModal
+      :open="showIncidentModal"
+      :title="editingIncidentId ? 'Edit Incident' : 'Report New Incident'"
+      :subtitle="editingIncidentId ? 'Update the incident details' : 'Log an incident, health observation, or behavioral note'"
+      size="lg"
+      @update:open="showIncidentModal = $event"
+    >
       <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <!-- Student Selector -->
-        <div>
-          <label
-            class="mb-1.5 block text-sm font-medium text-foreground"
-            for="incident-student"
-          >
-            Student
-          </label>
-          <select
-            id="incident-student"
-            v-model="newIncident.studentId"
-            class="w-full rounded-xl border border-border bg-white px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
-          >
-            <option
-              v-for="student in classStudents"
-              :key="student.id"
-              :value="student.id"
-            >
-              {{ student.firstName }} {{ student.lastName }}
-            </option>
-          </select>
-        </div>
-
-        <!-- Type Selector -->
-        <div>
-          <label
-            class="mb-1.5 block text-sm font-medium text-foreground"
-            for="incident-type"
-          >
-            Type
-          </label>
-          <select
-            id="incident-type"
-            v-model="newIncident.type"
-            class="w-full rounded-xl border border-border bg-white px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
-          >
-            <option value="injury">Injury</option>
-            <option value="health">Health</option>
-            <option value="behavioral">Behavioral</option>
-            <option value="other">Other</option>
-          </select>
-        </div>
-
-        <!-- Severity Selector -->
-        <div>
-          <label
-            class="mb-1.5 block text-sm font-medium text-foreground"
-            for="incident-severity"
-          >
-            Severity
-          </label>
-          <select
-            id="incident-severity"
-            v-model="newIncident.severity"
-            class="w-full rounded-xl border border-border bg-white px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
-          >
-            <option value="low">Low</option>
-            <option value="medium">Medium</option>
-            <option value="high">High</option>
-          </select>
-        </div>
-
-        <!-- Notify Parent -->
+        <FormSelect
+          v-model="incidentForm.studentId"
+          label="Student"
+          :options="studentOptions"
+          required
+        />
+        <FormSelect
+          v-model="incidentForm.type"
+          label="Type"
+          :options="typeOptions"
+          required
+        />
+        <FormSelect
+          v-model="incidentForm.severity"
+          label="Severity"
+          :options="severityOptions"
+          required
+        />
         <div class="flex items-end">
-          <label class="flex items-center gap-2 rounded-xl border border-border px-3 py-2 cursor-pointer transition-all duration-200 hover:bg-muted/30">
-            <input
-              v-model="newIncident.parentNotified"
-              type="checkbox"
-              class="h-4 w-4 rounded border-border text-primary focus:ring-primary"
-            />
-            <span class="text-sm font-medium text-foreground">Notify Parent</span>
-          </label>
+          <FormCheckbox
+            v-model="incidentForm.parentNotified"
+            label="Parent Notified"
+          />
         </div>
-
-        <!-- Description -->
         <div class="md:col-span-2">
-          <label
-            class="mb-1.5 block text-sm font-medium text-foreground"
-            for="incident-desc"
-          >
-            Description
-          </label>
-          <textarea
-            id="incident-desc"
-            v-model="newIncident.description"
-            rows="3"
+          <FormTextarea
+            v-model="incidentForm.description"
+            label="Description"
             placeholder="Describe what happened..."
-            class="w-full rounded-xl border border-border bg-white px-3 py-2 text-sm text-foreground shadow-sm placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
+            :rows="3"
+            required
           />
         </div>
-
-        <!-- Action Taken -->
         <div class="md:col-span-2">
-          <label
-            class="mb-1.5 block text-sm font-medium text-foreground"
-            for="incident-action"
-          >
-            Action Taken
-          </label>
-          <textarea
-            id="incident-action"
-            v-model="newIncident.actionTaken"
-            rows="2"
+          <FormTextarea
+            v-model="incidentForm.actionTaken"
+            label="Action Taken"
             placeholder="Describe the action taken..."
-            class="w-full rounded-xl border border-border bg-white px-3 py-2 text-sm text-foreground shadow-sm placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
+            :rows="2"
           />
         </div>
       </div>
-
-      <div class="mt-4 flex justify-end">
-        <button
-          :disabled="!newIncident.description.trim()"
-          :class="[
-            'inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-all duration-200',
-            newIncident.description.trim()
-              ? 'bg-primary hover:bg-primary/90'
-              : 'bg-muted-foreground/30 cursor-not-allowed',
-          ]"
-          @click="submitIncident"
-        >
-          <Plus class="h-4 w-4" />
-          Submit Incident
-        </button>
-      </div>
-    </div>
+      <template #footer>
+        <div class="flex justify-end gap-3">
+          <button
+            class="rounded-xl border border-border px-4 py-2 text-sm font-medium text-muted-foreground transition-all duration-200 hover:bg-muted"
+            @click="showIncidentModal = false"
+          >
+            Cancel
+          </button>
+          <button
+            :disabled="!incidentForm.description.trim()"
+            :class="[
+              'rounded-xl px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200',
+              incidentForm.description.trim()
+                ? 'bg-primary hover:bg-primary/90'
+                : 'bg-muted-foreground/30 cursor-not-allowed',
+            ]"
+            @click="saveIncident"
+          >
+            {{ editingIncidentId ? 'Update Incident' : 'Submit Incident' }}
+          </button>
+        </div>
+      </template>
+    </AppModal>
   </div>
 </template>

@@ -30,6 +30,12 @@ export const admissionsRoutes: RouteRecordRaw[] = [
         component: () => import('@/portals/admissions/views/LeaveManagement.vue'),
         meta: { title: 'Leave Management' },
       },
+      {
+        path: 'payroll',
+        name: 'admissions-payroll',
+        component: () => import('@/portals/admissions/views/PayrollManagement.vue'),
+        meta: { title: 'Payroll Management' },
+      },
     ],
   },
 ]

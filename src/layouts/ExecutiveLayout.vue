@@ -6,6 +6,7 @@ import {
   Building2,
   TrendingUp,
   AlertTriangle,
+  GraduationCap,
   Bell,
   ArrowLeft,
   Menu,
@@ -24,6 +25,7 @@ const navItems = [
   { label: 'Campus Performance', to: '/executive/campus-performance', icon: Building2 },
   { label: 'Revenue Forecasting', to: '/executive/revenue-forecasting', icon: TrendingUp },
   { label: 'Arrears Aging', to: '/executive/arrears-aging', icon: AlertTriangle },
+  { label: 'Academic Performance', to: '/executive/academic-performance', icon: GraduationCap },
 ]
 
 function isActive(to: string): boolean {
@@ -47,7 +49,7 @@ function isActive(to: string): boolean {
         'fixed inset-y-0 left-0 z-40 flex w-[280px] flex-col shadow-xl shadow-black/10 transition-transform duration-300 ease-in-out lg:static lg:translate-x-0',
         sidebarOpen ? 'translate-x-0' : '-translate-x-full',
       ]"
-      style="background: linear-gradient(180deg, #1B4D3E 0%, #143D31 100%)"
+      style="background: linear-gradient(180deg, #1F1B62 0%, #16134A 100%)"
     >
       <!-- Logo -->
       <div class="px-6 py-6">

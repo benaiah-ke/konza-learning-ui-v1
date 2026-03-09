@@ -3,20 +3,20 @@
 @theme {
   --font-sans: 'Onest', system-ui, -apple-system, sans-serif;
 
-  --color-primary: #1B4D3E;
-  --color-primary-light: #2D7A5F;
-  --color-primary-dark: #143D31;
+  --color-primary: #1F1B62;
+  --color-primary-light: #2D2878;
+  --color-primary-dark: #16134A;
   --color-primary-foreground: #FFFFFF;
 
-  --color-secondary: #F59E0B;
-  --color-secondary-light: #FBBF24;
+  --color-secondary: #C8A658;
+  --color-secondary-light: #F5D862;
   --color-secondary-foreground: #1A1A1A;
 
-  --color-background: #EDEEF2;
-  --color-foreground: #0F172A;
+  --color-background: #F5F6FA;
+  --color-foreground: #1F1B62;
   --color-surface: #FFFFFF;
   --color-muted: #F1F5F9;
-  --color-muted-foreground: #64748B;
+  --color-muted-foreground: #4B5563;
   --color-border: #E2E8F0;
   --color-border-light: #F1F5F9;
 
@@ -33,17 +33,17 @@
   --color-info-light: #F0F9FF;
   --color-info-foreground: #075985;
 
-  --color-executive: #1B4D3E;
+  --color-executive: #1F1B62;
   --color-finance: #1E3A5F;
   --color-parent: #7C3AED;
   --color-teacher: #0891B2;
   --color-admissions: #C2410C;
 
   --color-card: #FFFFFF;
-  --color-card-foreground: #0F172A;
+  --color-card-foreground: #1F1B62;
 
-  --color-chart-1: #1B4D3E;
-  --color-chart-2: #D97706;
+  --color-chart-1: #1F1B62;
+  --color-chart-2: #C8A658;
   --color-chart-3: #0284C7;
   --color-chart-4: #64748B;
   --color-chart-5: #059669;

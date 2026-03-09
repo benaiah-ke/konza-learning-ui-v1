@@ -48,6 +48,20 @@ export const useAdmissionsStore = defineStore('admissions', () => {
     }
   }
 
+  function addLead(lead: AdmissionLead) {
+    admissionLeads.value.push(lead)
+  }
+
+  function updateLead(id: string, updates: Partial<AdmissionLead>) {
+    const lead = admissionLeads.value.find((l) => l.id === id)
+    if (lead) Object.assign(lead, updates)
+  }
+
+  function deleteLead(id: string) {
+    const index = admissionLeads.value.findIndex((l) => l.id === id)
+    if (index !== -1) admissionLeads.value.splice(index, 1)
+  }
+
   return {
     admissionLeads,
     leadsByStage,
@@ -56,5 +70,8 @@ export const useAdmissionsStore = defineStore('admissions', () => {
     leadsBySource,
     activePipeline,
     moveLeadToStage,
+    addLead,
+    updateLead,
+    deleteLead,
   }
 })

@@ -4,6 +4,10 @@ import { students } from '@/data/students'
 import { parents } from '@/data/parents'
 import { messages as allMessages } from '@/data/milestones'
 import type { Message } from '@/types'
+import AppModal from '@/components/shared/AppModal.vue'
+import FormTextarea from '@/components/shared/FormTextarea.vue'
+import { useToast } from '@/composables/useToast'
+import { generateId } from '@/utils/generateId'
 import {
   Send,
   Megaphone,
@@ -124,11 +128,40 @@ function useTemplate(template: string) {
   messageInput.value = template
 }
 
-// Send to all
+// ── Send to All Parents Modal ────────────────────────────────
+const toast = useToast()
+const showSendAllModal = ref(false)
+const sendAllMessage = ref('')
+
+function openSendAllModal() {
+  sendAllMessage.value = ''
+  showSendAllModal.value = true
+}
+
 function sendToAll() {
-  alert(
-    'Class-wide announcement would be sent to all parents of Butterfly Class.',
-  )
+  openSendAllModal()
+}
+
+function confirmSendToAll() {
+  if (!sendAllMessage.value.trim()) return
+
+  // Create a message for each parent in the class
+  parentContacts.value.forEach((contact) => {
+    const newMsg: Message = {
+      id: generateId('msg'),
+      senderId: teacherId,
+      senderName: teacherName,
+      senderRole: 'teacher',
+      recipientId: contact.parentId,
+      content: sendAllMessage.value.trim(),
+      timestamp: new Date().toISOString(),
+      read: false,
+    }
+    messagesData.value.push(newMsg)
+  })
+
+  showSendAllModal.value = false
+  toast.success(`Announcement sent to ${parentContacts.value.length} parents`)
 }
 
 // Format timestamp
@@ -406,5 +439,59 @@ function selectParent(parentId: string) {
         </div>
       </div>
     </div>
+
+    <!-- Send to All Parents Modal -->
+    <AppModal
+      :open="showSendAllModal"
+      title="Send to All Parents"
+      :subtitle="`Broadcast a message to all ${parentContacts.length} parents in Butterfly Class`"
+      size="md"
+      @update:open="showSendAllModal = $event"
+    >
+      <div class="space-y-4">
+        <div class="rounded-xl border border-border bg-muted/30 p-3">
+          <p class="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">Recipients</p>
+          <div class="flex flex-wrap gap-2">
+            <span
+              v-for="contact in parentContacts"
+              :key="contact.parentId"
+              class="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary"
+            >
+              {{ contact.parentName }}
+            </span>
+          </div>
+        </div>
+        <FormTextarea
+          v-model="sendAllMessage"
+          label="Message"
+          placeholder="Type your announcement message..."
+          :rows="4"
+          required
+        />
+      </div>
+      <template #footer>
+        <div class="flex justify-end gap-3">
+          <button
+            class="rounded-xl border border-border px-4 py-2 text-sm font-medium text-muted-foreground transition-all duration-200 hover:bg-muted"
+            @click="showSendAllModal = false"
+          >
+            Cancel
+          </button>
+          <button
+            :disabled="!sendAllMessage.trim()"
+            :class="[
+              'inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200',
+              sendAllMessage.trim()
+                ? 'bg-primary hover:bg-primary/90'
+                : 'bg-muted-foreground/30 cursor-not-allowed',
+            ]"
+            @click="confirmSendToAll"
+          >
+            <Megaphone class="h-4 w-4" />
+            Send to All
+          </button>
+        </div>
+      </template>
+    </AppModal>
   </div>
 </template>

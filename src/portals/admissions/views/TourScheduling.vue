@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, reactive } from 'vue'
 import {
   CalendarDays,
   CalendarCheck,
@@ -7,6 +7,7 @@ import {
   TrendingUp,
   Phone,
   MapPin,
+  Plus,
 } from 'lucide-vue-next'
 import SafeChart from '@/components/shared/SafeChart.vue'
 import type { ApexOptions } from 'apexcharts'
@@ -14,12 +15,78 @@ import type { ApexOptions } from 'apexcharts'
 import StatCard from '@/components/shared/StatCard.vue'
 import StatusBadge from '@/components/shared/StatusBadge.vue'
 import ChartCard from '@/components/shared/ChartCard.vue'
+import AppModal from '@/components/shared/AppModal.vue'
+import FormSelect from '@/components/shared/FormSelect.vue'
+import FormField from '@/components/shared/FormField.vue'
+import FormTextarea from '@/components/shared/FormTextarea.vue'
 import { useAdmissionsStore } from '@/stores/admissions'
 import { useChartTheme } from '@/composables/useChartTheme'
+import { useToast } from '@/composables/useToast'
 import { campuses } from '@/data/campuses'
 
 const store = useAdmissionsStore()
 const { baseOptions } = useChartTheme()
+const toast = useToast()
+
+// ── Schedule Tour Modal State ───────────────────────────────
+const showTourModal = ref(false)
+
+const tourForm = reactive({
+  leadId: '' as string,
+  date: '',
+  time: '' as string,
+  campusId: '' as string,
+  notes: '',
+})
+
+const leadOptions = computed(() =>
+  store.admissionLeads
+    .filter((l) => l.stage === 'inquiry' || l.stage === 'tour-scheduled')
+    .map((l) => ({
+      value: l.id,
+      label: `${l.childName} (${l.parentName})`,
+    })),
+)
+
+const campusOptions = campuses.map((c) => ({
+  value: c.id,
+  label: c.name.replace('Konza ', '').replace(' Campus', ''),
+}))
+
+const timeOptions = [
+  { value: '09:00', label: '9:00 AM' },
+  { value: '10:00', label: '10:00 AM' },
+  { value: '11:00', label: '11:00 AM' },
+  { value: '14:00', label: '2:00 PM' },
+  { value: '15:00', label: '3:00 PM' },
+]
+
+function openTourModal() {
+  tourForm.leadId = ''
+  tourForm.date = ''
+  tourForm.time = ''
+  tourForm.campusId = ''
+  tourForm.notes = ''
+  showTourModal.value = true
+}
+
+function saveTour() {
+  if (!tourForm.leadId || !tourForm.date || !tourForm.time || !tourForm.campusId) return
+
+  const timeLabel = timeOptions.find((t) => t.value === tourForm.time)?.label ?? tourForm.time
+  const campusName = campuses.find((c) => c.id === tourForm.campusId)?.name ?? tourForm.campusId
+
+  // Move the lead to tour-scheduled stage and update notes with tour info
+  store.moveLeadToStage(tourForm.leadId, 'tour-scheduled')
+  store.updateLead(tourForm.leadId, {
+    campusPreference: tourForm.campusId,
+    date: tourForm.date,
+    notes: `Tour scheduled: ${tourForm.date} at ${timeLabel}, ${campusName}${tourForm.notes ? '. ' + tourForm.notes : ''}`,
+  })
+
+  toast.success('Tour scheduled successfully')
+  showTourModal.value = false
+}
 
 // ── Tour-related computed ───────────────────────────────────
 const tourScheduledLeads = computed(() =>
@@ -201,11 +268,20 @@ function formatDate(dateStr: string): string {
 <template>
   <div class="space-y-6">
     <!-- Header -->
-    <div>
-      <h1 class="text-2xl font-bold tracking-tight text-foreground">Tour Scheduling</h1>
-      <p class="mt-1 text-sm text-muted-foreground">
-        Schedule and manage campus tours for prospective families
-      </p>
+    <div class="flex items-start justify-between">
+      <div>
+        <h1 class="text-2xl font-bold tracking-tight text-foreground">Tour Scheduling</h1>
+        <p class="mt-1 text-sm text-muted-foreground">
+          Schedule and manage campus tours for prospective families
+        </p>
+      </div>
+      <button
+        class="inline-flex items-center gap-2 rounded-xl bg-[#C2410C] px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:bg-[#C2410C]/90"
+        @click="openTourModal"
+      >
+        <Plus class="h-4 w-4" />
+        Schedule Tour
+      </button>
     </div>
 
     <!-- Stats Row -->
@@ -386,5 +462,70 @@ function formatDate(dateStr: string): string {
         <p class="text-sm">No upcoming tours scheduled</p>
       </div>
     </div>
+
+    <!-- Schedule Tour Modal -->
+    <AppModal
+      :open="showTourModal"
+      @update:open="showTourModal = $event"
+      title="Schedule Tour"
+      subtitle="Schedule a campus tour for a prospective family"
+      size="md"
+    >
+      <div class="space-y-4">
+        <FormSelect
+          v-model="tourForm.leadId"
+          label="Lead"
+          :options="leadOptions"
+          placeholder="Select a lead..."
+          required
+        />
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <FormField
+            v-model="tourForm.date"
+            label="Date"
+            type="date"
+            required
+          />
+          <FormSelect
+            v-model="tourForm.time"
+            label="Time"
+            :options="timeOptions"
+            placeholder="Select time..."
+            required
+          />
+        </div>
+        <FormSelect
+          v-model="tourForm.campusId"
+          label="Campus"
+          :options="campusOptions"
+          placeholder="Select campus..."
+          required
+        />
+        <FormTextarea
+          v-model="tourForm.notes"
+          label="Notes"
+          placeholder="Any special requirements or notes for the tour..."
+          :rows="3"
+        />
+      </div>
+
+      <template #footer>
+        <div class="flex items-center justify-end gap-3">
+          <button
+            class="rounded-xl border border-border px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted"
+            @click="showTourModal = false"
+          >
+            Cancel
+          </button>
+          <button
+            class="rounded-xl bg-[#C2410C] px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:bg-[#C2410C]/90 disabled:opacity-50"
+            :disabled="!tourForm.leadId || !tourForm.date || !tourForm.time || !tourForm.campusId"
+            @click="saveTour"
+          >
+            Schedule Tour
+          </button>
+        </div>
+      </template>
+    </AppModal>
   </div>
 </template>

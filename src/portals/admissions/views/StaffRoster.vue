@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, reactive } from 'vue'
 import {
   Users,
   MapPin,
@@ -7,14 +7,141 @@ import {
   Phone,
   Mail,
   Calendar,
+  Plus,
+  Pencil,
+  Trash2,
 } from 'lucide-vue-next'
 
 import StatCard from '@/components/shared/StatCard.vue'
 import SearchInput from '@/components/shared/SearchInput.vue'
+import AppModal from '@/components/shared/AppModal.vue'
+import FormField from '@/components/shared/FormField.vue'
+import FormSelect from '@/components/shared/FormSelect.vue'
 import { useStaffStore } from '@/stores/staff'
+import { useToast } from '@/composables/useToast'
+import { useConfirm } from '@/composables/useConfirm'
+import { generateId } from '@/utils/generateId'
 import { campuses } from '@/data/campuses'
+import type { StaffMember } from '@/types'
 
 const staffStore = useStaffStore()
+const toast = useToast()
+const { confirm } = useConfirm()
+
+// ── CRUD Modal State ────────────────────────────────────────
+const showStaffModal = ref(false)
+const editingStaff = ref<StaffMember | null>(null)
+
+const staffForm = reactive({
+  firstName: '',
+  lastName: '',
+  role: '' as string,
+  department: '' as string,
+  campusId: '' as string,
+  email: '',
+  phone: '',
+  joinDate: '',
+})
+
+const roleOptions = [
+  { value: 'Lead Teacher', label: 'Lead Teacher' },
+  { value: 'Assistant Teacher', label: 'Assistant Teacher' },
+  { value: 'School Nurse', label: 'School Nurse' },
+  { value: 'Campus Manager', label: 'Campus Manager' },
+  { value: 'Cook', label: 'Cook' },
+  { value: 'Driver', label: 'Driver' },
+  { value: 'Security', label: 'Security' },
+]
+
+const departmentOptions = [
+  { value: 'Teaching', label: 'Teaching' },
+  { value: 'Administration', label: 'Administration' },
+  { value: 'Health', label: 'Health' },
+  { value: 'Catering', label: 'Catering' },
+  { value: 'Transport', label: 'Transport' },
+  { value: 'Security', label: 'Security' },
+  { value: 'Facilities', label: 'Facilities' },
+]
+
+const campusOptions = campuses.map((c) => ({
+  value: c.id,
+  label: c.name.replace('Konza ', '').replace(' Campus', ''),
+}))
+
+function openNewStaffModal() {
+  editingStaff.value = null
+  staffForm.firstName = ''
+  staffForm.lastName = ''
+  staffForm.role = ''
+  staffForm.department = ''
+  staffForm.campusId = ''
+  staffForm.email = ''
+  staffForm.phone = ''
+  staffForm.joinDate = ''
+  showStaffModal.value = true
+}
+
+function openEditStaffModal(member: StaffMember) {
+  editingStaff.value = member
+  staffForm.firstName = member.firstName
+  staffForm.lastName = member.lastName
+  staffForm.role = member.role
+  staffForm.department = member.department
+  staffForm.campusId = member.campusId
+  staffForm.email = member.email
+  staffForm.phone = member.phone
+  staffForm.joinDate = member.joinDate
+  showStaffModal.value = true
+}
+
+function saveStaff() {
+  if (!staffForm.firstName || !staffForm.lastName || !staffForm.role || !staffForm.department || !staffForm.campusId) return
+
+  if (editingStaff.value) {
+    staffStore.updateStaff(editingStaff.value.id, {
+      firstName: staffForm.firstName,
+      lastName: staffForm.lastName,
+      role: staffForm.role,
+      department: staffForm.department,
+      campusId: staffForm.campusId,
+      email: staffForm.email,
+      phone: staffForm.phone,
+      joinDate: staffForm.joinDate,
+      photoInitials: `${staffForm.firstName[0]}${staffForm.lastName[0]}`.toUpperCase(),
+    })
+    toast.success('Staff member updated successfully')
+  } else {
+    const newMember: StaffMember = {
+      id: generateId('staff'),
+      firstName: staffForm.firstName,
+      lastName: staffForm.lastName,
+      role: staffForm.role,
+      department: staffForm.department,
+      campusId: staffForm.campusId,
+      email: staffForm.email,
+      phone: staffForm.phone,
+      joinDate: staffForm.joinDate || new Date().toISOString().slice(0, 10),
+      status: 'active',
+      photoInitials: `${staffForm.firstName[0]}${staffForm.lastName[0]}`.toUpperCase(),
+    }
+    staffStore.addStaff(newMember)
+    toast.success('Staff member added successfully')
+  }
+
+  showStaffModal.value = false
+}
+
+async function deleteStaffMember(member: StaffMember) {
+  const ok = await confirm({
+    title: 'Delete Staff Member',
+    message: `Are you sure you want to delete ${member.firstName} ${member.lastName}? This action cannot be undone.`,
+    variant: 'danger',
+  })
+  if (ok) {
+    staffStore.deleteStaff(member.id)
+    toast.success('Staff member deleted successfully')
+  }
+}
 
 // ── Search & Filters ────────────────────────────────────────
 const searchQuery = ref('')
@@ -99,11 +226,20 @@ function formatDate(dateStr: string): string {
 <template>
   <div class="space-y-6">
     <!-- Header -->
-    <div>
-      <h1 class="text-2xl font-bold tracking-tight text-foreground">Staff Roster</h1>
-      <p class="mt-1 text-sm text-muted-foreground">
-        View and manage staff across all campuses
-      </p>
+    <div class="flex items-start justify-between">
+      <div>
+        <h1 class="text-2xl font-bold tracking-tight text-foreground">Staff Roster</h1>
+        <p class="mt-1 text-sm text-muted-foreground">
+          View and manage staff across all campuses
+        </p>
+      </div>
+      <button
+        class="inline-flex items-center gap-2 rounded-xl bg-[#C2410C] px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:bg-[#C2410C]/90"
+        @click="openNewStaffModal"
+      >
+        <Plus class="h-4 w-4" />
+        Add Staff
+      </button>
     </div>
 
     <!-- Stats Row -->
@@ -241,6 +377,24 @@ function formatDate(dateStr: string): string {
             <Calendar class="h-3.5 w-3.5 shrink-0" />
             Joined {{ formatDate(member.joinDate) }}
           </div>
+
+          <!-- Edit / Delete Actions -->
+          <div class="mt-3 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+            <button
+              class="inline-flex items-center gap-1.5 rounded-xl bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary"
+              @click="openEditStaffModal(member)"
+            >
+              <Pencil class="h-3 w-3" />
+              Edit
+            </button>
+            <button
+              class="inline-flex items-center gap-1.5 rounded-xl bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-danger/10 hover:text-danger"
+              @click="deleteStaffMember(member)"
+            >
+              <Trash2 class="h-3 w-3" />
+              Delete
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -259,5 +413,86 @@ function formatDate(dateStr: string): string {
         Clear all filters
       </button>
     </div>
+
+    <!-- Add / Edit Staff Modal -->
+    <AppModal
+      :open="showStaffModal"
+      @update:open="showStaffModal = $event"
+      :title="editingStaff ? 'Edit Staff Member' : 'Add Staff Member'"
+      :subtitle="editingStaff ? 'Update staff member information' : 'Add a new staff member to the roster'"
+      size="lg"
+    >
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <FormField
+          v-model="staffForm.firstName"
+          label="First Name"
+          placeholder="Enter first name"
+          required
+        />
+        <FormField
+          v-model="staffForm.lastName"
+          label="Last Name"
+          placeholder="Enter last name"
+          required
+        />
+        <FormSelect
+          v-model="staffForm.role"
+          label="Role"
+          :options="roleOptions"
+          placeholder="Select role..."
+          required
+        />
+        <FormSelect
+          v-model="staffForm.department"
+          label="Department"
+          :options="departmentOptions"
+          placeholder="Select department..."
+          required
+        />
+        <FormSelect
+          v-model="staffForm.campusId"
+          label="Campus"
+          :options="campusOptions"
+          placeholder="Select campus..."
+          required
+        />
+        <FormField
+          v-model="staffForm.email"
+          label="Email"
+          type="text"
+          placeholder="staff@konza.ac.ke"
+          required
+        />
+        <FormField
+          v-model="staffForm.phone"
+          label="Phone"
+          placeholder="+254 7XX XXX XXX"
+          required
+        />
+        <FormField
+          v-model="staffForm.joinDate"
+          label="Join Date"
+          type="date"
+        />
+      </div>
+
+      <template #footer>
+        <div class="flex items-center justify-end gap-3">
+          <button
+            class="rounded-xl border border-border px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted"
+            @click="showStaffModal = false"
+          >
+            Cancel
+          </button>
+          <button
+            class="rounded-xl bg-[#C2410C] px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:bg-[#C2410C]/90 disabled:opacity-50"
+            :disabled="!staffForm.firstName || !staffForm.lastName || !staffForm.role || !staffForm.department || !staffForm.campusId"
+            @click="saveStaff"
+          >
+            {{ editingStaff ? 'Update Staff' : 'Add Staff' }}
+          </button>
+        </div>
+      </template>
+    </AppModal>
   </div>
 </template>

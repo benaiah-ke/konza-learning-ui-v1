@@ -31,7 +31,7 @@ const portals: PortalCard[] = [
     subtitle: 'MD / CFO Portal',
     description: 'Real-time metrics, revenue tracking, campus performance, and strategic oversight across all branches.',
     icon: LayoutDashboard,
-    color: '#1B4D3E',
+    color: '#1F1B62',
     route: '/executive',
   },
   {

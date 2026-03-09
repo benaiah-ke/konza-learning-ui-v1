@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, reactive } from 'vue'
 import {
   Users,
   TrendingUp,
@@ -12,14 +12,128 @@ import {
   Share2,
   Footprints,
   CalendarCheck,
+  Plus,
+  Pencil,
+  Trash2,
 } from 'lucide-vue-next'
 
 import StatCard from '@/components/shared/StatCard.vue'
+import AppModal from '@/components/shared/AppModal.vue'
+import FormField from '@/components/shared/FormField.vue'
+import FormSelect from '@/components/shared/FormSelect.vue'
+import FormTextarea from '@/components/shared/FormTextarea.vue'
 import { useAdmissionsStore } from '@/stores/admissions'
+import { useToast } from '@/composables/useToast'
+import { useConfirm } from '@/composables/useConfirm'
+import { generateId } from '@/utils/generateId'
 import { campuses } from '@/data/campuses'
 import type { AdmissionLead } from '@/types'
 
 const store = useAdmissionsStore()
+const toast = useToast()
+const { confirm } = useConfirm()
+
+// ── CRUD Modal State ────────────────────────────────────────
+const showLeadModal = ref(false)
+const editingLead = ref<AdmissionLead | null>(null)
+
+const leadForm = reactive({
+  childName: '',
+  childAge: 0,
+  parentName: '',
+  parentPhone: '',
+  parentEmail: '',
+  source: '' as string,
+  campusPreference: '' as string,
+  notes: '',
+})
+
+const sourceOptions = [
+  { value: 'website', label: 'Website' },
+  { value: 'referral', label: 'Referral' },
+  { value: 'social-media', label: 'Social Media' },
+  { value: 'walk-in', label: 'Walk-in' },
+  { value: 'event', label: 'Event' },
+]
+
+const campusOptions = campuses.map((c) => ({
+  value: c.id,
+  label: c.name.replace('Konza ', '').replace(' Campus', ''),
+}))
+
+function openNewLeadModal() {
+  editingLead.value = null
+  leadForm.childName = ''
+  leadForm.childAge = 0
+  leadForm.parentName = ''
+  leadForm.parentPhone = ''
+  leadForm.parentEmail = ''
+  leadForm.source = ''
+  leadForm.campusPreference = ''
+  leadForm.notes = ''
+  showLeadModal.value = true
+}
+
+function openEditLeadModal(lead: AdmissionLead) {
+  editingLead.value = lead
+  leadForm.childName = lead.childName
+  leadForm.childAge = lead.childAge
+  leadForm.parentName = lead.parentName
+  leadForm.parentPhone = lead.parentPhone
+  leadForm.parentEmail = lead.parentEmail
+  leadForm.source = lead.source
+  leadForm.campusPreference = lead.campusPreference
+  leadForm.notes = lead.notes ?? ''
+  showLeadModal.value = true
+}
+
+function saveLead() {
+  if (!leadForm.childName || !leadForm.parentName || !leadForm.source || !leadForm.campusPreference) return
+
+  if (editingLead.value) {
+    store.updateLead(editingLead.value.id, {
+      childName: leadForm.childName,
+      childAge: leadForm.childAge,
+      parentName: leadForm.parentName,
+      parentPhone: leadForm.parentPhone,
+      parentEmail: leadForm.parentEmail,
+      source: leadForm.source as AdmissionLead['source'],
+      campusPreference: leadForm.campusPreference,
+      notes: leadForm.notes || undefined,
+    })
+    toast.success('Lead updated successfully')
+  } else {
+    const newLead: AdmissionLead = {
+      id: generateId('lead'),
+      childName: leadForm.childName,
+      childAge: leadForm.childAge,
+      parentName: leadForm.parentName,
+      parentPhone: leadForm.parentPhone,
+      parentEmail: leadForm.parentEmail,
+      source: leadForm.source as AdmissionLead['source'],
+      stage: 'inquiry',
+      campusPreference: leadForm.campusPreference,
+      date: new Date().toISOString().slice(0, 10),
+      notes: leadForm.notes || undefined,
+    }
+    store.addLead(newLead)
+    toast.success('New lead added successfully')
+  }
+
+  showLeadModal.value = false
+}
+
+async function deleteLead(lead: AdmissionLead) {
+  const ok = await confirm({
+    title: 'Delete Lead',
+    message: `Are you sure you want to delete the lead for ${lead.childName}? This action cannot be undone.`,
+    variant: 'danger',
+  })
+  if (ok) {
+    store.deleteLead(lead.id)
+    toast.success('Lead deleted successfully')
+  }
+}
 
 // ── Stage Configuration ─────────────────────────────────────
 interface StageConfig {
@@ -151,11 +265,20 @@ function advanceLead(leadId: string, nextStage: AdmissionLead['stage']) {
 <template>
   <div class="space-y-6">
     <!-- Header -->
-    <div>
-      <h1 class="text-2xl font-bold tracking-tight text-foreground">Admissions Pipeline</h1>
-      <p class="mt-1 text-sm text-muted-foreground">
-        Kanban board tracking applications from enquiry to enrolment
-      </p>
+    <div class="flex items-start justify-between">
+      <div>
+        <h1 class="text-2xl font-bold tracking-tight text-foreground">Admissions Pipeline</h1>
+        <p class="mt-1 text-sm text-muted-foreground">
+          Kanban board tracking applications from enquiry to enrolment
+        </p>
+      </div>
+      <button
+        class="inline-flex items-center gap-2 rounded-xl bg-[#C2410C] px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:bg-[#C2410C]/90"
+        @click="openNewLeadModal"
+      >
+        <Plus class="h-4 w-4" />
+        New Lead
+      </button>
     </div>
 
     <!-- KPI Stats Row -->
@@ -305,15 +428,32 @@ function advanceLead(leadId: string, nextStage: AdmissionLead['stage']) {
                 </p>
               </div>
 
-              <!-- Advance Button -->
-              <div v-if="stage.nextStage" class="mt-3 pl-6">
+              <!-- Actions: Advance / Edit / Delete -->
+              <div class="mt-3 pl-6 flex items-center gap-2">
                 <button
+                  v-if="stage.nextStage"
                   class="inline-flex items-center gap-1 rounded-xl bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary shadow-sm transition-all duration-200 hover:bg-primary/20 hover:shadow"
                   @click="advanceLead(lead.id, stage.nextStage!)"
                 >
                   Advance
                   <ChevronRight class="h-3 w-3" />
                 </button>
+                <div class="ml-auto flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  <button
+                    class="inline-flex h-6 w-6 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                    title="Edit lead"
+                    @click="openEditLeadModal(lead)"
+                  >
+                    <Pencil class="h-3 w-3" />
+                  </button>
+                  <button
+                    class="inline-flex h-6 w-6 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-danger/10 hover:text-danger"
+                    title="Delete lead"
+                    @click="deleteLead(lead)"
+                  >
+                    <Trash2 class="h-3 w-3" />
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -328,5 +468,89 @@ function advanceLead(leadId: string, nextStage: AdmissionLead['stage']) {
         </div>
       </div>
     </div>
+
+    <!-- New / Edit Lead Modal -->
+    <AppModal
+      :open="showLeadModal"
+      @update:open="showLeadModal = $event"
+      :title="editingLead ? 'Edit Lead' : 'New Lead'"
+      :subtitle="editingLead ? 'Update lead information' : 'Add a new prospective family to the pipeline'"
+      size="lg"
+    >
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <FormField
+          v-model="leadForm.childName"
+          label="Child Name"
+          placeholder="Enter child's name"
+          required
+        />
+        <FormField
+          v-model="leadForm.childAge"
+          label="Child Age"
+          type="number"
+          placeholder="Age in years"
+          required
+        />
+        <FormField
+          v-model="leadForm.parentName"
+          label="Parent Name"
+          placeholder="Enter parent's full name"
+          required
+        />
+        <FormField
+          v-model="leadForm.parentPhone"
+          label="Parent Phone"
+          placeholder="+254 7XX XXX XXX"
+          required
+        />
+        <FormField
+          v-model="leadForm.parentEmail"
+          label="Parent Email"
+          type="text"
+          placeholder="parent@email.com"
+          required
+        />
+        <FormSelect
+          v-model="leadForm.source"
+          label="Source"
+          :options="sourceOptions"
+          placeholder="Select source..."
+          required
+        />
+        <FormSelect
+          v-model="leadForm.campusPreference"
+          label="Campus Preference"
+          :options="campusOptions"
+          placeholder="Select campus..."
+          required
+        />
+      </div>
+      <div class="mt-4">
+        <FormTextarea
+          v-model="leadForm.notes"
+          label="Notes"
+          placeholder="Any additional notes about this lead..."
+          :rows="3"
+        />
+      </div>
+
+      <template #footer>
+        <div class="flex items-center justify-end gap-3">
+          <button
+            class="rounded-xl border border-border px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted"
+            @click="showLeadModal = false"
+          >
+            Cancel
+          </button>
+          <button
+            class="rounded-xl bg-[#C2410C] px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:bg-[#C2410C]/90 disabled:opacity-50"
+            :disabled="!leadForm.childName || !leadForm.parentName || !leadForm.source || !leadForm.campusPreference"
+            @click="saveLead"
+          >
+            {{ editingLead ? 'Update Lead' : 'Add Lead' }}
+          </button>
+        </div>
+      </template>
+    </AppModal>
   </div>
 </template>

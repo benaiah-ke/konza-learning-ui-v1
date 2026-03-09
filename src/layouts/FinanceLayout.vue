@@ -6,6 +6,7 @@ import {
   BookOpen,
   Receipt,
   AlertCircle,
+  Wallet,
   Bell,
   ArrowLeft,
   Menu,
@@ -24,6 +25,7 @@ const navItems = [
   { label: 'Student Ledger', to: '/finance/student-ledger', icon: BookOpen },
   { label: 'Billing & Invoices', to: '/finance/billing', icon: Receipt },
   { label: 'Arrears Management', to: '/finance/arrears', icon: AlertCircle },
+  { label: 'Expense Tracking', to: '/finance/expenses', icon: Wallet },
 ]
 
 function isActive(to: string): boolean {

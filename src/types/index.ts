@@ -173,3 +173,47 @@ export interface Notification {
   date: string
   read: boolean
 }
+
+export interface Expense {
+  id: string
+  date: string
+  category: 'salaries' | 'rent' | 'utilities' | 'supplies' | 'transport' | 'food' | 'maintenance' | 'marketing' | 'other'
+  description: string
+  amount: number
+  campusId: string
+  vendor?: string
+  reference?: string
+  status: 'pending' | 'approved' | 'rejected'
+  approvedBy?: string
+  createdBy: string
+}
+
+export interface PayrollRecord {
+  id: string
+  staffId: string
+  month: string
+  basicSalary: number
+  allowances: number
+  deductions: number
+  netPay: number
+  status: 'draft' | 'pending' | 'approved' | 'paid'
+  payDate?: string
+}
+
+export interface AcademicRecord {
+  id: string
+  studentId: string
+  term: string
+  subject: 'numeracy' | 'literacy' | 'kiswahili' | 'science' | 'creative-arts' | 'social-skills' | 'physical-development'
+  score: number
+  grade: 'Exceeding' | 'Meeting' | 'Approaching' | 'Developing' | 'Beginning'
+  comments?: string
+  assessedBy: string
+  assessedDate: string
+}
+
+export interface MonthlyExpense {
+  month: string
+  totalExpenses: number
+  byCategory: Record<string, number>
+}

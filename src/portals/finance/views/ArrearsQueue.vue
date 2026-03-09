@@ -10,6 +10,7 @@ import {
   PhoneCall,
   ChevronDown,
   ChevronUp,
+  Pencil,
 } from 'lucide-vue-next'
 import SafeChart from '@/components/shared/SafeChart.vue'
 import type { ApexOptions } from 'apexcharts'
@@ -19,16 +20,77 @@ import StatCard from '@/components/shared/StatCard.vue'
 import ChartCard from '@/components/shared/ChartCard.vue'
 import StatusBadge from '@/components/shared/StatusBadge.vue'
 import PageHeader from '@/components/shared/PageHeader.vue'
+import AppModal from '@/components/shared/AppModal.vue'
+import FormSelect from '@/components/shared/FormSelect.vue'
+import FormTextarea from '@/components/shared/FormTextarea.vue'
 import { useFinanceStore } from '@/stores/finance'
 import { useStudentsStore } from '@/stores/students'
 import { useCurrency } from '@/composables/useCurrency'
 import { useChartTheme } from '@/composables/useChartTheme'
+import { useToast } from '@/composables/useToast'
 import { parents } from '@/data/parents'
 
 const financeStore = useFinanceStore()
 const studentsStore = useStudentsStore()
 const { format: formatCurrency, formatCompact } = useCurrency()
 const { baseOptions } = useChartTheme()
+const toast = useToast()
+
+// ── Edit Arrears Modal State ────────────────────────────────
+const showEditModal = ref(false)
+const editingArrearsId = ref<string | null>(null)
+
+const defaultArrearsForm = () => ({
+  status: '' as string,
+  notes: '',
+  lastContactMethod: '' as string,
+})
+
+const arrearsForm = ref(defaultArrearsForm())
+
+const arrearsStatusOptions = [
+  { value: 'new', label: 'New' },
+  { value: 'contacted', label: 'Contacted' },
+  { value: 'promise-to-pay', label: 'Promise to Pay' },
+  { value: 'escalated', label: 'Escalated' },
+]
+
+const contactMethodOptions = [
+  { value: 'SMS', label: 'SMS' },
+  { value: 'Email', label: 'Email' },
+  { value: 'Phone', label: 'Phone Call' },
+  { value: 'In-Person', label: 'In-Person' },
+]
+
+function openEditArrears(id: string) {
+  const record = financeStore.arrearsRecords.find((a) => a.id === id)
+  if (!record) return
+
+  editingArrearsId.value = record.id
+  arrearsForm.value = {
+    status: record.status,
+    notes: record.notes ?? '',
+    lastContactMethod: record.lastContactMethod ?? '',
+  }
+  showEditModal.value = true
+}
+
+function saveArrears() {
+  if (!editingArrearsId.value) return
+
+  const record = financeStore.arrearsRecords.find((a) => a.id === editingArrearsId.value)
+  if (!record) return
+
+  record.status = arrearsForm.value.status as typeof record.status
+  record.notes = arrearsForm.value.notes
+  if (arrearsForm.value.lastContactMethod) {
+    record.lastContactMethod = arrearsForm.value.lastContactMethod
+    record.lastContactDate = new Date().toISOString().slice(0, 10)
+  }
+
+  toast.success('Arrears record updated successfully')
+  showEditModal.value = false
+}
 
 // ── Expanded rows state ─────────────────────────────────────
 const expandedRows = ref<Set<string>>(new Set())
@@ -355,6 +417,14 @@ function handleRecordCall(id: string) {
                 <td class="px-4 py-3">
                   <div class="flex items-center justify-center gap-1.5">
                     <button
+                      class="inline-flex items-center gap-1 rounded-lg bg-primary/10 px-2 py-1 text-xs font-medium text-primary ring-1 ring-primary/10 transition-all duration-200 hover:bg-primary/20"
+                      title="Edit Record"
+                      @click="openEditArrears(row.id)"
+                    >
+                      <Pencil class="h-3 w-3" />
+                      Edit
+                    </button>
+                    <button
                       class="inline-flex items-center gap-1 rounded-lg bg-success/10 px-2 py-1 text-xs font-medium text-success ring-1 ring-success/10 transition-all duration-200 hover:bg-success/20"
                       title="Send SMS"
                       @click="handleSendSMS(row.id)"
@@ -396,5 +466,51 @@ function handleRecordCall(id: string) {
         </table>
       </div>
     </div>
+
+    <!-- Edit Arrears Modal -->
+    <AppModal
+      v-model:open="showEditModal"
+      title="Edit Arrears Record"
+      subtitle="Update status and notes for this arrears record"
+      size="md"
+    >
+      <div class="space-y-4">
+        <FormSelect
+          v-model="arrearsForm.status"
+          label="Status"
+          :options="arrearsStatusOptions"
+          placeholder="Select status..."
+          required
+        />
+        <FormSelect
+          v-model="arrearsForm.lastContactMethod"
+          label="Last Contact Method"
+          :options="contactMethodOptions"
+          placeholder="Select method..."
+        />
+        <FormTextarea
+          v-model="arrearsForm.notes"
+          label="Notes"
+          placeholder="Add notes about this arrears record..."
+          :rows="4"
+        />
+      </div>
+      <template #footer>
+        <div class="flex items-center justify-end gap-3">
+          <button
+            class="rounded-xl border border-border px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted"
+            @click="showEditModal = false"
+          >
+            Cancel
+          </button>
+          <button
+            class="rounded-xl bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:bg-primary/90"
+            @click="saveArrears"
+          >
+            Save Changes
+          </button>
+        </div>
+      </template>
+    </AppModal>
   </div>
 </template>

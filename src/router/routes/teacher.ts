@@ -30,6 +30,12 @@ export const teacherRoutes: RouteRecordRaw[] = [
         component: () => import('@/portals/teacher/views/ParentComms.vue'),
         meta: { title: 'Parent Communication' },
       },
+      {
+        path: 'grades',
+        name: 'teacher-grades',
+        component: () => import('@/portals/teacher/views/GradeRecording.vue'),
+        meta: { title: 'Grade Recording' },
+      },
     ],
   },
 ]

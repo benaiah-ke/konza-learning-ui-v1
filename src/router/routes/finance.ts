@@ -30,6 +30,12 @@ export const financeRoutes: RouteRecordRaw[] = [
         component: () => import('@/portals/finance/views/ArrearsQueue.vue'),
         meta: { title: 'Arrears Management' },
       },
+      {
+        path: 'expenses',
+        name: 'finance-expenses',
+        component: () => import('@/portals/finance/views/ExpenseTracking.vue'),
+        meta: { title: 'Expense Tracking' },
+      },
     ],
   },
 ]

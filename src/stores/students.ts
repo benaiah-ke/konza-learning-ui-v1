@@ -39,6 +39,31 @@ export const useStudentsStore = defineStore('students', () => {
     return grouped
   })
 
+  // ── Actions ─────────────────────────────────────────────────
+
+  function addStudent(student: Student) {
+    students.value.push(student)
+  }
+
+  function updateStudent(id: string, updates: Partial<Student>) {
+    const student = students.value.find((s) => s.id === id)
+    if (student) Object.assign(student, updates)
+  }
+
+  function deleteStudent(id: string) {
+    const index = students.value.findIndex((s) => s.id === id)
+    if (index !== -1) students.value.splice(index, 1)
+  }
+
+  function addParent(parent: Parent) {
+    parents.value.push(parent)
+  }
+
+  function updateParent(id: string, updates: Partial<Parent>) {
+    const parent = parents.value.find((p) => p.id === id)
+    if (parent) Object.assign(parent, updates)
+  }
+
   return {
     students,
     parents,
@@ -48,5 +73,10 @@ export const useStudentsStore = defineStore('students', () => {
     getParentById,
     activeStudents,
     studentsByClassName,
+    addStudent,
+    updateStudent,
+    deleteStudent,
+    addParent,
+    updateParent,
   }
 })

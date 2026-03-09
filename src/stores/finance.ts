@@ -6,13 +6,15 @@ import {
   arrearsRecords as arrearsData,
   monthlyRevenue as revenueData,
 } from '@/data/financial'
-import type { Invoice, Transaction, ArrearsRecord, MonthlyRevenue } from '@/types'
+import { expenses as expenseData } from '@/data/expenses'
+import type { Invoice, Transaction, ArrearsRecord, MonthlyRevenue, Expense } from '@/types'
 
 export const useFinanceStore = defineStore('finance', () => {
   const invoices = ref<Invoice[]>([...invoiceData])
   const transactions = ref<Transaction[]>([...transactionData])
   const arrearsRecords = ref<ArrearsRecord[]>([...arrearsData])
   const monthlyRevenue = ref<MonthlyRevenue[]>([...revenueData])
+  const expenses = ref<Expense[]>([...expenseData])
 
   // ── Computed ────────────────────────────────────────────────
 
@@ -58,6 +60,28 @@ export const useFinanceStore = defineStore('finance', () => {
     invoices.value.filter((inv) => inv.status === 'overdue'),
   )
 
+  const totalExpenses = computed(() =>
+    expenses.value.reduce((sum, e) => sum + e.amount, 0),
+  )
+
+  const approvedExpenses = computed(() =>
+    expenses.value.filter((e) => e.status === 'approved'),
+  )
+
+  const pendingExpenses = computed(() =>
+    expenses.value.filter((e) => e.status === 'pending'),
+  )
+
+  const expensesByCategory = computed(() => {
+    const grouped: Record<string, number> = {}
+    for (const e of expenses.value) {
+      grouped[e.category] = (grouped[e.category] ?? 0) + e.amount
+    }
+    return grouped
+  })
+
+  const netIncome = computed(() => totalCollected.value - totalExpenses.value)
+
   // ── Actions ─────────────────────────────────────────────────
 
   function markAsReconciled(txId: string) {
@@ -70,9 +94,49 @@ export const useFinanceStore = defineStore('finance', () => {
   function sendFollowUp(arrearsId: string) {
     const record = arrearsRecords.value.find((a) => a.id === arrearsId)
     if (record) {
-      record.lastContactDate = new Date().toISOString().split('T')[0]
+      record.lastContactDate = new Date().toISOString().slice(0, 10)
       record.lastContactMethod = 'SMS'
       record.status = 'contacted'
+    }
+  }
+
+  function addInvoice(invoice: Invoice) {
+    invoices.value.push(invoice)
+  }
+
+  function updateInvoice(id: string, updates: Partial<Invoice>) {
+    const invoice = invoices.value.find((inv) => inv.id === id)
+    if (invoice) Object.assign(invoice, updates)
+  }
+
+  function deleteInvoice(id: string) {
+    const index = invoices.value.findIndex((inv) => inv.id === id)
+    if (index !== -1) invoices.value.splice(index, 1)
+  }
+
+  function addTransaction(transaction: Transaction) {
+    transactions.value.push(transaction)
+  }
+
+  function addExpense(expense: Expense) {
+    expenses.value.push(expense)
+  }
+
+  function updateExpense(id: string, updates: Partial<Expense>) {
+    const expense = expenses.value.find((e) => e.id === id)
+    if (expense) Object.assign(expense, updates)
+  }
+
+  function deleteExpense(id: string) {
+    const index = expenses.value.findIndex((e) => e.id === id)
+    if (index !== -1) expenses.value.splice(index, 1)
+  }
+
+  function approveExpense(id: string, approvedBy: string) {
+    const expense = expenses.value.find((e) => e.id === id)
+    if (expense) {
+      expense.status = 'approved'
+      expense.approvedBy = approvedBy
     }
   }
 
@@ -81,6 +145,7 @@ export const useFinanceStore = defineStore('finance', () => {
     transactions,
     arrearsRecords,
     monthlyRevenue,
+    expenses,
     totalRevenue,
     totalCollected,
     totalArrears,
@@ -89,7 +154,20 @@ export const useFinanceStore = defineStore('finance', () => {
     unmatchedTransactions,
     pendingTransactions,
     overdueInvoices,
+    totalExpenses,
+    approvedExpenses,
+    pendingExpenses,
+    expensesByCategory,
+    netIncome,
     markAsReconciled,
     sendFollowUp,
+    addInvoice,
+    updateInvoice,
+    deleteInvoice,
+    addTransaction,
+    addExpense,
+    updateExpense,
+    deleteExpense,
+    approveExpense,
   }
 })

@@ -7,6 +7,7 @@ import {
   Clock,
   Smartphone,
   Landmark,
+  Plus,
 } from 'lucide-vue-next'
 import { format } from 'date-fns'
 
@@ -15,13 +16,76 @@ import DataTable from '@/components/shared/DataTable.vue'
 import StatusBadge from '@/components/shared/StatusBadge.vue'
 import SearchInput from '@/components/shared/SearchInput.vue'
 import PageHeader from '@/components/shared/PageHeader.vue'
+import AppModal from '@/components/shared/AppModal.vue'
+import FormField from '@/components/shared/FormField.vue'
+import FormSelect from '@/components/shared/FormSelect.vue'
 import { useFinanceStore } from '@/stores/finance'
 import { useStudentsStore } from '@/stores/students'
 import { useCurrency } from '@/composables/useCurrency'
+import { useToast } from '@/composables/useToast'
+import { generateId } from '@/utils/generateId'
+import { students } from '@/data/students'
+import type { Transaction } from '@/types'
 
 const financeStore = useFinanceStore()
 const studentsStore = useStudentsStore()
 const { format: formatCurrency } = useCurrency()
+const toast = useToast()
+
+// ── Record Transaction Modal State ─────────────────────────
+const showTransactionModal = ref(false)
+
+const defaultTransactionForm = () => ({
+  amount: 0,
+  method: '' as string,
+  reference: '',
+  mpesaCode: '',
+  date: new Date().toISOString().slice(0, 10),
+  studentId: '',
+})
+
+const transactionForm = ref(defaultTransactionForm())
+
+const studentOptions = computed(() =>
+  students.map((s) => ({
+    value: s.id,
+    label: `${s.firstName} ${s.lastName} - ${s.className}`,
+  })),
+)
+
+const methodOptions = [
+  { value: 'mpesa', label: 'M-Pesa' },
+  { value: 'bank', label: 'Bank Transfer' },
+]
+
+function openTransactionModal() {
+  transactionForm.value = defaultTransactionForm()
+  showTransactionModal.value = true
+}
+
+function saveTransaction() {
+  const form = transactionForm.value
+  if (!form.amount || !form.method || !form.reference || !form.date) {
+    toast.error('Please fill in all required fields')
+    return
+  }
+
+  const transaction: Transaction = {
+    id: generateId('tx'),
+    invoiceId: '',
+    studentId: form.studentId,
+    amount: form.amount,
+    method: form.method as 'mpesa' | 'bank',
+    reference: form.reference,
+    date: form.date,
+    status: 'pending',
+    ...(form.method === 'mpesa' && form.mpesaCode ? { mpesaCode: form.mpesaCode } : {}),
+  }
+
+  financeStore.addTransaction(transaction)
+  toast.success('Transaction recorded successfully')
+  showTransactionModal.value = false
+}
 
 // ── Search & Filter State ───────────────────────────────────
 const searchQuery = ref('')
@@ -122,7 +186,15 @@ function handleReconcile(txId: string) {
     <PageHeader
       title="Financial Reconciliation Hub"
       subtitle="Match payments to invoices and reconcile accounts"
-    />
+    >
+      <button
+        class="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:bg-primary/90"
+        @click="openTransactionModal"
+      >
+        <Plus class="h-4 w-4" />
+        Record Transaction
+      </button>
+    </PageHeader>
 
     <!-- Stats Row -->
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -232,5 +304,70 @@ function handleReconcile(txId: string) {
         </template>
       </DataTable>
     </div>
+
+    <!-- Record Transaction Modal -->
+    <AppModal
+      v-model:open="showTransactionModal"
+      title="Record Transaction"
+      subtitle="Add a new payment transaction"
+      size="md"
+    >
+      <div class="space-y-4">
+        <FormSelect
+          v-model="transactionForm.studentId"
+          label="Student"
+          :options="studentOptions"
+          placeholder="Select student..."
+        />
+        <FormField
+          v-model="transactionForm.amount"
+          label="Amount"
+          type="number"
+          placeholder="Enter amount"
+          required
+        />
+        <FormSelect
+          v-model="transactionForm.method"
+          label="Payment Method"
+          :options="methodOptions"
+          placeholder="Select method..."
+          required
+        />
+        <FormField
+          v-model="transactionForm.reference"
+          label="Reference"
+          placeholder="Enter payment reference"
+          required
+        />
+        <FormField
+          v-if="transactionForm.method === 'mpesa'"
+          v-model="transactionForm.mpesaCode"
+          label="M-Pesa Code"
+          placeholder="e.g. QJK3L7M2NP"
+        />
+        <FormField
+          v-model="transactionForm.date"
+          label="Date"
+          type="date"
+          required
+        />
+      </div>
+      <template #footer>
+        <div class="flex items-center justify-end gap-3">
+          <button
+            class="rounded-xl border border-border px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted"
+            @click="showTransactionModal = false"
+          >
+            Cancel
+          </button>
+          <button
+            class="rounded-xl bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:bg-primary/90"
+            @click="saveTransaction"
+          >
+            Record Transaction
+          </button>
+        </div>
+      </template>
+    </AppModal>
   </div>
 </template>

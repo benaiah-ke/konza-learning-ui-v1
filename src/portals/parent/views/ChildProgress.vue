@@ -66,8 +66,8 @@ type DomainKey = 'physical' | 'cognitive' | 'social' | 'language' | 'creative'
 const domainConfig: Record<DomainKey, { label: string; icon: typeof Dumbbell; color: string; bg: string; chartColor: string }> = {
   physical: { label: 'Physical', icon: Dumbbell, color: 'text-info', bg: 'bg-info-light', chartColor: '#2563EB' },
   cognitive: { label: 'Cognitive', icon: Brain, color: 'text-success', bg: 'bg-success-light', chartColor: '#16A34A' },
-  social: { label: 'Social', icon: Users, color: 'text-primary', bg: 'bg-primary/10', chartColor: '#1B4D3E' },
-  language: { label: 'Language', icon: Languages, color: 'text-warning', bg: 'bg-warning-light', chartColor: '#D97706' },
+  social: { label: 'Social', icon: Users, color: 'text-primary', bg: 'bg-primary/10', chartColor: '#1F1B62' },
+  language: { label: 'Language', icon: Languages, color: 'text-warning', bg: 'bg-warning-light', chartColor: '#C8A658' },
   creative: { label: 'Creative', icon: Paintbrush, color: 'text-danger', bg: 'bg-danger-light', chartColor: '#DB2777' },
 }
 

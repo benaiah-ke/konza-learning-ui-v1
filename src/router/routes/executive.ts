@@ -30,6 +30,12 @@ export const executiveRoutes: RouteRecordRaw[] = [
         component: () => import('@/portals/executive/views/ArrearsAging.vue'),
         meta: { title: 'Arrears Aging' },
       },
+      {
+        path: 'academic-performance',
+        name: 'executive-academic',
+        component: () => import('@/portals/executive/views/AcademicPerformance.vue'),
+        meta: { title: 'Academic Performance' },
+      },
     ],
   },
 ]

@@ -6,6 +6,7 @@ import {
   Calendar,
   Users,
   CalendarOff,
+  Banknote,
   Bell,
   ArrowLeft,
   Menu,
@@ -24,6 +25,7 @@ const navItems = [
   { label: 'Tour Scheduling', to: '/admin/tours', icon: Calendar },
   { label: 'Staff Roster', to: '/admin/staff', icon: Users },
   { label: 'Leave Management', to: '/admin/leave', icon: CalendarOff },
+  { label: 'Payroll', to: '/admin/payroll', icon: Banknote },
 ]
 
 function isActive(to: string): boolean {

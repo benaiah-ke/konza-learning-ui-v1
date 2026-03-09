@@ -1,8 +1,14 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, reactive } from 'vue'
 import { students } from '@/data/students'
 import { milestones as allMilestones } from '@/data/milestones'
 import type { Milestone } from '@/types'
+import AppModal from '@/components/shared/AppModal.vue'
+import FormField from '@/components/shared/FormField.vue'
+import FormSelect from '@/components/shared/FormSelect.vue'
+import FormTextarea from '@/components/shared/FormTextarea.vue'
+import { useToast } from '@/composables/useToast'
+import { generateId } from '@/utils/generateId'
 import {
   Award,
   CheckCircle,
@@ -14,7 +20,8 @@ import {
   Palette,
   Dumbbell,
   CalendarDays,
-  X,
+  Plus,
+  Pencil,
 } from 'lucide-vue-next'
 
 // Filter students for Butterfly class at Karen campus
@@ -80,15 +87,17 @@ function getAvatarColor(index: number): string {
   return avatarColors[index % avatarColors.length] ?? ''
 }
 
-// Log milestone modal
+const toast = useToast()
+
+// ── Log Achievement Modal (existing, refactored to use AppModal) ────
 const showLogModal = ref(false)
 const loggingMilestoneId = ref<string | null>(null)
-const logDate = ref(new Date().toISOString().split('T')[0])
+const logDate = ref(new Date().toISOString().slice(0, 10))
 const logNotes = ref('')
 
 function openLogModal(milestoneId: string) {
   loggingMilestoneId.value = milestoneId
-  logDate.value = new Date().toISOString().split('T')[0]
+  logDate.value = new Date().toISOString().slice(0, 10)
   logNotes.value = ''
   showLogModal.value = true
 }
@@ -98,7 +107,7 @@ function closeLogModal() {
   loggingMilestoneId.value = null
 }
 
-function saveMilestone() {
+function saveMilestoneAchievement() {
   if (!loggingMilestoneId.value) return
   const index = milestonesData.value.findIndex(
     (m) => m.id === loggingMilestoneId.value,
@@ -114,17 +123,104 @@ function saveMilestone() {
     }
   }
   closeLogModal()
+  toast.success('Milestone achievement logged')
+}
+
+// ── Add Milestone Modal ─────────────────────────────────────
+const showAddModal = ref(false)
+
+const studentOptions = computed(() =>
+  classStudents.value.map((s) => ({
+    value: s.id,
+    label: `${s.firstName} ${s.lastName}`,
+  })),
+)
+
+const domainOptions = domains.map((d) => ({
+  value: d.key,
+  label: d.label,
+}))
+
+const defaultMilestoneForm = () => ({
+  studentId: selectedStudentId.value ?? classStudents.value[0]?.id ?? '',
+  domain: activeDomain.value as Milestone['domain'],
+  title: '',
+  description: '',
+  notes: '',
+})
+
+const milestoneForm = reactive(defaultMilestoneForm())
+
+function openAddModal() {
+  Object.assign(milestoneForm, defaultMilestoneForm())
+  showAddModal.value = true
+}
+
+function saveNewMilestone() {
+  if (!milestoneForm.title.trim()) return
+
+  const newMilestone: Milestone = {
+    id: generateId('ms'),
+    studentId: milestoneForm.studentId,
+    domain: milestoneForm.domain,
+    title: milestoneForm.title,
+    description: milestoneForm.description,
+    achieved: false,
+    notes: milestoneForm.notes || undefined,
+    loggedBy: 'stf-001',
+  }
+
+  milestonesData.value.push(newMilestone)
+  showAddModal.value = false
+  toast.success('Milestone added successfully')
+}
+
+// ── Edit Notes Modal ────────────────────────────────────────
+const showEditNotesModal = ref(false)
+const editingMilestoneId = ref<string | null>(null)
+const editNotes = ref('')
+
+function openEditNotesModal(milestone: Milestone) {
+  editingMilestoneId.value = milestone.id
+  editNotes.value = milestone.notes ?? ''
+  showEditNotesModal.value = true
+}
+
+function saveEditedNotes() {
+  if (!editingMilestoneId.value) return
+  const index = milestonesData.value.findIndex(
+    (m) => m.id === editingMilestoneId.value,
+  )
+  const existing = index !== -1 ? milestonesData.value[index] : undefined
+  if (existing) {
+    milestonesData.value[index] = {
+      ...existing,
+      notes: editNotes.value || undefined,
+    }
+  }
+  showEditNotesModal.value = false
+  editingMilestoneId.value = null
+  toast.success('Notes updated')
 }
 </script>
 
 <template>
   <div class="space-y-6">
     <!-- Page Header -->
-    <div>
-      <h1 class="text-2xl font-bold tracking-tight text-foreground">Milestones Logger</h1>
-      <p class="text-sm text-muted-foreground">
-        Record and track child developmental milestones
-      </p>
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <h1 class="text-2xl font-bold tracking-tight text-foreground">Milestones Logger</h1>
+        <p class="text-sm text-muted-foreground">
+          Record and track child developmental milestones
+        </p>
+      </div>
+      <button
+        class="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:bg-primary/90"
+        @click="openAddModal"
+      >
+        <Plus class="h-4 w-4" />
+        Add Milestone
+      </button>
     </div>
 
     <div class="grid grid-cols-1 gap-6 lg:grid-cols-4">
@@ -311,12 +407,21 @@ function saveMilestone() {
             </div>
 
             <!-- Action -->
-            <div v-if="!milestone.achieved">
+            <div class="flex flex-col gap-2">
               <button
+                v-if="!milestone.achieved"
                 class="whitespace-nowrap rounded-xl bg-primary px-3 py-1.5 text-xs font-medium text-white shadow-sm transition-all duration-200 hover:bg-primary/90"
                 @click="openLogModal(milestone.id)"
               >
                 Log Achievement
+              </button>
+              <button
+                v-if="milestone.achieved"
+                class="inline-flex items-center gap-1 whitespace-nowrap rounded-xl border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground transition-all duration-200 hover:bg-muted hover:text-foreground"
+                @click="openEditNotesModal(milestone)"
+              >
+                <Pencil class="h-3 w-3" />
+                Edit Notes
               </button>
             </div>
           </div>
@@ -324,73 +429,140 @@ function saveMilestone() {
       </div>
     </div>
 
-    <!-- Log Milestone Modal -->
-    <Teleport to="body">
-      <div
-        v-if="showLogModal"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
-        @click.self="closeLogModal"
-      >
-        <div class="w-full max-w-md card p-6 shadow-xl">
-          <div class="mb-5 flex items-center justify-between">
-            <h3 class="text-lg font-semibold tracking-tight text-foreground">Log Achievement</h3>
-            <button
-              class="rounded-xl p-1.5 text-muted-foreground transition-all duration-200 hover:bg-muted"
-              @click="closeLogModal"
-            >
-              <X class="h-5 w-5" />
-            </button>
-          </div>
-
-          <div class="space-y-4">
-            <div>
-              <label
-                class="mb-1.5 block text-sm font-medium text-foreground"
-                for="log-date"
-              >
-                Date Achieved
-              </label>
-              <input
-                id="log-date"
-                v-model="logDate"
-                type="date"
-                class="w-full rounded-xl border border-border bg-white px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-              />
-            </div>
-
-            <div>
-              <label
-                class="mb-1.5 block text-sm font-medium text-foreground"
-                for="log-notes"
-              >
-                Notes (optional)
-              </label>
-              <textarea
-                id="log-notes"
-                v-model="logNotes"
-                rows="3"
-                placeholder="Add any observations or comments..."
-                class="w-full rounded-xl border border-border bg-white px-3 py-2 text-sm text-foreground shadow-sm placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-              />
-            </div>
-
-            <div class="flex justify-end gap-3">
-              <button
-                class="rounded-xl border border-border px-4 py-2 text-sm font-medium text-muted-foreground transition-all duration-200 hover:bg-muted"
-                @click="closeLogModal"
-              >
-                Cancel
-              </button>
-              <button
-                class="rounded-xl bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:bg-primary/90"
-                @click="saveMilestone"
-              >
-                Save
-              </button>
-            </div>
-          </div>
-        </div>
+    <!-- Log Achievement Modal -->
+    <AppModal
+      :open="showLogModal"
+      title="Log Achievement"
+      subtitle="Record when this milestone was achieved"
+      size="sm"
+      @update:open="showLogModal = $event"
+    >
+      <div class="space-y-4">
+        <FormField
+          v-model="logDate"
+          label="Date Achieved"
+          type="date"
+          required
+        />
+        <FormTextarea
+          v-model="logNotes"
+          label="Notes (optional)"
+          placeholder="Add any observations or comments..."
+          :rows="3"
+        />
       </div>
-    </Teleport>
+      <template #footer>
+        <div class="flex justify-end gap-3">
+          <button
+            class="rounded-xl border border-border px-4 py-2 text-sm font-medium text-muted-foreground transition-all duration-200 hover:bg-muted"
+            @click="closeLogModal"
+          >
+            Cancel
+          </button>
+          <button
+            class="rounded-xl bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:bg-primary/90"
+            @click="saveMilestoneAchievement"
+          >
+            Save
+          </button>
+        </div>
+      </template>
+    </AppModal>
+
+    <!-- Add Milestone Modal -->
+    <AppModal
+      :open="showAddModal"
+      title="Add Milestone"
+      subtitle="Create a new developmental milestone to track"
+      size="md"
+      @update:open="showAddModal = $event"
+    >
+      <div class="space-y-4">
+        <FormSelect
+          v-model="milestoneForm.studentId"
+          label="Student"
+          :options="studentOptions"
+          required
+        />
+        <FormSelect
+          v-model="milestoneForm.domain"
+          label="Domain"
+          :options="domainOptions"
+          required
+        />
+        <FormField
+          v-model="milestoneForm.title"
+          label="Title"
+          placeholder="e.g. Hops on one foot"
+          required
+        />
+        <FormTextarea
+          v-model="milestoneForm.description"
+          label="Description"
+          placeholder="Describe the milestone expectation..."
+          :rows="3"
+        />
+        <FormTextarea
+          v-model="milestoneForm.notes"
+          label="Notes (optional)"
+          placeholder="Any additional observations..."
+          :rows="2"
+        />
+      </div>
+      <template #footer>
+        <div class="flex justify-end gap-3">
+          <button
+            class="rounded-xl border border-border px-4 py-2 text-sm font-medium text-muted-foreground transition-all duration-200 hover:bg-muted"
+            @click="showAddModal = false"
+          >
+            Cancel
+          </button>
+          <button
+            :disabled="!milestoneForm.title.trim()"
+            :class="[
+              'rounded-xl px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200',
+              milestoneForm.title.trim()
+                ? 'bg-primary hover:bg-primary/90'
+                : 'bg-muted-foreground/30 cursor-not-allowed',
+            ]"
+            @click="saveNewMilestone"
+          >
+            Add Milestone
+          </button>
+        </div>
+      </template>
+    </AppModal>
+
+    <!-- Edit Notes Modal -->
+    <AppModal
+      :open="showEditNotesModal"
+      title="Edit Notes"
+      subtitle="Update observations for this milestone"
+      size="sm"
+      @update:open="showEditNotesModal = $event"
+    >
+      <FormTextarea
+        v-model="editNotes"
+        label="Notes"
+        placeholder="Add any observations or comments..."
+        :rows="4"
+      />
+      <template #footer>
+        <div class="flex justify-end gap-3">
+          <button
+            class="rounded-xl border border-border px-4 py-2 text-sm font-medium text-muted-foreground transition-all duration-200 hover:bg-muted"
+            @click="showEditNotesModal = false"
+          >
+            Cancel
+          </button>
+          <button
+            class="rounded-xl bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:bg-primary/90"
+            @click="saveEditedNotes"
+          >
+            Save Notes
+          </button>
+        </div>
+      </template>
+    </AppModal>
   </div>
 </template>

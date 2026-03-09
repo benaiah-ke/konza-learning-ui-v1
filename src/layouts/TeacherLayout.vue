@@ -6,6 +6,7 @@ import {
   Target,
   ShieldAlert,
   MessageSquare,
+  ClipboardCheck,
   Bell,
 } from 'lucide-vue-next'
 import { useAuthStore } from '@/stores/auth'
@@ -22,6 +23,7 @@ const navItems = [
   { label: 'Milestones', to: '/teacher/milestones', icon: Target },
   { label: 'Incidents', to: '/teacher/incidents', icon: ShieldAlert },
   { label: 'Communication', to: '/teacher/communication', icon: MessageSquare },
+  { label: 'Grades', to: '/teacher/grades', icon: ClipboardCheck },
 ]
 
 function isActive(to: string): boolean {

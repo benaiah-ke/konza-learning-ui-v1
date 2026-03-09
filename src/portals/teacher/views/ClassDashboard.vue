@@ -1,8 +1,15 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, reactive } from 'vue'
 import { students } from '@/data/students'
 import { milestones, incidents } from '@/data/milestones'
+import type { DailyActivity } from '@/types'
 import StatCard from '@/components/shared/StatCard.vue'
+import AppModal from '@/components/shared/AppModal.vue'
+import FormField from '@/components/shared/FormField.vue'
+import FormSelect from '@/components/shared/FormSelect.vue'
+import FormTextarea from '@/components/shared/FormTextarea.vue'
+import { useToast } from '@/composables/useToast'
+import { generateId } from '@/utils/generateId'
 import {
   Users,
   CheckCircle,
@@ -13,6 +20,7 @@ import {
   Clock,
   MapPin,
   Calendar,
+  Plus,
 } from 'lucide-vue-next'
 
 // Filter students for Butterfly class at Karen campus
@@ -110,6 +118,61 @@ const today = new Date().toLocaleDateString('en-GB', {
   month: 'long',
   year: 'numeric',
 })
+
+// ── Log Activity Modal ──────────────────────────────────────
+const toast = useToast()
+
+const activities = ref<DailyActivity[]>([])
+
+const showActivityModal = ref(false)
+
+const activityTypeOptions = [
+  { value: 'meal', label: 'Meal' },
+  { value: 'nap', label: 'Nap' },
+  { value: 'activity', label: 'Activity' },
+  { value: 'learning', label: 'Learning' },
+  { value: 'outdoor', label: 'Outdoor' },
+]
+
+const studentOptions = computed(() =>
+  classStudents.value.map((s) => ({
+    value: s.id,
+    label: `${s.firstName} ${s.lastName}`,
+  })),
+)
+
+const defaultActivityForm = () => ({
+  studentId: classStudents.value[0]?.id ?? '',
+  type: 'activity' as DailyActivity['type'],
+  title: '',
+  description: '',
+  time: '',
+})
+
+const activityForm = reactive(defaultActivityForm())
+
+function openActivityModal() {
+  Object.assign(activityForm, defaultActivityForm())
+  showActivityModal.value = true
+}
+
+function saveActivity() {
+  if (!activityForm.title.trim()) return
+
+  const newActivity: DailyActivity = {
+    id: generateId('act'),
+    studentId: activityForm.studentId,
+    date: new Date().toISOString().slice(0, 10) ?? '',
+    type: activityForm.type,
+    title: activityForm.title,
+    description: activityForm.description,
+    time: activityForm.time,
+  }
+
+  activities.value.unshift(newActivity)
+  showActivityModal.value = false
+  toast.success('Activity logged successfully')
+}
 </script>
 
 <template>
@@ -120,19 +183,28 @@ const today = new Date().toLocaleDateString('en-GB', {
         <h1 class="text-2xl font-bold tracking-tight text-foreground">My Class Dashboard</h1>
         <p class="text-sm text-muted-foreground">Overview of your class, attendance, and daily schedule</p>
       </div>
-      <div class="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-        <span class="inline-flex items-center gap-1.5">
-          <Users class="h-4 w-4 text-primary" />
-          Butterfly Class
-        </span>
-        <span class="inline-flex items-center gap-1.5">
-          <MapPin class="h-4 w-4 text-primary" />
-          Karen Campus
-        </span>
-        <span class="inline-flex items-center gap-1.5">
-          <Calendar class="h-4 w-4 text-primary" />
-          {{ today }}
-        </span>
+      <div class="flex flex-wrap items-center gap-4">
+        <div class="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+          <span class="inline-flex items-center gap-1.5">
+            <Users class="h-4 w-4 text-primary" />
+            Butterfly Class
+          </span>
+          <span class="inline-flex items-center gap-1.5">
+            <MapPin class="h-4 w-4 text-primary" />
+            Karen Campus
+          </span>
+          <span class="inline-flex items-center gap-1.5">
+            <Calendar class="h-4 w-4 text-primary" />
+            {{ today }}
+          </span>
+        </div>
+        <button
+          class="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:bg-primary/90"
+          @click="openActivityModal"
+        >
+          <Plus class="h-4 w-4" />
+          Log Activity
+        </button>
       </div>
     </div>
 
@@ -305,5 +377,67 @@ const today = new Date().toLocaleDateString('en-GB', {
         </div>
       </div>
     </div>
+    <!-- Log Activity Modal -->
+    <AppModal
+      :open="showActivityModal"
+      title="Log Activity"
+      subtitle="Record a daily activity for a student"
+      size="md"
+      @update:open="showActivityModal = $event"
+    >
+      <div class="space-y-4">
+        <FormSelect
+          v-model="activityForm.studentId"
+          label="Student"
+          :options="studentOptions"
+          required
+        />
+        <FormSelect
+          v-model="activityForm.type"
+          label="Type"
+          :options="activityTypeOptions"
+          required
+        />
+        <FormField
+          v-model="activityForm.title"
+          label="Title"
+          placeholder="e.g. Morning snack, Outdoor play"
+          required
+        />
+        <FormTextarea
+          v-model="activityForm.description"
+          label="Description"
+          placeholder="Describe the activity..."
+          :rows="3"
+        />
+        <FormField
+          v-model="activityForm.time"
+          label="Time"
+          placeholder="e.g. 10:30 AM"
+        />
+      </div>
+      <template #footer>
+        <div class="flex justify-end gap-3">
+          <button
+            class="rounded-xl border border-border px-4 py-2 text-sm font-medium text-muted-foreground transition-all duration-200 hover:bg-muted"
+            @click="showActivityModal = false"
+          >
+            Cancel
+          </button>
+          <button
+            :disabled="!activityForm.title.trim()"
+            :class="[
+              'rounded-xl px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200',
+              activityForm.title.trim()
+                ? 'bg-primary hover:bg-primary/90'
+                : 'bg-muted-foreground/30 cursor-not-allowed',
+            ]"
+            @click="saveActivity"
+          >
+            Save Activity
+          </button>
+        </div>
+      </template>
+    </AppModal>
   </div>
 </template>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, reactive, watch } from 'vue'
 import {
   Clock,
   CheckCircle2,
@@ -13,9 +13,89 @@ import {
 import StatCard from '@/components/shared/StatCard.vue'
 import DataTable from '@/components/shared/DataTable.vue'
 import StatusBadge from '@/components/shared/StatusBadge.vue'
+import AppModal from '@/components/shared/AppModal.vue'
+import FormField from '@/components/shared/FormField.vue'
+import FormSelect from '@/components/shared/FormSelect.vue'
+import FormTextarea from '@/components/shared/FormTextarea.vue'
 import { useStaffStore } from '@/stores/staff'
+import { useToast } from '@/composables/useToast'
+import { generateId } from '@/utils/generateId'
+import type { LeaveRequest } from '@/types'
 
 const staffStore = useStaffStore()
+const toast = useToast()
+
+// ── New Leave Request Modal State ───────────────────────────
+const showLeaveModal = ref(false)
+
+const leaveForm = reactive({
+  staffId: '' as string,
+  type: '' as string,
+  startDate: '',
+  endDate: '',
+  days: 0,
+  reason: '',
+})
+
+const staffOptions = computed(() =>
+  staffStore.staff
+    .filter((s) => s.status === 'active')
+    .map((s) => ({
+      value: s.id,
+      label: `${s.firstName} ${s.lastName}`,
+    })),
+)
+
+const leaveTypeOptions = [
+  { value: 'annual', label: 'Annual Leave' },
+  { value: 'sick', label: 'Sick Leave' },
+  { value: 'personal', label: 'Personal Leave' },
+  { value: 'maternity', label: 'Maternity Leave' },
+  { value: 'paternity', label: 'Paternity Leave' },
+]
+
+// Auto-calculate days when dates change
+watch(
+  [() => leaveForm.startDate, () => leaveForm.endDate],
+  ([start, end]) => {
+    if (start && end) {
+      const startDate = new Date(start)
+      const endDate = new Date(end)
+      const diffTime = endDate.getTime() - startDate.getTime()
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1
+      leaveForm.days = diffDays > 0 ? diffDays : 0
+    }
+  },
+)
+
+function openLeaveModal() {
+  leaveForm.staffId = ''
+  leaveForm.type = ''
+  leaveForm.startDate = ''
+  leaveForm.endDate = ''
+  leaveForm.days = 0
+  leaveForm.reason = ''
+  showLeaveModal.value = true
+}
+
+function saveLeaveRequest() {
+  if (!leaveForm.staffId || !leaveForm.type || !leaveForm.startDate || !leaveForm.endDate || !leaveForm.reason) return
+
+  const newRequest: LeaveRequest = {
+    id: generateId('leave'),
+    staffId: leaveForm.staffId,
+    type: leaveForm.type as LeaveRequest['type'],
+    startDate: leaveForm.startDate,
+    endDate: leaveForm.endDate,
+    days: leaveForm.days,
+    status: 'pending',
+    reason: leaveForm.reason,
+  }
+
+  staffStore.addLeaveRequest(newRequest)
+  toast.success('Leave request submitted successfully')
+  showLeaveModal.value = false
+}
 
 // ── Stats ───────────────────────────────────────────────────
 const pendingCount = computed(() => staffStore.pendingLeaveRequests.length)
@@ -170,7 +250,7 @@ function handleDecline(id: string) {
       </div>
       <button
         class="inline-flex items-center gap-2 rounded-xl bg-[#C2410C] px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:bg-[#C2410C]/90"
-        disabled
+        @click="openLeaveModal"
       >
         <Plus class="h-4 w-4" />
         New Request
@@ -358,5 +438,77 @@ function handleDecline(id: string) {
         </span>
       </div>
     </div>
+
+    <!-- New Leave Request Modal -->
+    <AppModal
+      :open="showLeaveModal"
+      @update:open="showLeaveModal = $event"
+      title="New Leave Request"
+      subtitle="Submit a leave request for a staff member"
+      size="md"
+    >
+      <div class="space-y-4">
+        <FormSelect
+          v-model="leaveForm.staffId"
+          label="Staff Member"
+          :options="staffOptions"
+          placeholder="Select staff member..."
+          required
+        />
+        <FormSelect
+          v-model="leaveForm.type"
+          label="Leave Type"
+          :options="leaveTypeOptions"
+          placeholder="Select leave type..."
+          required
+        />
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <FormField
+            v-model="leaveForm.startDate"
+            label="Start Date"
+            type="date"
+            required
+          />
+          <FormField
+            v-model="leaveForm.endDate"
+            label="End Date"
+            type="date"
+            required
+          />
+          <FormField
+            v-model="leaveForm.days"
+            label="Days"
+            type="number"
+            placeholder="Auto-calculated"
+            disabled
+          />
+        </div>
+        <FormTextarea
+          v-model="leaveForm.reason"
+          label="Reason"
+          placeholder="Provide a reason for the leave request..."
+          :rows="3"
+          required
+        />
+      </div>
+
+      <template #footer>
+        <div class="flex items-center justify-end gap-3">
+          <button
+            class="rounded-xl border border-border px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted"
+            @click="showLeaveModal = false"
+          >
+            Cancel
+          </button>
+          <button
+            class="rounded-xl bg-[#C2410C] px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:bg-[#C2410C]/90 disabled:opacity-50"
+            :disabled="!leaveForm.staffId || !leaveForm.type || !leaveForm.startDate || !leaveForm.endDate || !leaveForm.reason"
+            @click="saveLeaveRequest"
+          >
+            Submit Request
+          </button>
+        </div>
+      </template>
+    </AppModal>
   </div>
 </template>

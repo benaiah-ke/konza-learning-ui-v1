@@ -10,6 +10,7 @@ import {
   User,
   Phone,
   Mail,
+  Plus,
 } from 'lucide-vue-next'
 import { format } from 'date-fns'
 
@@ -17,13 +18,77 @@ import StatCard from '@/components/shared/StatCard.vue'
 import StatusBadge from '@/components/shared/StatusBadge.vue'
 import SearchInput from '@/components/shared/SearchInput.vue'
 import PageHeader from '@/components/shared/PageHeader.vue'
+import AppModal from '@/components/shared/AppModal.vue'
+import FormField from '@/components/shared/FormField.vue'
+import FormSelect from '@/components/shared/FormSelect.vue'
 import { useFinanceStore } from '@/stores/finance'
 import { useCurrency } from '@/composables/useCurrency'
+import { useToast } from '@/composables/useToast'
+import { generateId } from '@/utils/generateId'
 import { students } from '@/data/students'
 import { parents } from '@/data/parents'
+import type { Transaction } from '@/types'
 
 const financeStore = useFinanceStore()
 const { format: formatCurrency } = useCurrency()
+const toast = useToast()
+
+// ── Record Payment Modal State ──────────────────────────────
+const showPaymentModal = ref(false)
+
+const defaultPaymentForm = () => ({
+  studentId: '',
+  amount: 0,
+  method: '' as string,
+  reference: '',
+  date: new Date().toISOString().slice(0, 10),
+})
+
+const paymentForm = ref(defaultPaymentForm())
+
+const studentOptions = computed(() =>
+  students.map((s) => ({
+    value: s.id,
+    label: `${s.firstName} ${s.lastName} - ${s.className}`,
+  })),
+)
+
+const methodOptions = [
+  { value: 'mpesa', label: 'M-Pesa' },
+  { value: 'bank', label: 'Bank Transfer' },
+]
+
+function openPaymentModal() {
+  paymentForm.value = defaultPaymentForm()
+  // Pre-select current student if one is selected
+  if (selectedStudentId.value) {
+    paymentForm.value.studentId = selectedStudentId.value
+  }
+  showPaymentModal.value = true
+}
+
+function savePayment() {
+  const form = paymentForm.value
+  if (!form.studentId || !form.amount || !form.method || !form.reference || !form.date) {
+    toast.error('Please fill in all required fields')
+    return
+  }
+
+  const transaction: Transaction = {
+    id: generateId('tx'),
+    invoiceId: '',
+    studentId: form.studentId,
+    amount: form.amount,
+    method: form.method as 'mpesa' | 'bank',
+    reference: form.reference,
+    date: form.date,
+    status: 'pending',
+  }
+
+  financeStore.addTransaction(transaction)
+  toast.success('Payment recorded successfully')
+  showPaymentModal.value = false
+}
 
 // ── State ───────────────────────────────────────────────────
 const searchQuery = ref('')
@@ -100,7 +165,15 @@ function selectStudent(id: string) {
     <PageHeader
       title="Student Ledger & Billing"
       subtitle="Individual student financial records and billing history"
-    />
+    >
+      <button
+        class="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:bg-primary/90"
+        @click="openPaymentModal"
+      >
+        <Plus class="h-4 w-4" />
+        Record Payment
+      </button>
+    </PageHeader>
 
     <div class="grid grid-cols-1 gap-6 lg:grid-cols-12">
       <!-- Left sidebar - Student selector -->
@@ -368,5 +441,65 @@ function selectStudent(id: string) {
         </div>
       </div>
     </div>
+
+    <!-- Record Payment Modal -->
+    <AppModal
+      v-model:open="showPaymentModal"
+      title="Record Payment"
+      subtitle="Add a new payment for a student"
+      size="md"
+    >
+      <div class="space-y-4">
+        <FormSelect
+          v-model="paymentForm.studentId"
+          label="Student"
+          :options="studentOptions"
+          placeholder="Select student..."
+          required
+        />
+        <FormField
+          v-model="paymentForm.amount"
+          label="Amount"
+          type="number"
+          placeholder="Enter payment amount"
+          required
+        />
+        <FormSelect
+          v-model="paymentForm.method"
+          label="Payment Method"
+          :options="methodOptions"
+          placeholder="Select method..."
+          required
+        />
+        <FormField
+          v-model="paymentForm.reference"
+          label="Reference"
+          placeholder="Enter payment reference"
+          required
+        />
+        <FormField
+          v-model="paymentForm.date"
+          label="Date"
+          type="date"
+          required
+        />
+      </div>
+      <template #footer>
+        <div class="flex items-center justify-end gap-3">
+          <button
+            class="rounded-xl border border-border px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted"
+            @click="showPaymentModal = false"
+          >
+            Cancel
+          </button>
+          <button
+            class="rounded-xl bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:bg-primary/90"
+            @click="savePayment"
+          >
+            Record Payment
+          </button>
+        </div>
+      </template>
+    </AppModal>
   </div>
 </template>
