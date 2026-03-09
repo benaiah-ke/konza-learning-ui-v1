@@ -4,6 +4,7 @@ import {
   DollarSign,
   Users,
   TrendingUp,
+  TrendingDown,
   AlertTriangle,
   CheckCircle,
   Clock,
@@ -11,6 +12,11 @@ import {
   FileText,
   CalendarClock,
   AlertCircle,
+  Wallet,
+  Banknote,
+  ClipboardList,
+  Briefcase,
+  PieChart,
 } from 'lucide-vue-next'
 import SafeChart from '@/components/shared/SafeChart.vue'
 import type { ApexOptions } from 'apexcharts'
@@ -18,11 +24,17 @@ import type { ApexOptions } from 'apexcharts'
 import StatCard from '@/components/shared/StatCard.vue'
 import ChartCard from '@/components/shared/ChartCard.vue'
 import { useFinanceStore } from '@/stores/finance'
+import { useStaffStore } from '@/stores/staff'
+import { useAcademicsStore } from '@/stores/academics'
+import { useAdmissionsStore } from '@/stores/admissions'
 import { useCurrency } from '@/composables/useCurrency'
 import { useChartTheme } from '@/composables/useChartTheme'
 import { campuses } from '@/data/campuses'
 
 const finance = useFinanceStore()
+const staffStore = useStaffStore()
+const academics = useAcademicsStore()
+const admissions = useAdmissionsStore()
 const { formatCompact, format } = useCurrency()
 const { baseOptions } = useChartTheme()
 
@@ -34,6 +46,53 @@ const totalCapacity = computed(() =>
 
 const totalEnrollment = computed(() =>
   campuses.reduce((sum, c) => sum + c.currentEnrollment, 0),
+)
+
+// ── Financial Health Computations ───────────────────────────
+
+const currentMonthPayroll = computed(() => {
+  const data = staffStore.payrollByMonth['2026-03']
+  return data?.total ?? 0
+})
+
+const pendingApprovals = computed(() =>
+  finance.pendingExpenses.length + staffStore.pendingPayroll.length,
+)
+
+// ── Expense by Month Aggregation ────────────────────────────
+
+const expensesByMonth = computed(() => {
+  const grouped: Record<string, number> = {}
+  for (const e of finance.expenses) {
+    const month = e.date.slice(0, 7)
+    grouped[month] = (grouped[month] ?? 0) + e.amount
+  }
+  return grouped
+})
+
+const comparisonMonths = ['2026-01', '2026-02', '2026-03']
+
+const comparisonLabels = ['Jan 2026', 'Feb 2026', 'Mar 2026']
+
+const monthlyNetIncome = computed(() =>
+  comparisonMonths.map((m) => {
+    const rev = finance.monthlyRevenue.find((r) => r.month === m)
+    return (rev?.collected ?? 0) - (expensesByMonth.value[m] ?? 0)
+  }),
+)
+
+// ── Academics Summary ───────────────────────────────────────
+
+const exceedingPct = computed(() => {
+  const dist = academics.gradeDistribution
+  const total = Object.values(dist).reduce((a, b) => a + b, 0)
+  return total > 0 ? Math.round(((dist['Exceeding'] ?? 0) / total) * 100) : 0
+})
+
+const enrollmentUtilization = computed(() =>
+  totalCapacity.value > 0
+    ? Math.round((totalEnrollment.value / totalCapacity.value) * 100)
+    : 0,
 )
 
 // ── Revenue Trend Chart ─────────────────────────────────────
@@ -98,6 +157,199 @@ const revenueOptions = computed<ApexOptions>(() => ({
   },
   grid: baseOptions.grid,
   legend: baseOptions.legend,
+  dataLabels: { enabled: false },
+}))
+
+// ── Income vs Expenses Bar Chart ────────────────────────────
+
+const incomeVsExpensesSeries = computed(() => [
+  {
+    name: 'Revenue Collected',
+    data: comparisonMonths.map((m) => {
+      const rev = finance.monthlyRevenue.find((r) => r.month === m)
+      return rev?.collected ?? 0
+    }),
+  },
+  {
+    name: 'Total Expenses',
+    data: comparisonMonths.map((m) => expensesByMonth.value[m] ?? 0),
+  },
+])
+
+const incomeVsExpensesOptions = computed<ApexOptions>(() => ({
+  ...baseOptions,
+  chart: {
+    ...baseOptions.chart,
+    type: 'bar',
+    height: 300,
+  },
+  colors: ['#22c55e', '#ef4444'],
+  plotOptions: {
+    bar: {
+      horizontal: false,
+      columnWidth: '55%',
+      borderRadius: 6,
+      borderRadiusApplication: 'end',
+    },
+  },
+  xaxis: {
+    ...baseOptions.xaxis,
+    categories: comparisonLabels,
+  },
+  yaxis: {
+    ...baseOptions.yaxis,
+    labels: {
+      ...(baseOptions.yaxis && !Array.isArray(baseOptions.yaxis)
+        ? baseOptions.yaxis.labels
+        : {}),
+      formatter: (val: number) => formatCompact(val),
+    },
+  },
+  tooltip: {
+    ...baseOptions.tooltip,
+    y: {
+      formatter: (val: number) => format(val),
+    },
+  },
+  stroke: { show: false, width: 0 },
+  grid: baseOptions.grid,
+  legend: baseOptions.legend,
+  dataLabels: { enabled: false },
+}))
+
+// ── Profit Margin Area Chart ────────────────────────────────
+
+const profitSeries = computed(() => [
+  {
+    name: 'Net Income',
+    data: monthlyNetIncome.value,
+  },
+])
+
+const profitOptions = computed<ApexOptions>(() => ({
+  ...baseOptions,
+  chart: {
+    ...baseOptions.chart,
+    type: 'area',
+    height: 300,
+  },
+  colors: ['#22c55e'],
+  fill: {
+    type: 'gradient',
+    gradient: {
+      shadeIntensity: 1,
+      opacityFrom: 0.4,
+      opacityTo: 0.05,
+      stops: [0, 95, 100],
+    },
+  },
+  xaxis: {
+    ...baseOptions.xaxis,
+    categories: comparisonLabels,
+  },
+  yaxis: {
+    ...baseOptions.yaxis,
+    labels: {
+      ...(baseOptions.yaxis && !Array.isArray(baseOptions.yaxis)
+        ? baseOptions.yaxis.labels
+        : {}),
+      formatter: (val: number) => formatCompact(val),
+    },
+  },
+  tooltip: {
+    ...baseOptions.tooltip,
+    y: {
+      formatter: (val: number) => format(val),
+    },
+  },
+  stroke: {
+    curve: 'smooth',
+    width: 2.5,
+  },
+  grid: baseOptions.grid,
+  legend: baseOptions.legend,
+  dataLabels: { enabled: false },
+}))
+
+// ── Expense Breakdown Donut Chart ───────────────────────────
+
+const categoryLabels: Record<string, string> = {
+  salaries: 'Salaries',
+  rent: 'Rent',
+  utilities: 'Utilities',
+  food: 'Food',
+  supplies: 'Supplies',
+  transport: 'Transport',
+  maintenance: 'Maintenance',
+  marketing: 'Marketing',
+  other: 'Other',
+}
+
+const expenseCategoryEntries = computed(() => {
+  const cats = finance.expensesByCategory
+  return Object.entries(cats).sort((a, b) => b[1] - a[1])
+})
+
+const expenseDonutSeries = computed(() =>
+  expenseCategoryEntries.value.map(([, val]) => val),
+)
+
+const expenseDonutLabels = computed(() =>
+  expenseCategoryEntries.value.map(([key]) => categoryLabels[key] ?? key),
+)
+
+const expenseDonutOptions = computed<ApexOptions>(() => ({
+  chart: {
+    ...baseOptions.chart,
+    type: 'donut',
+    height: 300,
+  },
+  labels: expenseDonutLabels.value,
+  plotOptions: {
+    pie: {
+      donut: {
+        size: '70%',
+        labels: {
+          show: true,
+          name: {
+            show: true,
+            fontSize: '14px',
+            color: '#737373',
+            offsetY: -8,
+          },
+          value: {
+            show: true,
+            fontSize: '20px',
+            fontWeight: 700,
+            color: '#1a1a1a',
+            offsetY: 4,
+            formatter: (val: string) => formatCompact(Number(val)),
+          },
+          total: {
+            show: true,
+            label: 'Total Expenses',
+            fontSize: '13px',
+            color: '#737373',
+            formatter: () => formatCompact(finance.totalExpenses),
+          },
+        },
+      },
+    },
+  },
+  stroke: {
+    width: 3,
+    colors: ['#ffffff'],
+  },
+  legend: {
+    ...baseOptions.legend,
+    position: 'bottom',
+  },
+  tooltip: {
+    ...baseOptions.tooltip,
+    y: {
+      formatter: (val: number) => format(val),
+    },
+  },
   dataLabels: { enabled: false },
 }))
 
@@ -251,7 +503,7 @@ const alerts: AlertItem[] = [
   },
   {
     id: 'a3',
-    message: 'New admission inquiry \u2014 Sarah Kipchoge for Butterfly Class',
+    message: 'New admission inquiry — Sarah Kipchoge for Butterfly Class',
     type: 'info',
     time: '1 hr ago',
     icon: UserPlus,
@@ -265,7 +517,7 @@ const alerts: AlertItem[] = [
   },
   {
     id: 'a5',
-    message: 'Term 1 2026 billing complete \u2014 28 invoices generated',
+    message: 'Term 1 2026 billing complete — 28 invoices generated',
     type: 'success',
     time: '3 hrs ago',
     icon: FileText,
@@ -299,6 +551,39 @@ const alertIconBg: Record<string, string> = {
   info: 'bg-info-light',
   danger: 'bg-danger-light',
 }
+
+// ── Operations snapshot metrics ─────────────────────────────
+
+const opsMetrics = computed(() => [
+  {
+    section: 'Staff',
+    items: [
+      { label: 'Active Staff', value: `${staffStore.activeStaff.length}`, color: 'text-info' },
+      { label: 'Pending Leave', value: `${staffStore.pendingLeaveRequests.length}`, color: 'text-warning' },
+    ],
+  },
+  {
+    section: 'Admissions',
+    items: [
+      { label: 'Active Pipeline', value: `${admissions.activePipeline.length} leads`, color: 'text-primary' },
+      { label: 'Conversion Rate', value: `${admissions.conversionRate}%`, color: 'text-success' },
+    ],
+  },
+  {
+    section: 'Academics',
+    items: [
+      { label: 'Avg Score', value: `${academics.overallAverageScore} / 5`, color: 'text-primary' },
+      { label: 'Exceeding Grade', value: `${exceedingPct.value}%`, color: 'text-success' },
+    ],
+  },
+  {
+    section: 'Enrollment',
+    items: [
+      { label: 'Students', value: `${totalEnrollment.value} / ${totalCapacity.value}`, color: 'text-info' },
+      { label: 'Utilization', value: `${enrollmentUtilization.value}%`, color: 'text-primary' },
+    ],
+  },
+])
 </script>
 
 <template>
@@ -320,7 +605,7 @@ const alertIconBg: Record<string, string> = {
       </div>
     </div>
 
-    <!-- KPI Cards Row -->
+    <!-- Row 1: Revenue KPI Cards -->
     <div class="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
       <StatCard
         label="Total Revenue"
@@ -330,11 +615,11 @@ const alertIconBg: Record<string, string> = {
         variant="primary"
       />
       <StatCard
-        label="Total Enrollment"
-        :value="`${totalEnrollment} / ${totalCapacity}`"
-        :change="{ value: 12.4, direction: 'up' }"
-        :icon="Users"
-        variant="info"
+        label="Total Collected"
+        :value="formatCompact(finance.totalCollected)"
+        :change="{ value: 5.1, direction: 'up' }"
+        :icon="CheckCircle"
+        variant="success"
       />
       <StatCard
         label="Collection Rate"
@@ -352,39 +637,45 @@ const alertIconBg: Record<string, string> = {
       />
     </div>
 
-    <!-- Charts Row -->
-    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-      <!-- Revenue Trend -->
-      <ChartCard
-        title="Revenue Trend"
-        subtitle="Expected vs Collected over 12 months"
-      >
-        <template #default>
-          <div class="flex items-center gap-1.5">
-            <Clock class="h-4 w-4 text-muted-foreground" />
-            <span class="text-xs text-muted-foreground">Apr 2025 - Mar 2026</span>
-          </div>
-        </template>
-        <template #chart>
-          <SafeChart
-            type="area"
-            :height="300"
-            :options="revenueOptions"
-            :series="revenueSeries"
-          />
-        </template>
-      </ChartCard>
+    <!-- Row 2: Financial Health Cards -->
+    <div class="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
+      <StatCard
+        label="Total Expenses"
+        :value="formatCompact(finance.totalExpenses)"
+        :icon="Wallet"
+        variant="warning"
+      />
+      <StatCard
+        label="Net Income"
+        :value="formatCompact(finance.netIncome)"
+        :icon="finance.netIncome >= 0 ? TrendingUp : TrendingDown"
+        :variant="finance.netIncome >= 0 ? 'success' : 'danger'"
+      />
+      <StatCard
+        label="Payroll (Mar 2026)"
+        :value="formatCompact(currentMonthPayroll)"
+        :icon="Banknote"
+        variant="info"
+      />
+      <StatCard
+        label="Pending Approvals"
+        :value="String(pendingApprovals)"
+        :icon="ClipboardList"
+        variant="neutral"
+      />
+    </div>
 
-      <!-- Enrollment by Campus -->
+    <!-- Row 3: Income vs Expenses + Profit Margin -->
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
       <ChartCard
-        title="Enrollment by Campus"
-        subtitle="Current enrollment vs total capacity"
+        title="Income vs Expenses"
+        subtitle="Monthly comparison — Jan to Mar 2026"
       >
         <template #default>
           <div class="flex items-center gap-1.5">
-            <Users class="h-4 w-4 text-muted-foreground" />
+            <DollarSign class="h-4 w-4 text-muted-foreground" />
             <span class="text-xs text-muted-foreground">
-              {{ totalEnrollment }} of {{ totalCapacity }} total
+              Net: {{ formatCompact(finance.netIncome) }}
             </span>
           </div>
         </template>
@@ -392,16 +683,80 @@ const alertIconBg: Record<string, string> = {
           <SafeChart
             type="bar"
             :height="300"
-            :options="enrollmentOptions"
-            :series="enrollmentSeries"
+            :options="incomeVsExpensesOptions"
+            :series="incomeVsExpensesSeries"
+          />
+        </template>
+      </ChartCard>
+
+      <ChartCard
+        title="Monthly Profit Margin"
+        subtitle="Revenue collected minus total expenses"
+      >
+        <template #default>
+          <div class="flex items-center gap-1.5">
+            <TrendingUp class="h-4 w-4 text-success" />
+            <span class="text-xs font-medium text-success">
+              Profitable
+            </span>
+          </div>
+        </template>
+        <template #chart>
+          <SafeChart
+            type="area"
+            :height="300"
+            :options="profitOptions"
+            :series="profitSeries"
           />
         </template>
       </ChartCard>
     </div>
 
-    <!-- Bottom Row -->
+    <!-- Row 4: Revenue Trend (full width) -->
+    <ChartCard
+      title="Revenue Trend"
+      subtitle="Expected vs Collected over 12 months"
+    >
+      <template #default>
+        <div class="flex items-center gap-1.5">
+          <Clock class="h-4 w-4 text-muted-foreground" />
+          <span class="text-xs text-muted-foreground">Apr 2025 - Mar 2026</span>
+        </div>
+      </template>
+      <template #chart>
+        <SafeChart
+          type="area"
+          :height="300"
+          :options="revenueOptions"
+          :series="revenueSeries"
+        />
+      </template>
+    </ChartCard>
+
+    <!-- Row 5: Expense Breakdown + Arrears Aging -->
     <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-      <!-- Arrears Distribution -->
+      <ChartCard
+        title="Expense Breakdown"
+        subtitle="Spending by category"
+      >
+        <template #default>
+          <div class="flex items-center gap-1.5">
+            <PieChart class="h-4 w-4 text-warning" />
+            <span class="text-xs font-medium text-warning">
+              {{ formatCompact(finance.totalExpenses) }} total
+            </span>
+          </div>
+        </template>
+        <template #chart>
+          <SafeChart
+            type="donut"
+            :height="300"
+            :options="expenseDonutOptions"
+            :series="expenseDonutSeries"
+          />
+        </template>
+      </ChartCard>
+
       <ChartCard
         title="Arrears Aging Distribution"
         subtitle="Outstanding balances by aging bucket"
@@ -423,58 +778,119 @@ const alertIconBg: Record<string, string> = {
           />
         </template>
       </ChartCard>
+    </div>
 
-      <!-- Recent Alerts & Activity -->
+    <!-- Row 6: Enrollment + Operations Snapshot -->
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+      <ChartCard
+        title="Enrollment by Campus"
+        subtitle="Current enrollment vs total capacity"
+      >
+        <template #default>
+          <div class="flex items-center gap-1.5">
+            <Users class="h-4 w-4 text-muted-foreground" />
+            <span class="text-xs text-muted-foreground">
+              {{ totalEnrollment }} of {{ totalCapacity }} total
+            </span>
+          </div>
+        </template>
+        <template #chart>
+          <SafeChart
+            type="bar"
+            :height="300"
+            :options="enrollmentOptions"
+            :series="enrollmentSeries"
+          />
+        </template>
+      </ChartCard>
+
+      <!-- Operations Snapshot -->
       <div class="card p-6">
         <div class="flex items-start justify-between">
           <div>
-            <h3 class="font-semibold tracking-tight text-card-foreground">Recent Activity</h3>
+            <h3 class="font-semibold tracking-tight text-card-foreground">Operations Snapshot</h3>
             <p class="mt-0.5 text-sm text-muted-foreground">
-              Latest alerts and notifications
+              Cross-domain summary of all operations
             </p>
           </div>
-          <div
-            class="flex h-8 items-center rounded-lg bg-danger-light px-3 text-xs font-medium text-danger ring-1 ring-danger/10"
-          >
-            {{ finance.overdueInvoices.length }} overdue
+          <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
+            <Briefcase class="h-4 w-4 text-primary" />
           </div>
         </div>
-        <div class="mt-4 max-h-[320px] space-y-1 overflow-y-auto pr-1">
+        <div class="mt-5 grid grid-cols-2 gap-4">
           <div
-            v-for="alert in alerts"
-            :key="alert.id"
-            class="group flex items-start gap-3 rounded-lg px-3 py-3 transition-all duration-200 hover:bg-muted/50"
+            v-for="group in opsMetrics"
+            :key="group.section"
+            class="rounded-xl border border-border p-4"
           >
-            <!-- Icon -->
-            <div
+            <p class="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              {{ group.section }}
+            </p>
+            <div class="space-y-2.5">
+              <div
+                v-for="item in group.items"
+                :key="item.label"
+                class="flex items-center justify-between"
+              >
+                <span class="text-sm text-muted-foreground">{{ item.label }}</span>
+                <span :class="['text-sm font-semibold', item.color]">{{ item.value }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 7: Recent Activity -->
+    <div class="card p-6">
+      <div class="flex items-start justify-between">
+        <div>
+          <h3 class="font-semibold tracking-tight text-card-foreground">Recent Activity</h3>
+          <p class="mt-0.5 text-sm text-muted-foreground">
+            Latest alerts and notifications
+          </p>
+        </div>
+        <div
+          class="flex h-8 items-center rounded-lg bg-danger-light px-3 text-xs font-medium text-danger ring-1 ring-danger/10"
+        >
+          {{ finance.overdueInvoices.length }} overdue
+        </div>
+      </div>
+      <div class="mt-4 max-h-[320px] space-y-1 overflow-y-auto pr-1">
+        <div
+          v-for="alert in alerts"
+          :key="alert.id"
+          class="group flex items-start gap-3 rounded-lg px-3 py-3 transition-all duration-200 hover:bg-muted/50"
+        >
+          <!-- Icon -->
+          <div
+            :class="[
+              'mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full',
+              alertIconBg[alert.type],
+            ]"
+          >
+            <component
+              :is="alert.icon"
+              :class="['h-4 w-4', alertIconColor[alert.type]]"
+            />
+          </div>
+          <!-- Content -->
+          <div class="min-w-0 flex-1">
+            <p class="text-sm leading-snug text-card-foreground">
+              {{ alert.message }}
+            </p>
+            <p class="mt-1 text-xs text-muted-foreground">
+              {{ alert.time }}
+            </p>
+          </div>
+          <!-- Status dot -->
+          <div class="mt-2 shrink-0">
+            <span
               :class="[
-                'mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full',
-                alertIconBg[alert.type],
+                'inline-block h-2 w-2 rounded-full',
+                alertDotColor[alert.type],
               ]"
-            >
-              <component
-                :is="alert.icon"
-                :class="['h-4 w-4', alertIconColor[alert.type]]"
-              />
-            </div>
-            <!-- Content -->
-            <div class="min-w-0 flex-1">
-              <p class="text-sm leading-snug text-card-foreground">
-                {{ alert.message }}
-              </p>
-              <p class="mt-1 text-xs text-muted-foreground">
-                {{ alert.time }}
-              </p>
-            </div>
-            <!-- Status dot -->
-            <div class="mt-2 shrink-0">
-              <span
-                :class="[
-                  'inline-block h-2 w-2 rounded-full',
-                  alertDotColor[alert.type],
-                ]"
-              />
-            </div>
+            />
           </div>
         </div>
       </div>
